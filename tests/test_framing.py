@@ -99,6 +99,7 @@ FORBIDDEN = [
     "Seneca",
     "The impediment to action advances action",
     "What stands in the way becomes the way",
+    "The dollar holds.",
     "Bitcoin is more American than the Dollar",
     "A bailout used to need a vote",
     "where we need to go",
@@ -120,6 +121,14 @@ class FramingTests(unittest.TestCase):
         for text in FORBIDDEN:
             self.assertNotIn(text, self.page, text)
             self.assertNotIn(text, self.readme, text)
+
+    def test_the_chance_card_headline_is_the_whitepaper(self):
+        card = self.page.split("So you're telling me there's a chance.", 1)[0].rsplit("<figure", 1)[1]
+        card += self.page.split("So you're telling me there's a chance.", 1)[1].split("</figure>", 1)[0]
+        self.assertIn("Satoshi drops a whitepaper", card)
+        self.assertIn("Lloyd Christmas", card)
+        self.assertIn("Dumb and Dumber", card)
+        self.assertNotIn("The dollar holds.", card)
 
     def test_the_page_scrolls_the_quotes(self):
         self.assertIn('class="quote-strip"', self.page)
