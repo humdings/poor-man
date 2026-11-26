@@ -34,7 +34,6 @@ from metric import (  # noqa: E402
     annualized_from_cumulative,
     compute_bailout,
     effective_gap,
-    read_gate,
     half_life_with_gap,
     half_life_years,
     perry_table,
@@ -382,57 +381,36 @@ class HalfLifeTests(unittest.TestCase):
         self.assertNotIn("aei.org", page)
         self.assertNotIn("<img", page[page.find("Bullshit adjuster"):page.find("Years at a steady")])
 
-    def test_the_gate_needs_both_boxes(self):
-        """Neither box, or only the first, leaves the official half-life.
-
-        At 3.7%, adding 5 percentage points changes the years only when
-        both boxes are checked.
-        """
+    def test_the_gap_applies_immediately(self):
+        """A 5 percentage point gap changes the half-life with no checkbox."""
         rate = 0.037
-        official = half_life_years(rate)
-        for honest, acknowledged in ((False, False), (True, False), (False, True)):
-            applied = effective_gap(0.05, honest, acknowledged)
-            self.assertEqual(applied, 0.0)
-            self.assertAlmostEqual(half_life_with_gap(rate, applied), official, places=9)
-        moved = half_life_with_gap(rate, effective_gap(0.05, True, True))
+        applied = effective_gap(0.05)
+        self.assertEqual(applied, 0.05)
+        self.assertEqual(effective_gap(None), 0.0)
+        self.assertEqual(effective_gap(float("nan")), 0.0)
+        moved = half_life_with_gap(rate, applied)
         self.assertAlmostEqual(moved, half_life_years(rate + 0.05), places=9)
-        self.assertNotEqual(round(moved, 4), round(official, 4))
+        self.assertNotEqual(round(moved, 4), round(half_life_years(rate), 4))
 
-    def test_a_lone_honest_param_does_not_open_the_gate(self):
-        self.assertEqual(read_gate(None, None), (False, False))
-        self.assertEqual(read_gate("1", None), (False, False))
-        self.assertEqual(read_gate(None, "1"), (False, False))
-        self.assertEqual(read_gate("1", "0"), (True, False))
-        self.assertEqual(read_gate("0", "1"), (False, True))
-        self.assertEqual(read_gate("1", "1"), (True, True))
-
-    def test_the_gate_and_disclaimer_sit_on_the_half_life_panel(self):
+    def test_the_disclaimer_sits_under_the_slider(self):
         page = (ROOT / "index.html").read_text(encoding="utf-8")
         app = (ROOT / "js" / "app.js").read_text(encoding="utf-8")
-        panel = page[page.find('id="chart-halflife"'):page.find("Days at a fixed bitcoin price")]
-        footer = page[page.find("<footer>"):page.find("</footer>")]
-        self.assertIn('id="honest"', panel)
-        self.assertIn('id="ack"', panel)
-        self.assertIn("Turn off the bullshit", panel)
+        adjuster = page[page.find("Bullshit adjuster"):page.find('id="bs-presets"')]
+        self.assertLess(adjuster.index('id="bs-gap"'), adjuster.index("bs-caption"))
         self.assertIn(
-            '<p class="honest-aside">In the real world, you can\'t turn this bullshit off.</p>',
-            panel,
+            '<p class="bs-caption">In the real world, you can\'t turn this bullshit off.</p>',
+            adjuster,
         )
-        self.assertIn(
-            "I acknowledge that in the real world, you can't turn this bullshit off.",
-            panel,
-        )
-        self.assertNotIn('id="honest"', footer)
-        self.assertNotIn("Turn off the bullshit", footer)
-        self.assertIn(
-            "You just had to dig to the bottom of the page to make the numbers honest. That was the point.",
-            page,
-        )
-        self.assertIn("Pmb.readGate", app)
-        self.assertIn("Pmb.effectiveGap(state.gap / 100, state.honest, state.ack)", app)
-        self.assertIn("Adjusting...", app)
-        self.assertIn('q.set("honest"', app)
-        self.assertIn('q.set("ack"', app)
+        self.assertNotIn("Turn off the bullshit", page)
+        self.assertNotIn('id="honest"', page)
+        self.assertNotIn('id="ack"', page)
+        self.assertNotIn("I acknowledge that in the real world", page)
+        self.assertNotIn("Adjusting...", page)
+        self.assertNotIn("dig to the bottom of the page", page)
+        self.assertNotIn("readGate", app)
+        self.assertNotIn('q.set("honest"', app)
+        self.assertNotIn('q.set("ack"', app)
+        self.assertIn("Pmb.effectiveGap(state.gap / 100)", app)
         self.assertIn('q.set("gap"', app)
 
     def test_javascript_matches(self):
@@ -449,12 +427,9 @@ class HalfLifeTests(unittest.TestCase):
             "series: Pmb.trailingCpiHalfLife(points),"
             "perry: Pmb.perryTable(),"
             "bumped: Pmb.halfLifeWithGap(0.02, Pmb.perryTable().filter(function (row) { return row.key === 'hospital'; })[0].gap),"
-            "neither: Pmb.effectiveGap(0.05, false, false),"
-            "firstOnly: Pmb.effectiveGap(0.05, true, false),"
-            "ackOnly: Pmb.effectiveGap(0.05, false, true),"
-            "both: Pmb.effectiveGap(0.05, true, true),"
-            "stale: Pmb.readGate('1', null),"
-            "open: Pmb.readGate('1', '1')"
+            "applied: Pmb.effectiveGap(0.05),"
+            "missing: Pmb.effectiveGap(null),"
+            "bad: Pmb.effectiveGap(NaN)"
             "}));"
         )
         raw = subprocess.check_output(["node", "-e", code], text=True)
@@ -483,12 +458,9 @@ class HalfLifeTests(unittest.TestCase):
             self.assertAlmostEqual(left["gap"], right["gap"], places=9)
             self.assertAlmostEqual(left["annualized"], right["annualized"], places=9)
         self.assertAlmostEqual(js["bumped"], half_life_with_gap(0.02, py_rows[1]["gap"]), places=9)
-        self.assertEqual(js["neither"], 0)
-        self.assertEqual(js["firstOnly"], 0)
-        self.assertEqual(js["ackOnly"], 0)
-        self.assertAlmostEqual(js["both"], effective_gap(0.05, True, True), places=9)
-        self.assertEqual(js["stale"], {"honest": False, "acknowledged": False})
-        self.assertEqual(js["open"], {"honest": True, "acknowledged": True})
+        self.assertAlmostEqual(js["applied"], effective_gap(0.05), places=9)
+        self.assertEqual(js["missing"], 0)
+        self.assertEqual(js["bad"], 0)
 
 
 class JavascriptParityTests(unittest.TestCase):

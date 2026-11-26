@@ -422,18 +422,7 @@
     return halfLifeYears(rate + gap);
   }
 
-  function readGate(honestParam, ackParam) {
-    if (honestParam == null || ackParam == null) {
-      return { honest: false, acknowledged: false };
-    }
-    return {
-      honest: honestParam === "1",
-      acknowledged: ackParam === "1",
-    };
-  }
-
-  function effectiveGap(gap, honest, acknowledged) {
-    if (!honest || !acknowledged) return 0;
+  function effectiveGap(gap) {
     if (typeof gap !== "number" || !isFinite(gap)) return 0;
     return gap;
   }
@@ -475,7 +464,6 @@
     annualizedFromCumulative: annualizedFromCumulative,
     perryTable: perryTable,
     halfLifeWithGap: halfLifeWithGap,
-    readGate: readGate,
     effectiveGap: effectiveGap,
     perrySpanYears: PERRY_SPAN_YEARS,
   };
