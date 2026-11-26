@@ -24,7 +24,7 @@ d(t) = C(t) / g(t)     when g(t) > 0
 
 ## In their words
 
-The page runs these as a scrolling strip. Verbatim, except the cards marked attributed or paraphrase. Film lines are the picture's own words. A one-line frame above a film card is ours.
+The page runs these as a scrolling strip and shuffles the order on each visit. Morgan, Saylor, and the IOU stay together, in that order, and the IOU card is set larger. Verbatim, except the cards marked attributed or paraphrase. Film lines are the picture's own words. A one-line frame above a film card is ours. The list below is a catalog, not the order on a given visit.
 
 > And I sincerely believe with you, that banking establishments are more dangerous than standing armies; & that the principle of spending money to be paid by posterity, under the name of funding, is but swindling futurity on a large scale
 
@@ -101,10 +101,6 @@ Milton Friedman, "The Counter-Revolution in Monetary Theory," 16 September 1970.
 > Are you not entertained?
 
 Maximus, *Gladiator* (2000).
-
-> You know, Lloyd, just when I think you couldn't possibly be any dumber, you go and do something like this... and totally redeem yourself!
-
-Harry Dunne, *Dumb and Dumber* (1994). [Clip.Cafe](https://clip.cafe/dumb-dumber-1994/you-know-lloyd-just-i-think/). [Wikiquote](https://en.wikiquote.org/wiki/Dumb_and_Dumber).
 
 > Inflation is taxation without legislation.
 

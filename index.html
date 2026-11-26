@@ -191,7 +191,7 @@
 
     <section class="quotes" aria-labelledby="quotes-title">
       <h2 id="quotes-title">In their words</h2>
-      <p class="quotes-note">A scrolling strip. Verbatim, except the cards marked attributed or paraphrase. The film lines are the picture's own words, with a one-line frame of ours above them. Spellings are the source's. The strip pauses when you hover it.</p>
+      <p class="quotes-note">A scrolling strip, shuffled on each visit. Verbatim, except the cards marked attributed or paraphrase. The film lines are the picture's own words, with a one-line frame of ours above them. Spellings are the source's. Morgan, Saylor, and the IOU stay together, in that order. The strip pauses when you hover it.</p>
       <div class="quote-strip" id="quote-strip" tabindex="0" aria-label="Quotes">
         <div class="quote-track" id="quote-track">
           <div class="quote-set" id="quote-set">
@@ -300,12 +300,6 @@
               <figcaption>Maximus, <cite>Gladiator</cite> (2000).</figcaption>
             </figure>
 
-            <figure class="film">
-              <p class="quote-frame">The rescue.</p>
-              <blockquote><p>You know, Lloyd, just when I think you couldn't possibly be any dumber, you go and do something like this... and totally redeem yourself!</p></blockquote>
-              <figcaption>Harry Dunne, <cite>Dumb and Dumber</cite> (1994). <a href="https://clip.cafe/dumb-dumber-1994/you-know-lloyd-just-i-think/">Clip.Cafe transcript</a>. <a href="https://en.wikiquote.org/wiki/Dumb_and_Dumber">Wikiquote</a>.</figcaption>
-            </figure>
-
             <figure class="flagged">
               <p class="quote-flag">Attributed to Milton Friedman</p>
               <blockquote><p>Inflation is taxation without legislation.</p></blockquote>
@@ -328,22 +322,24 @@
               <figcaption>Widely credited to Voltaire. The original source is uncertain.</figcaption>
             </figure>
 
-            <figure>
-              <blockquote><p>Money is gold, and nothing else.</p></blockquote>
-              <figcaption>J. Pierpont Morgan to Samuel Untermyer, Money Trust Investigation, 19 December 1912. <a href="https://fraser.stlouisfed.org/files/docs/historical/house/money_trust/montru_pt15.pdf">FRASER, part 15</a>. <span class="paraphrase">The popular line &ldquo;Gold is money. Everything else is credit.&rdquo; is a paraphrase.</span></figcaption>
-            </figure>
+            <div class="quote-trio">
+              <figure>
+                <blockquote><p>Money is gold, and nothing else.</p></blockquote>
+                <figcaption>J. Pierpont Morgan to Samuel Untermyer, Money Trust Investigation, 19 December 1912. <a href="https://fraser.stlouisfed.org/files/docs/historical/house/money_trust/montru_pt15.pdf">FRASER, part 15</a>. <span class="paraphrase">The popular line &ldquo;Gold is money. Everything else is credit.&rdquo; is a paraphrase.</span></figcaption>
+              </figure>
 
-            <figure class="flagged">
-              <p class="quote-flag">Michael Saylor (paraphrase)</p>
-              <blockquote><p>Bitcoin is money, everything else is credit.</p></blockquote>
-              <figcaption>The compact line is widely repeated. No post or checked transcript prints it as one sentence.</figcaption>
-            </figure>
+              <figure class="flagged">
+                <p class="quote-flag">Michael Saylor (paraphrase)</p>
+                <blockquote><p>Bitcoin is money, everything else is credit.</p></blockquote>
+                <figcaption>The compact line is widely repeated. No post or checked transcript prints it as one sentence.</figcaption>
+              </figure>
 
-            <figure class="film">
-              <p class="quote-frame">The tender.</p>
-              <blockquote><p>That's as good as money, sir. Those are I.O.U.'s.</p></blockquote>
-              <figcaption>Lloyd Christmas, <cite>Dumb and Dumber</cite> (1994). <a href="https://clip.cafe/dumb-dumber-1994/listen-mr-samsonite-about-the-briefcase/">Clip.Cafe transcript</a>.</figcaption>
-            </figure>
+              <figure class="film featured">
+                <p class="quote-frame">The tender.</p>
+                <blockquote><p>That's as good as money, sir. Those are I.O.U.'s.</p></blockquote>
+                <figcaption>Lloyd Christmas, <cite>Dumb and Dumber</cite> (1994). <a href="https://clip.cafe/dumb-dumber-1994/listen-mr-samsonite-about-the-briefcase/">Clip.Cafe transcript</a>.</figcaption>
+              </figure>
+            </div>
 
             <figure>
               <blockquote><p>You can tell everybody to go fuck themselves. […] the classic Bitcoiner response is, Oh, yeah, my Bitcoin, I lost it in a boating accident. You ever heard that phrase? It's kind of a trope, but what it means is at the end of the day, if you push me too far, I lost it. It's gone. Sorry. Tax that.</p></blockquote>
@@ -379,20 +375,7 @@
         </div>
       </div>
     </section>
-    <script>
-      (function () {
-        var set = document.getElementById("quote-set");
-        var track = document.getElementById("quote-track");
-        var strip = document.getElementById("quote-strip");
-        if (!set || !track || !strip) return;
-        var clone = set.cloneNode(true);
-        clone.removeAttribute("id");
-        clone.setAttribute("aria-hidden", "true");
-        track.appendChild(clone);
-        track.classList.add("is-looping");
-        strip.classList.add("is-looping");
-      })();
-    </script>
+    <script src="js/quotes.js"></script>
     <section class="prose">
       <h2>The axiom</h2>
       <p>Money spends the same, so expansion in any form counts as expansion. That includes M2, the monetary base, currency in circulation, the Fed balance sheet, and the public debt. Debt spends the same as cash. One person's debt is another's asset. Public debt stays in the comparison, on the same terms as the other measures.</p>

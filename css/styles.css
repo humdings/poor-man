@@ -146,8 +146,26 @@ a:hover { color: var(--ink); }
   display: flex;
   flex-direction: column;
 }
+.quote-trio {
+  display: flex;
+  gap: 0.85rem;
+  align-items: stretch;
+}
 .quotes figure.film { border-left-color: var(--sage); }
 .quotes figure.flagged { border-left-color: var(--clay); }
+.quotes figure.featured {
+  flex-basis: min(30rem, 86vw);
+  background:
+    linear-gradient(165deg, rgba(228, 177, 90, 0.22), rgba(228, 177, 90, 0.06) 46%, var(--bg-raise));
+  border-left: 6px solid var(--gold);
+  box-shadow: inset 0 0 0 1px rgba(228, 177, 90, 0.34);
+}
+.quotes figure.featured .quote-frame { color: var(--gold); }
+.quotes figure.featured blockquote p {
+  font-size: 1.32rem;
+  line-height: 1.28;
+  max-height: none;
+}
 .quote-flag, .quote-frame {
   margin: 0 0 0.4rem;
   font-size: 0.72rem;

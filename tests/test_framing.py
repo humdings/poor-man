@@ -1,5 +1,6 @@
 """The framing and the quotes stay verbatim, and the spurious line stays out."""
 
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -53,9 +54,7 @@ REQUIRED = [
     "So you're telling me there's a chance.",
     "Are you not entertained?",
     "We landed on the moon!",
-    "You know, Lloyd, just when I think you couldn't possibly be any dumber, you go and do something like this... and totally redeem yourself!",
     "That's as good as money, sir. Those are I.O.U.'s.",
-    "Harry Dunne",
 ]
 
 # The circulating line attributed to Jefferson about private banks and a
@@ -72,6 +71,8 @@ FORBIDDEN = [
     "good money again",
     "I thought you couldn't possibly be any dumber",
     "That's an IOU. It's as good as money",
+    "totally redeem yourself",
+    "Harry Dunne",
 ]
 
 
@@ -101,16 +102,35 @@ class FramingTests(unittest.TestCase):
             paraphrase = text.index("Gold is money. Everything else is credit.")
             saylor = text.index("Michael Saylor (paraphrase)")
             riff = text.index("Bitcoin is money, everything else is credit.")
+            iou = text.index("That's as good as money, sir. Those are I.O.U.'s.")
             self.assertLess(morgan, paraphrase)
             self.assertLess(paraphrase, saylor)
             self.assertLess(saylor, riff)
-            iou = text.index("That's as good as money, sir. Those are I.O.U.'s.")
             self.assertLess(riff, iou)
-            self.assertLess(iou, text.index("boating accident"))
             moon = text.index("We landed on the moon!")
             self.assertIn("Lloyd Christmas", text[moon:moon + 400])
-            redeem = text.index("totally redeem yourself!")
-            self.assertIn("Harry Dunne", text[redeem:redeem + 400])
+        trio = self.page.split('class="quote-trio"', 1)[1].split("</div>", 1)[0]
+        self.assertLess(trio.index("Money is gold, and nothing else."), trio.index("Michael Saylor (paraphrase)"))
+        self.assertLess(
+            trio.index("Bitcoin is money, everything else is credit."),
+            trio.index("That's as good as money, sir. Those are I.O.U.'s."),
+        )
+        self.assertIn("featured", trio)
+
+    def test_shuffle_keeps_every_card_once_and_the_trio_in_order(self):
+        css = (ROOT / "css" / "styles.css").read_text(encoding="utf-8")
+        self.assertIn(".quote-strip:hover .quote-track", css)
+        self.assertIn("animation-play-state: paused", css)
+        runner = ROOT / "tests" / "quote_shuffle.mjs"
+        done = subprocess.run(
+            ["node", str(runner)],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(done.returncode, 0, done.stderr or done.stdout)
+        self.assertIn("ok ", done.stdout)
 
     def test_the_data_axiom_stays_with_the_formula(self):
         for text in (self.page, self.readme):
