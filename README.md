@@ -158,19 +158,45 @@ Micah 6:11, King James Version. [Bible Gateway](https://www.biblegateway.com/pas
 
 Ezekiel 45:10, King James Version. [Bible Gateway](https://www.biblegateway.com/passage/?search=Ezekiel+45%3A10&version=KJV).
 
-> Woe to those who give less [than due], Who, when they take a measure from people, take in full. But if they give by measure or by weight to them, they cause loss.
+> This System of banks begotten, hatched and brooded by Duer, Robert and Governeur Morris, Hamilton and Washington, I have always considered as a System of national Injustice. A Sacrifice of public and private Interest to a few Aristocratical Friends and Favourites. Verres plundered Temples and robbed a few rich Men: but he never made Such ravages among private property in general, nor Swindled So much out of the pocketts of the poor and the middle Class of People as these Banks have done.
 
-Quran 83:1–3, Saheeh International. [Quran.com](https://quran.com/83/1-3).
+John Adams to Thomas Jefferson, 15 November 1813. [Founders Online](https://founders.archives.gov/documents/Adams/99-02-02-6198). Adams's spelling is kept, including "Governeur" and "pocketts."
 
-> And the heaven He raised and imposed the balance
-> That you not transgress within the balance.
-> And establish weight in justice and do not make deficient the balance.
+> There is no honest Bank but a Bank of Deposit. A Bank that issues Paper at Interest is a Pickpocket or a Robber. […] There is no honest Money but Silver and Gold.
 
-Quran 55:7–9, Saheeh International. [Quran.com](https://quran.com/55/7-9).
+John Adams to Benjamin Rush, 27 December 1810. [Founders Online](https://founders.archives.gov/documents/Adams/99-02-02-5585). The bracket skips the sentences between the two remarks.
 
-> And give full measure when you measure, and weigh with an even [i.e., honest] balance. That is the best [way] and best in result.
+> With only 20 millions of coin, and three or four hundred million of circulating paper, public and private, nothing is necessary but a general panic, produced either by failures, invasion or any other cause, and the whole visionary fabric vanishes into air and shews that paper is poverty, that it is only the ghost of money, and not money itself.
 
-Quran 17:35, Saheeh International. [Quran.com](https://quran.com/17/35).
+Thomas Jefferson to Edward Carrington, 27 May 1788. [Founders Online](https://founders.archives.gov/documents/Jefferson/01-13-02-0120).
+
+> I have ever been the enemy of banks; not of those discounting for cash; but of those foisting their own paper into circulation, and thus banishing our cash.
+
+Thomas Jefferson to John Adams, 24 January 1814. [Founders Online](https://founders.archives.gov/documents/Jefferson/03-07-02-0083).
+
+> Mr. SHERMAN thought this a favorable crisis for crushing paper money. If the consent of the Legislature could authorise emissions of it, the friends of paper money, would make every exertion to get into the Legislature in order to licence it.
+
+Roger Sherman, as James Madison recorded him, Constitutional Convention, 28 August 1787. [Avalon Project](https://avalon.law.yale.edu/18th_century/debates_828.asp).
+
+> striking out the words would not disable the Govt. from the use of public notes as far as they could be safe & proper; & would only cut off the pretext for a paper currency, and particularly for making the bills a tender either for public or private debts.
+
+James Madison, on his own vote of 16 August 1787, in his convention notes. [Avalon Project](https://avalon.law.yale.edu/18th_century/debates_816.asp). Federalist No. 44, already in the catalog, is a different text.
+
+> Paper money can in no case be necessary. Give the Government credit, and other resources will offer. The power may do harm, never good.
+
+Oliver Ellsworth, as James Madison recorded him, Constitutional Convention, 16 August 1787. [Avalon Project](https://avalon.law.yale.edu/18th_century/debates_816.asp).
+
+> The emitting of paper money by the authority of Government is wisely prohibited to the individual States, by the National Constitution. And the spirit of that prohibition ought not to be disregarded, by the Government of the United States.
+
+Alexander Hamilton, Report on a National Bank, 13 December 1790. [Founders Online](https://founders.archives.gov/documents/Hamilton/01-07-02-0229-0003).
+
+> Paper Money not being easily receiv'd out of the Country that makes it, if the Quantity becomes excessive, the Depreciation is quicker & greater.
+
+Benjamin Franklin, "Of the Paper Money of America" (1780?). [Founders Online](https://founders.archives.gov/documents/Franklin/01-34-02-0156). A line blaming England for taking the colonies' money is not his, and is not here.
+
+> Gold and silver are the emissions of nature: paper is the emission of art. The value of gold and silver is ascertained by the quantity which nature has made in the earth. We cannot make that quantity more or less than it is, and therefore the value being dependent upon the quantity, depends not on man.
+
+Thomas Paine, *Dissertations on Government, the Affairs of the Bank, and Paper Money* (Philadelphia, 1786), as printed in Philip S. Foner, ed., *The Complete Writings of Thomas Paine* (1945). [Mises Institute](https://mises.org/mises-daily/thomas-paine-paper-money). That printing modernizes the spelling.
 
 > Money is gold, and nothing else.
 

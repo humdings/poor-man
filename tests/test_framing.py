@@ -74,9 +74,25 @@ REQUIRED = [
     "making the ephah small, and the shekel great",
     "the bag of deceitful weights",
     "Ye shall have just balances, and a just ephah, and a just bath.",
-    "Woe to those who give less [than due]",
-    "do not make deficient the balance.",
-    "weigh with an even [i.e., honest] balance.",
+    "This System of banks begotten, hatched and brooded by Duer, Robert and Governeur Morris",
+    "There is no honest Money but Silver and Gold.",
+    "paper is poverty, that it is only the ghost of money, and not money itself.",
+    "foisting their own paper into circulation, and thus banishing our cash.",
+    "a favorable crisis for crushing paper money",
+    "cut off the pretext for a paper currency",
+    "Paper money can in no case be necessary.",
+    "wisely prohibited to the individual States, by the National Constitution.",
+    "the Depreciation is quicker",
+    "Gold and silver are the emissions of nature: paper is the emission of art.",
+    "https://founders.archives.gov/documents/Adams/99-02-02-6198",
+    "https://founders.archives.gov/documents/Adams/99-02-02-5585",
+    "https://founders.archives.gov/documents/Jefferson/01-13-02-0120",
+    "https://founders.archives.gov/documents/Jefferson/03-07-02-0083",
+    "https://avalon.law.yale.edu/18th_century/debates_828.asp",
+    "https://avalon.law.yale.edu/18th_century/debates_816.asp",
+    "https://founders.archives.gov/documents/Hamilton/01-07-02-0229-0003",
+    "https://founders.archives.gov/documents/Franklin/01-34-02-0156",
+    "https://mises.org/mises-daily/thomas-paine-paper-money",
 ]
 
 # The circulating line attributed to Jefferson about private banks and a
@@ -103,6 +119,10 @@ FORBIDDEN = [
     "Bitcoin is more American than the Dollar",
     "A bailout used to need a vote",
     "where we need to go",
+    "Quran",
+    "quran.com",
+    "little tax on tea",
+    "colonial scrip",
 ]
 
 
