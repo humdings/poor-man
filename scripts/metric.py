@@ -226,6 +226,21 @@ def half_life_with_gap(rate: float | None, gap: float | None) -> float | None:
     return half_life_years(rate + gap)
 
 
+def effective_gap(gap: float | None, honest: bool) -> float:
+    """Gap added to trailing CPI, as a decimal rate.
+
+    The slider and the presets always show a gap. It changes the chart only
+    when `honest` is true. Otherwise the applied gap is zero.
+    """
+    if not honest:
+        return 0.0
+    if isinstance(gap, bool) or not isinstance(gap, (int, float)):
+        return 0.0
+    if not math.isfinite(gap):
+        return 0.0
+    return float(gap)
+
+
 def _positive(value) -> bool:
     return (
         isinstance(value, (int, float))

@@ -422,6 +422,12 @@
     return halfLifeYears(rate + gap);
   }
 
+  function effectiveGap(gap, honest) {
+    if (!honest) return 0;
+    if (typeof gap !== "number" || !isFinite(gap)) return 0;
+    return gap;
+  }
+
   function trailingCpiHalfLife(points) {
     var series = normalize(points);
     var levels = Object.create(null);
@@ -459,6 +465,7 @@
     annualizedFromCumulative: annualizedFromCumulative,
     perryTable: perryTable,
     halfLifeWithGap: halfLifeWithGap,
+    effectiveGap: effectiveGap,
     perrySpanYears: PERRY_SPAN_YEARS,
   };
 });

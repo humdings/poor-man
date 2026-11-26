@@ -33,6 +33,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from metric import (  # noqa: E402
     annualized_from_cumulative,
     compute_bailout,
+    effective_gap,
     half_life_with_gap,
     half_life_years,
     perry_table,
@@ -380,6 +381,39 @@ class HalfLifeTests(unittest.TestCase):
         self.assertNotIn("aei.org", page)
         self.assertNotIn("<img", page[page.find("Bullshit adjuster"):page.find("Years at a steady")])
 
+    def test_a_dishonest_gap_does_not_change_the_half_life(self):
+        """The slider's gap is ignored until honest is true.
+
+        At 3.7% the official half-life is the chart's number. Adding 5
+        percentage points only changes it once the footer box is checked.
+        """
+        rate = 0.037
+        official = half_life_years(rate)
+        self.assertEqual(effective_gap(0.05, False), 0.0)
+        self.assertAlmostEqual(half_life_with_gap(rate, effective_gap(0.05, False)), official, places=9)
+        moved = half_life_with_gap(rate, effective_gap(0.05, True))
+        self.assertAlmostEqual(moved, half_life_years(rate + 0.05), places=9)
+        self.assertNotEqual(round(moved, 4), round(official, 4))
+
+    def test_the_footer_disclaimer_is_the_locked_sentence(self):
+        page = (ROOT / "index.html").read_text(encoding="utf-8")
+        app = (ROOT / "js" / "app.js").read_text(encoding="utf-8")
+        line = "In the real world, you can't turn this bullshit off."
+        box = page.find('id="honest"')
+        note = page.find(line)
+        self.assertIn("Turn off the bullshit", page)
+        self.assertGreater(box, page.find("tip-lead"))
+        self.assertGreater(note, box)
+        self.assertLess(note - box, 400)
+        self.assertIn(
+            "You just had to dig to the bottom of the page to make the numbers honest. That was the point.",
+            page,
+        )
+        self.assertIn("Pmb.effectiveGap(state.gap / 100, state.honest)", app)
+        self.assertIn("Adjusting...", app)
+        self.assertIn('q.set("honest"', app)
+        self.assertIn('q.set("gap"', app)
+
     def test_javascript_matches(self):
         code = (
             "const Pmb = require(" + json.dumps(str(ROOT / "js" / "metric.js")) + ");\n"
@@ -393,7 +427,9 @@ class HalfLifeTests(unittest.TestCase):
             "neg: Pmb.halfLifeYears(-0.02),"
             "series: Pmb.trailingCpiHalfLife(points),"
             "perry: Pmb.perryTable(),"
-            "bumped: Pmb.halfLifeWithGap(0.02, Pmb.perryTable().filter(function (row) { return row.key === 'hospital'; })[0].gap)"
+            "bumped: Pmb.halfLifeWithGap(0.02, Pmb.perryTable().filter(function (row) { return row.key === 'hospital'; })[0].gap),"
+            "asleep: Pmb.effectiveGap(0.05, false),"
+            "awake: Pmb.effectiveGap(0.05, true)"
             "}));"
         )
         raw = subprocess.check_output(["node", "-e", code], text=True)
@@ -422,6 +458,8 @@ class HalfLifeTests(unittest.TestCase):
             self.assertAlmostEqual(left["gap"], right["gap"], places=9)
             self.assertAlmostEqual(left["annualized"], right["annualized"], places=9)
         self.assertAlmostEqual(js["bumped"], half_life_with_gap(0.02, py_rows[1]["gap"]), places=9)
+        self.assertEqual(js["asleep"], 0)
+        self.assertAlmostEqual(js["awake"], effective_gap(0.05, True), places=9)
 
 
 class JavascriptParityTests(unittest.TestCase):

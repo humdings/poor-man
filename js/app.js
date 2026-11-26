@@ -4,7 +4,7 @@
   var METHODS = ["trailing", "regression", "cagr"];
   var data = null;
   var shareHalfYears = null;
-  var bullshitGap = 0;
+  var teaseTimer = null;
   var state = readState();
 
   var els = {
@@ -32,6 +32,9 @@
     bsGapNum: document.getElementById("bs-gap-num"),
     bsPresets: document.getElementById("bs-presets"),
     bsTable: document.getElementById("bs-table"),
+    bsTease: document.getElementById("bs-tease"),
+    bsReveal: document.getElementById("bs-reveal"),
+    honest: document.getElementById("honest"),
     btcNote: document.getElementById("btc-note"),
     paceNote: document.getElementById("pace-note"),
     empty: document.getElementById("empty-bailout"),
@@ -54,7 +57,12 @@
     var log = q.get("log") === "0" ? false : true;
     var norm = q.get("norm");
     if (norm !== "gdp" && norm !== "cpi") norm = "0";
-    return { measure: measure, amount: amount, unit: unit, method: method, log: log, norm: norm };
+    var gap = parseFloat(q.get("gap"));
+    if (!isFinite(gap)) gap = 0;
+    if (gap < -5) gap = -5;
+    if (gap > 15) gap = 15;
+    var honest = q.get("honest") === "1";
+    return { measure: measure, amount: amount, unit: unit, method: method, log: log, norm: norm, gap: gap, honest: honest };
   }
 
   function clamp(amount, unit) {
@@ -70,6 +78,8 @@
     q.set("method", state.method);
     q.set("log", state.log ? "1" : "0");
     q.set("norm", state.norm);
+    q.set("gap", String(Math.round(state.gap * 1000000) / 1000000));
+    q.set("honest", state.honest ? "1" : "0");
     history.replaceState(null, "", "?" + q.toString());
   }
 
@@ -477,6 +487,12 @@
     els.normSeries.value = state.norm === "cpi" ? "cpi" : "gdp";
     els.normSeries.disabled = !canNorm || state.norm === "0";
     if (!canNorm) state.norm = "0";
+    if (els.honest) els.honest.checked = !!state.honest;
+    if (els.bsGap && document.activeElement !== els.bsGap) els.bsGap.value = String(state.gap);
+    if (els.bsGapNum && document.activeElement !== els.bsGapNum) {
+      els.bsGapNum.value = String(Math.round(state.gap * 10000) / 10000);
+    }
+    if (els.bsReveal) els.bsReveal.hidden = !state.honest;
   }
 
   function yearsLabel(value) {
@@ -525,16 +541,17 @@
         if (!button || !els.bsPresets.contains(button)) return;
         var next = clampGap(button.getAttribute("data-gap"));
         if (next == null) return;
-        bullshitGap = next;
-        els.bsGap.value = String(bullshitGap);
-        els.bsGapNum.value = String(Math.round(bullshitGap * 10000) / 10000);
+        state.gap = next;
+        els.bsGap.value = String(state.gap);
+        els.bsGapNum.value = String(Math.round(state.gap * 10000) / 10000);
+        tease();
         render();
       });
     }
     if (els.bsPresets) {
       els.bsPresets.querySelectorAll("button").forEach(function (button) {
         var gap = Number(button.getAttribute("data-gap"));
-        button.setAttribute("aria-pressed", Math.abs(gap - bullshitGap) < 1e-6 ? "true" : "false");
+        button.setAttribute("aria-pressed", Math.abs(gap - state.gap) < 1e-6 ? "true" : "false");
       });
     }
     if (els.bsTable && !els.bsTable.dataset.filled) {
@@ -575,7 +592,7 @@
       return { official: [], gap: [], wages: [] };
     }
     var series = Pmb.trailingCpiHalfLife(cpi.points);
-    var gapDecimal = bullshitGap / 100;
+    var gapDecimal = Pmb.effectiveGap(state.gap / 100, state.honest);
     var adjusted = series.map(function (row) {
       return {
         date: row.date,
@@ -595,13 +612,17 @@
       if (!last) latest.textContent = "The trailing 12-month CPI rate is not positive.";
       else {
         var pct = (last.rate * 100).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-        var adjustedYears = Pmb.halfLifeWithGap(last.rate, gapDecimal);
         var line = "Latest print " + last.date + ": " + pct + "% over the prior twelve months, " +
-          yearsLabel(last.years) + " years at official CPI. At CPI plus " + ppLabel(gapDecimal) +
-          " percentage points, ";
-        line += adjustedYears != null ? yearsLabel(adjustedYears) + " years." : "the rate is not positive, so that half-life is a gap.";
-        line += " The gap is an illustrative assumption, not measured real inflation.";
-        latest.textContent = line;
+          yearsLabel(last.years) + " years";
+        if (!state.honest) {
+          latest.textContent = line + ".";
+        } else {
+          var adjustedYears = Pmb.halfLifeWithGap(last.rate, gapDecimal);
+          line += " at official CPI. At CPI plus " + ppLabel(state.gap / 100) + " percentage points, ";
+          line += adjustedYears != null ? yearsLabel(adjustedYears) + " years." : "the rate is not positive, so that half-life is a gap.";
+          line += " The gap is an illustrative assumption, not measured real inflation.";
+          latest.textContent = line;
+        }
       }
     }
     return {
@@ -726,13 +747,29 @@
     function applyGap(raw, fromSlider) {
       var next = clampGap(raw);
       if (next == null) return;
-      bullshitGap = next;
-      if (fromSlider) els.bsGapNum.value = String(Math.round(bullshitGap * 100) / 100);
-      else els.bsGap.value = String(bullshitGap);
+      state.gap = next;
+      if (fromSlider) els.bsGapNum.value = String(Math.round(state.gap * 100) / 100);
+      else els.bsGap.value = String(state.gap);
+      tease();
       render();
     }
     els.bsGap.addEventListener("input", function () { applyGap(els.bsGap.value, true); });
     els.bsGapNum.addEventListener("input", function () { applyGap(els.bsGapNum.value, false); });
+    els.honest.addEventListener("change", function () {
+      state.honest = els.honest.checked;
+      if (state.honest && els.bsTease) els.bsTease.textContent = "";
+      render();
+    });
+  }
+
+  function tease() {
+    if (!els.bsTease || state.honest) return;
+    els.bsTease.textContent = "Adjusting...";
+    clearTimeout(teaseTimer);
+    teaseTimer = setTimeout(function () {
+      if (!els.bsTease || state.honest) return;
+      els.bsTease.textContent = shareHalfYears != null ? yearsLabel(shareHalfYears) + " years" : "";
+    }, 700);
   }
 
   function fail(message) {
