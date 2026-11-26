@@ -155,6 +155,77 @@ def trailing_cpi_half_life(points) -> list[dict]:
     return out
 
 
+# Cumulative changes, January 2000 through June 2026, from Mark J. Perry's
+# BLS chart of selected consumer prices and wages. The June 2026 AEI post
+# was not found, so the page credits him without a link. Decimals, not percent.
+PERRY_SPAN_YEARS = 26.5
+PERRY_CUMULATIVE = (
+    ("overall", "Overall inflation", 0.964, "baseline"),
+    ("hospital", "Hospital Services", 2.911, "preset"),
+    ("tuition", "College Tuition and Fees", 1.998, "preset"),
+    ("textbooks", "College Textbooks", 1.819, "preset"),
+    ("daycare", "Day Care and Preschool", 1.624, "preset"),
+    ("medical", "Medical Care Services", 1.505, "preset"),
+    ("wages", "Average Hourly Wages", 1.357, "reference"),
+    ("housing", "Housing", 1.153, "preset"),
+    ("food", "Food and Beverages", 1.085, "preset"),
+)
+
+
+def annualized_from_cumulative(change: float, years: float = PERRY_SPAN_YEARS) -> float | None:
+    """Annual rate that compounds to `change` over `years`.
+
+    (1 + change) ** (1 / years) - 1. `change` is a decimal cumulative change.
+    """
+    if isinstance(change, bool) or not isinstance(change, (int, float)):
+        return None
+    if isinstance(years, bool) or not isinstance(years, (int, float)):
+        return None
+    if not math.isfinite(change) or change <= -1:
+        return None
+    if not math.isfinite(years) or years <= 0:
+        return None
+    rate = (1.0 + change) ** (1.0 / years) - 1.0
+    if not math.isfinite(rate):
+        return None
+    return rate
+
+
+def perry_table() -> list[dict]:
+    """Annualized rate and the gap over overall CPI, in decimal rate points.
+
+    A preset adds that gap to trailing CPI. Wages is a reference, not a preset.
+    The gap is an illustrative assumption, not measured real inflation.
+    """
+    overall = annualized_from_cumulative(0.964)
+    rows: list[dict] = []
+    for key, name, change, role in PERRY_CUMULATIVE:
+        rate = annualized_from_cumulative(change)
+        gap = None if rate is None or overall is None else rate - overall
+        rows.append({
+            "key": key,
+            "name": name,
+            "cumulative": change,
+            "annualized": rate,
+            "gap": gap,
+            "role": role,
+        })
+    return rows
+
+
+def half_life_with_gap(rate: float | None, gap: float | None) -> float | None:
+    """Half-life at `rate` plus `gap`. Both are decimals. A non-positive sum is a gap."""
+    if rate is None or gap is None:
+        return None
+    if isinstance(rate, bool) or not isinstance(rate, (int, float)):
+        return None
+    if isinstance(gap, bool) or not isinstance(gap, (int, float)):
+        return None
+    if not math.isfinite(rate) or not math.isfinite(gap):
+        return None
+    return half_life_years(rate + gap)
+
+
 def _positive(value) -> bool:
     return (
         isinstance(value, (int, float))

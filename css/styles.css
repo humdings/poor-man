@@ -528,6 +528,76 @@ a.share { display: inline-block; text-decoration: none; }
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+.bs-adjust { margin: 0.15rem 0.15rem 0.35rem; min-width: 0; }
+.bs-adjust .half-label { margin: 0.15rem 0 0.25rem; }
+.bs-adjust .card-note { margin-bottom: 0.55rem; }
+.bs-control {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 5.6rem auto;
+  gap: 0.45rem 0.55rem;
+  align-items: center;
+  min-width: 0;
+}
+.bs-control label, .bs-unit { color: var(--muted); font-size: 0.88rem; }
+.bs-control input[type="range"] {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  accent-color: var(--clay);
+}
+.bs-control input[type="number"] {
+  width: 100%;
+  min-width: 0;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.28rem 0.4rem;
+  font-size: 0.9rem;
+}
+.bs-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.6rem 0 0.45rem;
+  min-width: 0;
+}
+.bs-preset {
+  margin: 0;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.28rem 0.65rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+.bs-preset strong { font-weight: 560; margin-left: 0.3rem; color: var(--clay); }
+.bs-preset[aria-pressed="true"] {
+  border-color: rgba(211, 122, 104, 0.7);
+  background: rgba(211, 122, 104, 0.14);
+}
+.bs-preset:hover { border-color: rgba(228, 177, 90, 0.45); }
+.bs-adjust .legend { flex-wrap: wrap; margin: 0.15rem 0 0.35rem; }
+.bs-table {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 0.75fr) minmax(0, 0.9fr) minmax(0, 0.7fr);
+  gap: 0.2rem 0.4rem;
+  margin: 0.55rem 0.15rem 0.35rem;
+  min-width: 0;
+  font-size: 0.78rem;
+}
+.bs-table span { min-width: 0; }
+.bs-table .bs-h {
+  color: var(--faint);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.bs-table .bs-num { font-variant-numeric: tabular-nums; }
+.bs-table .is-ref { color: var(--sage); }
+.bs-credit { margin: 0.2rem 0.15rem 0.45rem; }
 .half-table {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -575,6 +645,7 @@ a.share { display: inline-block; text-decoration: none; }
 .swatch.money { background: var(--sage); }
 .swatch.btc { background: var(--gold); }
 .swatch.units { background: #8eb4d4; }
+.swatch.clay { background: var(--clay); }
 
 .prose { padding: 0.6rem 0 1.5rem; max-width: 46rem; }
 .prose h2 { font-family: Fraunces, Georgia, serif; font-weight: 560; font-size: 1.6rem; margin: 1.4rem 0 0.4rem; }

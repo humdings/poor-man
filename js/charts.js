@@ -149,10 +149,26 @@
       priceLineVisible: false,
     });
     if (charts.halflife) {
+      var yearFormat = { type: "custom", formatter: years, minMove: 0.1 };
+      charts.halflifeWages = charts.halflife.addLineSeries({
+        color: SAGE,
+        lineWidth: 1,
+        lineStyle: 2,
+        priceFormat: yearFormat,
+        priceLineVisible: false,
+        lastValueVisible: true,
+      });
+      charts.halflifeGap = charts.halflife.addLineSeries({
+        color: "#d37a68",
+        lineWidth: 2,
+        priceFormat: yearFormat,
+        priceLineVisible: false,
+        lastValueVisible: true,
+      });
       charts.halflifeSeries = charts.halflife.addLineSeries({
         color: GOLD,
         lineWidth: 2,
-        priceFormat: { type: "custom", formatter: years, minMove: 0.1 },
+        priceFormat: yearFormat,
         priceLineVisible: false,
         lastValueVisible: true,
       });
@@ -206,6 +222,8 @@
       charts.btcSeries.setData(levels(spec.btc));
       charts.overlayMoney.setData(levels(spec.money));
       charts.overlayBtc.setData(levels(spec.btc));
+      if (charts.halflifeWages) charts.halflifeWages.setData(monotonic(spec.halfLifeWages || []));
+      if (charts.halflifeGap) charts.halflifeGap.setData(monotonic(spec.halfLifeGap || []));
       if (charts.halflifeSeries) charts.halflifeSeries.setData(monotonic(spec.halfLife || []));
     } catch (err) {
       console.error(err);

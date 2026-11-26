@@ -380,6 +380,48 @@
     return Math.log(2) / growth;
   }
 
+  var PERRY_SPAN_YEARS = 26.5;
+  var PERRY_CUMULATIVE = [
+    ["overall", "Overall inflation", 0.964, "baseline"],
+    ["hospital", "Hospital Services", 2.911, "preset"],
+    ["tuition", "College Tuition and Fees", 1.998, "preset"],
+    ["textbooks", "College Textbooks", 1.819, "preset"],
+    ["daycare", "Day Care and Preschool", 1.624, "preset"],
+    ["medical", "Medical Care Services", 1.505, "preset"],
+    ["wages", "Average Hourly Wages", 1.357, "reference"],
+    ["housing", "Housing", 1.153, "preset"],
+    ["food", "Food and Beverages", 1.085, "preset"],
+  ];
+
+  function annualizedFromCumulative(change, years) {
+    if (typeof change !== "number" || !isFinite(change) || change <= -1) return null;
+    var span = years == null ? PERRY_SPAN_YEARS : years;
+    if (typeof span !== "number" || !isFinite(span) || span <= 0) return null;
+    var rate = Math.pow(1 + change, 1 / span) - 1;
+    return isFinite(rate) ? rate : null;
+  }
+
+  function perryTable() {
+    var overall = annualizedFromCumulative(0.964);
+    return PERRY_CUMULATIVE.map(function (row) {
+      var rate = annualizedFromCumulative(row[2]);
+      return {
+        key: row[0],
+        name: row[1],
+        cumulative: row[2],
+        annualized: rate,
+        gap: rate == null || overall == null ? null : rate - overall,
+        role: row[3],
+      };
+    });
+  }
+
+  function halfLifeWithGap(rate, gap) {
+    if (typeof rate !== "number" || typeof gap !== "number") return null;
+    if (!isFinite(rate) || !isFinite(gap)) return null;
+    return halfLifeYears(rate + gap);
+  }
+
   function trailingCpiHalfLife(points) {
     var series = normalize(points);
     var levels = Object.create(null);
@@ -414,5 +456,9 @@
     toChartData: toChartData,
     halfLifeYears: halfLifeYears,
     trailingCpiHalfLife: trailingCpiHalfLife,
+    annualizedFromCumulative: annualizedFromCumulative,
+    perryTable: perryTable,
+    halfLifeWithGap: halfLifeWithGap,
+    perrySpanYears: PERRY_SPAN_YEARS,
   };
 });

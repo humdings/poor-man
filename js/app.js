@@ -4,6 +4,7 @@
   var METHODS = ["trailing", "regression", "cagr"];
   var data = null;
   var shareHalfYears = null;
+  var bullshitGap = 0;
   var state = readState();
 
   var els = {
@@ -27,6 +28,10 @@
     normSeries: document.getElementById("norm-series"),
     moneyTitle: document.getElementById("money-title"),
     legend: document.getElementById("legend-money"),
+    bsGap: document.getElementById("bs-gap"),
+    bsGapNum: document.getElementById("bs-gap-num"),
+    bsPresets: document.getElementById("bs-presets"),
+    bsTable: document.getElementById("bs-table"),
     btcNote: document.getElementById("btc-note"),
     paceNote: document.getElementById("pace-note"),
     empty: document.getElementById("empty-bailout"),
@@ -478,6 +483,78 @@
     return value.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   }
 
+  function clampGap(raw) {
+    var n = Number(raw);
+    if (!isFinite(n)) return null;
+    if (n < -5) return -5;
+    if (n > 15) return 15;
+    return n;
+  }
+
+  function ppLabel(gap) {
+    return (gap * 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function pctLabel(rate, digits) {
+    return (rate * 100).toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits }) + "%";
+  }
+
+  var PRESET_LABEL = {
+    hospital: "Hospital",
+    tuition: "Tuition",
+    textbooks: "Textbooks",
+    daycare: "Day care",
+    medical: "Medical",
+    housing: "Housing",
+    food: "Food",
+  };
+
+  function paintBullshit() {
+    var rows = Pmb.perryTable();
+    if (els.bsPresets && !els.bsPresets.dataset.filled) {
+      var buttons = '<button type="button" class="bs-preset" data-gap="0">None</button>';
+      rows.forEach(function (row) {
+        if (row.role !== "preset") return;
+        buttons += '<button type="button" class="bs-preset" data-gap="' + row.gap * 100 + '">' +
+          PRESET_LABEL[row.key] + "<strong>" + ppLabel(row.gap) + "</strong></button>";
+      });
+      els.bsPresets.innerHTML = buttons;
+      els.bsPresets.dataset.filled = "1";
+      els.bsPresets.addEventListener("click", function (event) {
+        var button = event.target.closest("button");
+        if (!button || !els.bsPresets.contains(button)) return;
+        var next = clampGap(button.getAttribute("data-gap"));
+        if (next == null) return;
+        bullshitGap = next;
+        els.bsGap.value = String(bullshitGap);
+        els.bsGapNum.value = String(Math.round(bullshitGap * 10000) / 10000);
+        render();
+      });
+    }
+    if (els.bsPresets) {
+      els.bsPresets.querySelectorAll("button").forEach(function (button) {
+        var gap = Number(button.getAttribute("data-gap"));
+        button.setAttribute("aria-pressed", Math.abs(gap - bullshitGap) < 1e-6 ? "true" : "false");
+      });
+    }
+    if (els.bsTable && !els.bsTable.dataset.filled) {
+      var html = '<span class="bs-h">Category</span><span class="bs-h">Change</span><span class="bs-h">Annual</span><span class="bs-h">Gap</span>';
+      rows.forEach(function (row) {
+        var name = row.name + (row.role === "reference" ? " (reference)" : "");
+        var cls = row.role === "reference" ? " is-ref" : "";
+        html += '<span class="' + cls.trim() + '">' + name + "</span>";
+        html += '<span class="bs-num' + cls + '">+' + (row.cumulative * 100).toFixed(1) + "%</span>";
+        html += '<span class="bs-num' + cls + '">' + pctLabel(row.annualized, 2) + "</span>";
+        html += '<span class="bs-num' + cls + '">' + ppLabel(row.gap) + "</span>";
+      });
+      els.bsTable.innerHTML = html;
+      els.bsTable.dataset.filled = "1";
+    }
+    var wages = null;
+    rows.forEach(function (row) { if (row.key === "wages") wages = row; });
+    return wages;
+  }
+
   function paintHalfLife() {
     var table = document.getElementById("half-table");
     var latest = document.getElementById("half-latest");
@@ -491,12 +568,24 @@
       table.innerHTML = html;
       table.dataset.filled = "1";
     }
+    var wages = paintBullshit();
     if (!cpi || !cpi.points) {
       shareHalfYears = null;
       if (latest) latest.textContent = "CPI is not in this snapshot.";
-      return [];
+      return { official: [], gap: [], wages: [] };
     }
     var series = Pmb.trailingCpiHalfLife(cpi.points);
+    var gapDecimal = bullshitGap / 100;
+    var adjusted = series.map(function (row) {
+      return {
+        date: row.date,
+        years: row.rate == null ? null : Pmb.halfLifeWithGap(row.rate, gapDecimal),
+      };
+    });
+    var wageYears = wages ? Pmb.halfLifeYears(wages.annualized) : null;
+    var wageSeries = series.map(function (row) {
+      return { date: row.date, years: wageYears };
+    });
     var last = null;
     for (var i = series.length - 1; i >= 0; i--) {
       if (series[i].years != null) { last = series[i]; break; }
@@ -506,10 +595,20 @@
       if (!last) latest.textContent = "The trailing 12-month CPI rate is not positive.";
       else {
         var pct = (last.rate * 100).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-        latest.textContent = "Latest print " + last.date + ": " + pct + "% over the prior twelve months, " + yearsLabel(last.years) + " years.";
+        var adjustedYears = Pmb.halfLifeWithGap(last.rate, gapDecimal);
+        var line = "Latest print " + last.date + ": " + pct + "% over the prior twelve months, " +
+          yearsLabel(last.years) + " years at official CPI. At CPI plus " + ppLabel(gapDecimal) +
+          " percentage points, ";
+        line += adjustedYears != null ? yearsLabel(adjustedYears) + " years." : "the rate is not positive, so that half-life is a gap.";
+        line += " The gap is an illustrative assumption, not measured real inflation.";
+        latest.textContent = line;
       }
     }
-    return Pmb.toChartData(series, "years");
+    return {
+      official: Pmb.toChartData(series, "years"),
+      gap: Pmb.toChartData(adjusted, "years"),
+      wages: Pmb.toChartData(wageSeries, "years"),
+    };
   }
 
   function shareSentence() {
@@ -558,6 +657,7 @@
     els.legend.textContent = measure.short;
     var price = data.btc.points[data.btc.points.length - 1][2];
     els.btcNote.textContent = "Log scale. Latest price " + (price != null ? "$" + Number(price).toLocaleString("en-US", { maximumFractionDigits: 2 }) : "unavailable") + ".";
+    var half = paintHalfLife();
     PmbCharts.render({
       bailout: painted.plotted,
       fixedPrice: Pmb.toChartData(result.points, "fixedPriceDays"),
@@ -565,7 +665,9 @@
       pace: Pmb.toChartData(result.points, "growthPerDay"),
       money: measure.points,
       btc: btcPairs(),
-      halfLife: paintHalfLife(),
+      halfLife: half.official,
+      halfLifeGap: half.gap,
+      halfLifeWages: half.wages,
       log: state.log,
     });
     paintShare();
@@ -621,6 +723,16 @@
     });
     els.share.addEventListener("click", function () { copyLink(els.share); });
     els.shareHalf.addEventListener("click", function () { copyLink(els.shareHalf); });
+    function applyGap(raw, fromSlider) {
+      var next = clampGap(raw);
+      if (next == null) return;
+      bullshitGap = next;
+      if (fromSlider) els.bsGapNum.value = String(Math.round(bullshitGap * 100) / 100);
+      else els.bsGap.value = String(bullshitGap);
+      render();
+    }
+    els.bsGap.addEventListener("input", function () { applyGap(els.bsGap.value, true); });
+    els.bsGapNum.addEventListener("input", function () { applyGap(els.bsGapNum.value, false); });
   }
 
   function fail(message) {
