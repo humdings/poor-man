@@ -102,9 +102,9 @@ Milton Friedman, "The Counter-Revolution in Monetary Theory," 16 September 1970.
 
 Maximus, *Gladiator* (2000).
 
-> Inflation is taxation without legislation.
+> It is the one form of taxation that can be imposed without legislation.
 
-**Attributed to Milton Friedman.** No source in his own words has been found. [MiltonFriedman.org](https://miltonfriedman.org/misattributed).
+Milton Friedman, AEI round table, 17 July 1974. The popular line, "Inflation is taxation without legislation," is a paraphrase. [Indexing and Inflation](https://www.aei.org/wp-content/uploads/2016/03/AEIRoundTable05.pdf).
 
 > Governments will never allow monetary competition, and even bankers do not understand the idea because they have all grown up in the system which is so completely dependent on central banks. So I think we need a roundabout way.
 
