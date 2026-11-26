@@ -11,6 +11,7 @@ REQUIRED = [
     "Bitcoin is a choice each person can make, or leave alone.",
     "not a destination anyone needs to reach.",
     "the price is volatile, custody is your own, and there is a real learning curve.",
+    "Don't forget to enjoy the journey.",
     "To a bitcoiner, debasement is a slow-motion bailout.",
     "That is one way of seeing it, not a call to act.",
     "Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.",
