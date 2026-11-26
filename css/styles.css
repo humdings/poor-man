@@ -211,10 +211,14 @@ a:hover { color: var(--ink); }
   grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.8fr);
   gap: 1.25rem;
   padding: 1.25rem 0 0.5rem;
-  align-items: stretch;
+  align-items: start;
 }
-
-.hero-main { padding: 0.25rem 0 0.5rem; }
+.hero-col { min-width: 0; }
+.hero-main { min-width: 0; padding: 0.25rem 0 0; }
+.hero-quotes { min-width: 0; padding-top: 0.85rem; }
+.hero-quotes h2 { margin: 0 0 0.25rem; font-size: 1.25rem; }
+.hero-quotes .quotes-note { margin: 0 0 0.55rem; font-size: 0.88rem; }
+.hero-quotes .quote-strip { max-width: 100%; margin-left: 0; margin-right: 0; }
 
 .kicker {
   margin: 0 0 0.6rem;
