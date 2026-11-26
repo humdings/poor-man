@@ -1,12 +1,18 @@
 # Poor Man's Bailout
 
+**Bitcoin is more American than the Dollar!**
+
+Washington, Madison, and Jefferson treated paper money as a standing danger, and the Constitution told the states to keep gold and silver as tender. Bitcoin is the hard-money side of that argument.
+
+To a bitcoiner, debasement is a slow-motion bailout. A bailout used to need a vote. Now it just needs time. Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.
+
 How many days of monetary expansion equal the entire bitcoin market cap.
 
 Money spends the same, so expansion in any form counts as expansion. M2, the monetary base, currency in circulation, public debt, and the Fed balance sheet all count. Debt spends the same as cash: one person's debt is another's asset.
 
 **[humdings.github.io/poor-man](https://humdings.github.io/poor-man/)**
 
-![Poor Man's Bailout. US M2, 12-month trailing change: 345.8 days.](docs/preview.png)
+![Poor Man's Bailout. Bitcoin is more American than the Dollar. US M2, 12-month trailing change: 345.8 days.](docs/preview.png)
 
 On a date *t*, over a window that starts at *s* and spans *N* calendar days:
 
@@ -15,6 +21,38 @@ d(t) = C(t) / g(t)     when g(t) > 0
 ```
 
 *C* is the bitcoin market cap in dollars. *g* is the pace of the chosen measure, in dollars per day. The default is US M2 and a 12-month trailing change, `(M(t) − M(s)) / N`.
+
+## In their words
+
+Verbatim. Spellings and punctuation are the source's.
+
+> And I sincerely believe with you, that banking establishments are more dangerous than standing armies; & that the principle of spending money to be paid by posterity, under the name of funding, is but swindling futurity on a large scale
+
+Thomas Jefferson to John Taylor, 28 May 1816. [Founders Online](https://founders.archives.gov/documents/Jefferson/03-10-02-0053).
+
+> Bank-paper must be suppressed, and the circulating medium must be restored to the nation to whom it belongs.
+
+Thomas Jefferson to John Wayles Eppes, 11 September 1813. [Founders Online](https://founders.archives.gov/documents/Jefferson/03-06-02-0388).
+
+> No State shall enter into any Treaty, Alliance, or Confederation; grant Letters of Marque and Reprisal; coin Money; emit Bills of Credit; make any Thing but gold and silver Coin a Tender in Payment of Debts; pass any Bill of Attainder, ex post facto Law, or Law impairing the Obligation of Contracts, or grant any Title of Nobility.
+
+United States Constitution, Article I, Section 10. [National Archives transcript](https://www.archives.gov/founding-docs/constitution-transcript).
+
+> The loss which America has sustained since the peace, from the pestilent effects of paper money on the necessary confidence between man and man, on the necessary confidence in the public councils, on the industry and morals of the people, and on the character of republican government, constitutes an enormous debt against the States chargeable with this unadvised measure, which must long remain unsatisfied; or rather an accumulation of guilt, which can be expiated no otherwise than by a voluntary sacrifice on the altar of justice, of the power which has been the instrument of it.
+
+James Madison, Federalist No. 44, New York Packet, 25 January 1788. [Avalon Project](https://avalon.law.yale.edu/18th_century/fed44.asp).
+
+> Paper money has had the effect in your State that it ever will have, to ruin commerce—oppress the honest, and open a door to every species of fraud and injustice.
+
+George Washington to Jabez Bowen, 9 January 1787. [Founders Online](https://founders.archives.gov/documents/Washington/04-04-02-0428).
+
+> I think they've made the biggest financial mess that any government's ever made in this country for a very long time, and Socialist governments traditionally do make a financial mess. They always run out of other people's money. It's quite a characteristic of them.
+
+Margaret Thatcher, Thames TV *This Week*, 5 February 1976. [Thatcher Foundation](https://www.margaretthatcher.org/document/102953).
+
+> It follows from the propositions I have so far stated that inflation is always and everywhere a monetary phenomenon in the sense that it is and can be produced only by a more rapid increase in the quantity of money than in output.
+
+Milton Friedman, “The Counter-Revolution in Monetary Theory,” 16 September 1970. [Hoover Institution](https://miltonfriedman.hoover.org/internal/media/dispatcher/214480/full).
 
 ## Headline
 
