@@ -39,8 +39,7 @@ REQUIRED = [
     "Money is gold, and nothing else.",
     "Gold is money. Everything else is credit.",
     "Gold monetized physical scarcity. Fiat monetized political credit. Bitcoin monetizes digital scarcity.",
-    "sound money, limits on power, no taxation without consent",
-    "That is our view, not a line they wrote, and still one path among many.",
+    "We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.",
     "You can tell everybody to go fuck themselves.",
     "I lost it in a boating accident.",
     "Attributed to Voltaire",
@@ -188,8 +187,12 @@ class FramingTests(unittest.TestCase):
 
     def test_the_founders_comment_is_the_sites_own_view(self):
         section = self.page.split('id="quotes-title"', 1)[1].split('id="quote-strip"', 1)[0]
-        self.assertIn("sound money, limits on power, no taxation without consent", section)
-        self.assertIn("That is our view, not a line they wrote", section)
+        self.assertIn(
+            "We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.",
+            section,
+        )
+        self.assertNotIn("on this page's reading", section)
+        self.assertNotIn("not a line they wrote", section)
         self.assertNotIn("<blockquote", section)
         self.assertNotIn("<figure", section)
         strip = self.page.split('id="quote-set"', 1)[1].split("</div>", 1)[0]

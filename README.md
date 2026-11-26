@@ -24,7 +24,7 @@ d(t) = C(t) / g(t)     when g(t) > 0
 
 ## In their words
 
-The founders would agree, on this page's reading: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does. That is our view, not a line they wrote, and still one path among many.
+We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.
 
 The page runs these as a scrolling strip and shuffles the order on each visit. Morgan, Saylor, and the IOU stay together, in that order, and the IOU card is set larger. Verbatim, except the cards marked attributed or paraphrase. Film lines are the picture's own words. A one-line frame above a film card is ours. The list below is a catalog, not the order on a given visit.
 
