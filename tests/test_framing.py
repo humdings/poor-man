@@ -26,6 +26,32 @@ REQUIRED = [
     "https://founders.archives.gov/documents/Washington/04-04-02-0428",
     "https://www.margaretthatcher.org/document/102953",
     "https://miltonfriedman.hoover.org/internal/media/dispatcher/214480/full",
+    "All warfare is based on deception.",
+    "bad money drives out good money, but that good money cannot drive out bad money.",
+    "By a continuing process of inflation, governments can confiscate, secretly and unobserved, an important part of the wealth of their citizens.",
+    "The first panacea for a mismanaged nation is inflation of the currency; the second is war.",
+    "September 1935",
+    "Money is gold, and nothing else.",
+    "Gold is money. Everything else is credit.",
+    "Michael Saylor (paraphrase)",
+    "Bitcoin is money, everything else is credit.",
+    "You can tell everybody to go fuck themselves.",
+    "I lost it in a boating accident.",
+    "Attributed to Voltaire",
+    "Paper money eventually returns to its intrinsic value: zero.",
+    "Attributed to Milton Friedman",
+    "So I think we need a roundabout way.",
+    "Bitcoin isn\u2019t strictly a monetary protocol.",
+    "Bitcoin is proof that proof-of-work works.",
+    "cyber power projection tactic for the digital age.",
+    "That's not a knife. That's a knife.",
+    "people are gonna be doing what they always do when the economy tanks.",
+    "greed, for lack of a better word, is good.",
+    "There is no spoon.",
+    "Excuse me. I believe you have my stapler.",
+    "be first, be smarter, or cheat.",
+    "So you're telling me there's a chance.",
+    "Are you not entertained?",
 ]
 
 # The circulating line attributed to Jefferson about private banks and a
@@ -36,6 +62,10 @@ FORBIDDEN = [
     "banking institutions are more dangerous to our liberties",
     "6 November 1813",
     "problem with socialism",
+    "ship with no anchor",
+    "I do not think it means what you think it means",
+    "bigger boat",
+    "good money again",
 ]
 
 
@@ -54,6 +84,20 @@ class FramingTests(unittest.TestCase):
         for text in FORBIDDEN:
             self.assertNotIn(text, self.page, text)
             self.assertNotIn(text, self.readme, text)
+
+    def test_the_page_scrolls_the_quotes(self):
+        self.assertIn('class="quote-strip"', self.page)
+        self.assertIn("quote-marquee", (ROOT / "css" / "styles.css").read_text(encoding="utf-8"))
+
+    def test_morgan_sits_immediately_before_the_saylor_riff(self):
+        for text in (self.page, self.readme):
+            morgan = text.index("Money is gold, and nothing else.")
+            paraphrase = text.index("Gold is money. Everything else is credit.")
+            saylor = text.index("Michael Saylor (paraphrase)")
+            riff = text.index("Bitcoin is money, everything else is credit.")
+            self.assertLess(morgan, paraphrase)
+            self.assertLess(paraphrase, saylor)
+            self.assertLess(saylor, riff)
 
     def test_the_data_axiom_stays_with_the_formula(self):
         for text in (self.page, self.readme):

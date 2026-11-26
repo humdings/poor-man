@@ -105,22 +105,63 @@ a:hover { color: var(--ink); }
   letter-spacing: -0.02em;
 }
 
-.quotes { padding: 0.4rem 0 0.2rem; max-width: 46rem; }
+.quotes { padding: 0.4rem 0 0.6rem; max-width: none; }
+.quotes h2, .quotes-note { max-width: 46rem; }
 .quotes h2 {
   margin: 1.2rem 0 0.3rem;
   font-family: Fraunces, Georgia, serif;
   font-weight: 560;
   font-size: 1.6rem;
 }
-.quotes-note { margin: 0 0 1rem; color: var(--muted); }
-.quotes figure {
-  margin: 0 0 1.15rem;
-  padding: 0.15rem 0 0.15rem 0.9rem;
-  border-left: 2px solid var(--gold);
+.quotes-note { margin: 0 0 0.8rem; color: var(--muted); }
+
+.quote-strip {
+  overflow-x: auto;
+  margin: 0 -0.2rem;
+  padding-bottom: 0.35rem;
+  scrollbar-color: var(--gold) transparent;
 }
-.quotes blockquote { margin: 0; }
+.quote-strip.is-looping { overflow: hidden; }
+.quote-track {
+  display: flex;
+  width: max-content;
+  align-items: stretch;
+}
+.quote-track.is-looping { animation: quote-marquee 220s linear infinite; }
+.quote-strip:hover .quote-track,
+.quote-strip:focus-within .quote-track { animation-play-state: paused; }
+.quote-set {
+  display: flex;
+  gap: 0.85rem;
+  padding-right: 0.85rem;
+  align-items: stretch;
+}
+.quotes figure {
+  flex: 0 0 min(24rem, 78vw);
+  margin: 0;
+  padding: 0.85rem 0.95rem 0.75rem;
+  background: var(--bg-raise);
+  border-radius: 12px;
+  border-left: 3px solid var(--gold);
+  display: flex;
+  flex-direction: column;
+}
+.quotes figure.film { border-left-color: var(--sage); }
+.quotes figure.flagged { border-left-color: var(--clay); }
+.quote-flag, .quote-frame {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.quote-flag { color: var(--clay); }
+.quote-frame { color: var(--sage); }
+.quotes blockquote { margin: 0; min-height: 0; }
 .quotes blockquote p {
   margin: 0;
+  max-height: 8.4rem;
+  overflow: auto;
   font-family: Fraunces, Georgia, serif;
   font-weight: 560;
   font-size: 1.08rem;
@@ -128,12 +169,24 @@ a:hover { color: var(--ink); }
   letter-spacing: -0.015em;
 }
 .quotes figcaption {
-  margin-top: 0.4rem;
+  margin-top: auto;
+  padding-top: 0.55rem;
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   overflow-wrap: anywhere;
 }
+.quotes .paraphrase { display: block; margin-top: 0.35rem; }
 .quotes a { color: var(--gold); }
+
+@keyframes quote-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quote-track.is-looping { animation: none; }
+  .quote-strip.is-looping { overflow-x: auto; }
+  .quote-set[aria-hidden="true"] { display: none; }
+}
 
 .hero {
   display: grid;

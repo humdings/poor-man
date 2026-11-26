@@ -24,35 +24,119 @@ d(t) = C(t) / g(t)     when g(t) > 0
 
 ## In their words
 
-Verbatim. Spellings and punctuation are the source's.
+The page runs these as a scrolling strip. Verbatim, except the cards marked attributed or paraphrase. Film lines are the picture's own words. A one-line frame above a film card is ours.
 
 > And I sincerely believe with you, that banking establishments are more dangerous than standing armies; & that the principle of spending money to be paid by posterity, under the name of funding, is but swindling futurity on a large scale
 
 Thomas Jefferson to John Taylor, 28 May 1816. [Founders Online](https://founders.archives.gov/documents/Jefferson/03-10-02-0053).
 
-> Bank-paper must be suppressed, and the circulating medium must be restored to the nation to whom it belongs.
+> That's not a knife. That's a knife.
 
-Thomas Jefferson to John Wayles Eppes, 11 September 1813. [Founders Online](https://founders.archives.gov/documents/Jefferson/03-06-02-0388).
+The dollar, and a bitcoin. Michael J. "Crocodile" Dundee, *Crocodile Dundee* (1986). [Wikiquote](https://en.wikiquote.org/wiki/Crocodile_Dundee).
 
 > No State shall enter into any Treaty, Alliance, or Confederation; grant Letters of Marque and Reprisal; coin Money; emit Bills of Credit; make any Thing but gold and silver Coin a Tender in Payment of Debts; pass any Bill of Attainder, ex post facto Law, or Law impairing the Obligation of Contracts, or grant any Title of Nobility.
 
 United States Constitution, Article I, Section 10. [National Archives transcript](https://www.archives.gov/founding-docs/constitution-transcript).
 
+> All warfare is based on deception.
+
+Sun Tzu, *The Art of War*, Lionel Giles translation (1910). [Project Gutenberg](https://www.gutenberg.org/files/17405/17405-h/17405-h.htm).
+
 > The loss which America has sustained since the peace, from the pestilent effects of paper money on the necessary confidence between man and man, on the necessary confidence in the public councils, on the industry and morals of the people, and on the character of republican government, constitutes an enormous debt against the States chargeable with this unadvised measure, which must long remain unsatisfied; or rather an accumulation of guilt, which can be expiated no otherwise than by a voluntary sacrifice on the altar of justice, of the power which has been the instrument of it.
 
 James Madison, Federalist No. 44, New York Packet, 25 January 1788. [Avalon Project](https://avalon.law.yale.edu/18th_century/fed44.asp).
+
+> I have a feeling that in a few years people are gonna be doing what they always do when the economy tanks.
+
+Mark Baum, *The Big Short* (2015). The next sentence is left off. [Clip.Cafe](https://clip.cafe/the-big-short-2015/i-have-a-feelingthat-in-a-few-years-people-are-gonna-be-doingwhat-they-always-do-when-the-economy/).
 
 > Paper money has had the effect in your State that it ever will have, to ruin commerce—oppress the honest, and open a door to every species of fraud and injustice.
 
 George Washington to Jabez Bowen, 9 January 1787. [Founders Online](https://founders.archives.gov/documents/Washington/04-04-02-0428).
 
+> The point is, ladies and gentlemen, that greed, for lack of a better word, is good.
+
+Gordon Gekko, *Wall Street* (1987). [Wikiquote](https://en.wikiquote.org/wiki/Wall_Street_(1987_film)).
+
+> Bank-paper must be suppressed, and the circulating medium must be restored to the nation to whom it belongs.
+
+Thomas Jefferson to John Wayles Eppes, 11 September 1813. [Founders Online](https://founders.archives.gov/documents/Jefferson/03-06-02-0388).
+
+> There is no spoon.
+
+Spoon Boy, *The Matrix* (1999). [Wikiquote](https://en.wikiquote.org/wiki/The_Matrix_(film)).
+
+> This law, briefly expressed, is that bad money drives out good money, but that good money cannot drive out bad money.
+
+William Stanley Jevons, *Money and the Mechanism of Exchange* (1875), on the law named for Sir Thomas Gresham. [Econlib](https://www.econlib.org/book-chapters/chapter-chapter-viii-the-principles-of-circulation/).
+
+> Excuse me. I believe you have my stapler.
+
+Milton Waddams, *Office Space* (1999).
+
+> By a continuing process of inflation, governments can confiscate, secretly and unobserved, an important part of the wealth of their citizens.
+
+John Maynard Keynes, *The Economic Consequences of the Peace* (1919). [Wikisource](https://en.wikisource.org/wiki/The_Economic_Consequences_of_the_Peace/Chapter_6).
+
+> There are three ways to make a living in this business: be first, be smarter, or cheat.
+
+John Tuld, *Margin Call* (2011). [Wikiquote](https://en.wikiquote.org/wiki/Margin_Call_(film)).
+
+> The first panacea for a mismanaged nation is inflation of the currency; the second is war. Both bring a temporary prosperity; both bring a permanent ruin. But both are the refuge of political and economic opportunists.
+
+Ernest Hemingway, "Notes on the Next War," *Esquire*, September 1935. [Harper's](https://harpers.org/2007/09/hemingway-on-the-politics-of-war/).
+
+> So you're telling me there's a chance.
+
+Lloyd Christmas, *Dumb and Dumber* (1994). [Clip.Cafe](https://clip.cafe/dumb-dumber-1994/i-want-ask-a-question-straight-out-flat-out/).
+
+> It follows from the propositions I have so far stated that inflation is always and everywhere a monetary phenomenon in the sense that it is and can be produced only by a more rapid increase in the quantity of money than in output.
+
+Milton Friedman, "The Counter-Revolution in Monetary Theory," 16 September 1970. [Hoover Institution](https://miltonfriedman.hoover.org/internal/media/dispatcher/214480/full).
+
+> Are you not entertained?
+
+Maximus, *Gladiator* (2000).
+
+> Inflation is taxation without legislation.
+
+**Attributed to Milton Friedman.** No source in his own words has been found. [MiltonFriedman.org](https://miltonfriedman.org/misattributed).
+
+> Governments will never allow monetary competition, and even bankers do not understand the idea because they have all grown up in the system which is so completely dependent on central banks. So I think we need a roundabout way.
+
+F. A. Hayek, interview with James U. Blanchard III, *Cato Policy Report*, May/June 1984. [Cato Institute](https://web.archive.org/web/20130121123902/https://www.cato.org/policy-report/mayjune-1984/exclusive-interview-fa-hayek).
+
 > I think they've made the biggest financial mess that any government's ever made in this country for a very long time, and Socialist governments traditionally do make a financial mess. They always run out of other people's money. It's quite a characteristic of them.
 
 Margaret Thatcher, Thames TV *This Week*, 5 February 1976. [Thatcher Foundation](https://www.margaretthatcher.org/document/102953).
 
-> It follows from the propositions I have so far stated that inflation is always and everywhere a monetary phenomenon in the sense that it is and can be produced only by a more rapid increase in the quantity of money than in output.
+> Paper money eventually returns to its intrinsic value: zero.
 
-Milton Friedman, “The Counter-Revolution in Monetary Theory,” 16 September 1970. [Hoover Institution](https://miltonfriedman.hoover.org/internal/media/dispatcher/214480/full).
+**Attributed to Voltaire.** Widely credited to him. The original source is uncertain.
+
+> Money is gold, and nothing else.
+
+J. Pierpont Morgan, Money Trust Investigation, 19 December 1912. [FRASER](https://fraser.stlouisfed.org/files/docs/historical/house/money_trust/montru_pt15.pdf). The popular line "Gold is money. Everything else is credit." is a paraphrase.
+
+**Michael Saylor (paraphrase).** No post or checked transcript prints this as one sentence.
+
+> Bitcoin is money, everything else is credit.
+
+> You can tell everybody to go fuck themselves. […] the classic Bitcoiner response is, Oh, yeah, my Bitcoin, I lost it in a boating accident. You ever heard that phrase? It's kind of a trope, but what it means is at the end of the day, if you push me too far, I lost it. It's gone. Sorry. Tax that.
+
+Michael Saylor, METAL interview, January 2021. [YouTube](https://www.youtube.com/watch?v=BoVlCnZe5vQ). The bracket skips a clause the captions and the write-ups do not agree on.
+
+> Bitcoin isn’t strictly a monetary protocol.
+
+> Instead, Bitcoin appears to be emerging as a cyber power projection tactic for the digital age.
+
+> While most software can only logically constrain computers, Bitcoin can physically constrain computers and impose severe physical costs (as measured in watts) on belligerent actors in, from, and through cyberspace.
+
+> Bitcoin is proof that proof-of-work works.
+
+> Bitcoin could represent a strategically vital national security technology for the digital age.
+
+Jason Lowery, *Softwar* (MIT, February 2023). [MIT DSpace](https://hdl.handle.net/1721.1/153030).
 
 ## Headline
 
