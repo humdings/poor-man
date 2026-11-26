@@ -603,6 +603,60 @@ footer {
 }
 footer p { margin: 0; }
 
+.tip {
+  flex: 1 0 100%;
+  margin-top: 0.35rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+.tip-lead {
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 560;
+  color: var(--ink);
+  font-size: 1.02rem;
+  letter-spacing: -0.02em;
+}
+.tip-links { margin-top: 0.2rem; }
+.tip-ln {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 0.8rem;
+  margin-top: 0.55rem;
+  min-width: 0;
+}
+.tip-ln img {
+  width: 96px;
+  height: 96px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: #f3efe4;
+}
+.tip-addr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.55rem;
+  min-width: 0;
+}
+.tip-addr code {
+  color: var(--ink);
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}
+.tip-copy {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid rgba(228, 177, 90, 0.45);
+  border-radius: 999px;
+  padding: 0.22rem 0.65rem;
+  cursor: pointer;
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
+.tip-copy:hover { background: var(--gold-dim); }
+
 .noscript {
   width: min(1120px, calc(100% - 2rem));
   margin: 1rem auto 2rem;

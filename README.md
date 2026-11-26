@@ -308,6 +308,12 @@ Before the first deploy, in the repository settings:
 
 The site is [https://humdings.github.io/poor-man/](https://humdings.github.io/poor-man/).
 
+## Tip
+
+Stack sats? Tip the printer-watcher.
+
+[Zap me on Nostr](https://njump.me/npub17z7t6hf6e3xru2lkc79lmkddljnswkn5xz86gppqt7amzvre90kqlew3u8) · Lightning `ivoryfireant9@primal.net`
+
 ## License
 
 [MIT](LICENSE).
