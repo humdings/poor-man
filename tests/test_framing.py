@@ -52,6 +52,10 @@ REQUIRED = [
     "be first, be smarter, or cheat.",
     "So you're telling me there's a chance.",
     "Are you not entertained?",
+    "We landed on the moon!",
+    "You know, Lloyd, just when I think you couldn't possibly be any dumber, you go and do something like this... and totally redeem yourself!",
+    "That's as good as money, sir. Those are I.O.U.'s.",
+    "Harry Dunne",
 ]
 
 # The circulating line attributed to Jefferson about private banks and a
@@ -66,6 +70,8 @@ FORBIDDEN = [
     "I do not think it means what you think it means",
     "bigger boat",
     "good money again",
+    "I thought you couldn't possibly be any dumber",
+    "That's an IOU. It's as good as money",
 ]
 
 
@@ -98,6 +104,13 @@ class FramingTests(unittest.TestCase):
             self.assertLess(morgan, paraphrase)
             self.assertLess(paraphrase, saylor)
             self.assertLess(saylor, riff)
+            iou = text.index("That's as good as money, sir. Those are I.O.U.'s.")
+            self.assertLess(riff, iou)
+            self.assertLess(iou, text.index("boating accident"))
+            moon = text.index("We landed on the moon!")
+            self.assertIn("Lloyd Christmas", text[moon:moon + 400])
+            redeem = text.index("totally redeem yourself!")
+            self.assertIn("Harry Dunne", text[redeem:redeem + 400])
 
     def test_the_data_axiom_stays_with_the_formula(self):
         for text in (self.page, self.readme):

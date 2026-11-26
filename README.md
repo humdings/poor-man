@@ -90,6 +90,10 @@ Ernest Hemingway, "Notes on the Next War," *Esquire*, September 1935. [Harper's]
 
 Lloyd Christmas, *Dumb and Dumber* (1994). [Clip.Cafe](https://clip.cafe/dumb-dumber-1994/i-want-ask-a-question-straight-out-flat-out/).
 
+> No way. That's great. We landed on the moon!
+
+Lloyd Christmas, *Dumb and Dumber* (1994). [Clip.Cafe](https://clip.cafe/dumb-dumber-1994/no-way/).
+
 > It follows from the propositions I have so far stated that inflation is always and everywhere a monetary phenomenon in the sense that it is and can be produced only by a more rapid increase in the quantity of money than in output.
 
 Milton Friedman, "The Counter-Revolution in Monetary Theory," 16 September 1970. [Hoover Institution](https://miltonfriedman.hoover.org/internal/media/dispatcher/214480/full).
@@ -97,6 +101,10 @@ Milton Friedman, "The Counter-Revolution in Monetary Theory," 16 September 1970.
 > Are you not entertained?
 
 Maximus, *Gladiator* (2000).
+
+> You know, Lloyd, just when I think you couldn't possibly be any dumber, you go and do something like this... and totally redeem yourself!
+
+Harry Dunne, *Dumb and Dumber* (1994). [Clip.Cafe](https://clip.cafe/dumb-dumber-1994/you-know-lloyd-just-i-think/). [Wikiquote](https://en.wikiquote.org/wiki/Dumb_and_Dumber).
 
 > Inflation is taxation without legislation.
 
@@ -121,6 +129,10 @@ J. Pierpont Morgan, Money Trust Investigation, 19 December 1912. [FRASER](https:
 **Michael Saylor (paraphrase).** No post or checked transcript prints this as one sentence.
 
 > Bitcoin is money, everything else is credit.
+
+> That's as good as money, sir. Those are I.O.U.'s.
+
+Lloyd Christmas, *Dumb and Dumber* (1994). [Clip.Cafe](https://clip.cafe/dumb-dumber-1994/listen-mr-samsonite-about-the-briefcase/).
 
 > You can tell everybody to go fuck themselves. […] the classic Bitcoiner response is, Oh, yeah, my Bitcoin, I lost it in a boating accident. You ever heard that phrase? It's kind of a trope, but what it means is at the end of the day, if you push me too far, I lost it. It's gone. Sorry. Tax that.
 
