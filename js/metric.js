@@ -373,6 +373,34 @@
     return rows;
   }
 
+  function halfLifeYears(rate) {
+    if (typeof rate !== "number" || !isFinite(rate) || rate <= 0) return null;
+    var growth = Math.log(1 + rate);
+    if (!(growth > 0) || !isFinite(growth)) return null;
+    return Math.log(2) / growth;
+  }
+
+  function trailingCpiHalfLife(points) {
+    var series = normalize(points);
+    var levels = Object.create(null);
+    for (var i = 0; i < series.length; i++) levels[series[i][0]] = series[i][1];
+    var out = [];
+    var started = false;
+    for (var j = 0; j < series.length; j++) {
+      var day = series[j][0];
+      var level = series[j][1];
+      var prior = levels[shiftMonths(day, -12)];
+      if (prior == null || prior <= 0 || !(level > 0)) {
+        if (started) out.push({ date: day, rate: null, years: null });
+        continue;
+      }
+      var rate = level / prior - 1;
+      out.push({ date: day, rate: rate, years: halfLifeYears(rate) });
+      started = true;
+    }
+    return out;
+  }
+
   function toChartData(points, key) {
     if (!key || key === "days") return daysChart(points);
     return seriesChart(points, key, key !== "growthPerDay");
@@ -384,5 +412,7 @@
     computeBailout: computeBailout,
     decompose: decompose,
     toChartData: toChartData,
+    halfLifeYears: halfLifeYears,
+    trailingCpiHalfLife: trailingCpiHalfLife,
   };
 });

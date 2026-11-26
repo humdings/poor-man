@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "series.json"
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from metric import compute_bailout  # noqa: E402
+from metric import compute_bailout, trailing_cpi_half_life  # noqa: E402
 
 
 def load():
@@ -116,6 +116,12 @@ class SnapshotTests(unittest.TestCase):
         self.assertGreater(len(set(recent)), 1)
         self.assertIn("normalization", self.doc["bailout"])
         self.assertIn("axiom", self.doc["bailout"])
+
+    def test_latest_cpi_half_life_is_a_human_span(self):
+        series = trailing_cpi_half_life(self.doc["deflators"]["cpi"]["points"])
+        latest = next(row for row in reversed(series) if row["years"] is not None)
+        self.assertGreater(latest["years"], 5)
+        self.assertLess(latest["years"], 80)
 
 
 if __name__ == "__main__":

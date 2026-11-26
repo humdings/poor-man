@@ -32,9 +32,11 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from metric import (  # noqa: E402
     compute_bailout,
+    half_life_years,
     regression_slope,
     shift_months,
     to_chart_data,
+    trailing_cpi_half_life,
 )
 
 
@@ -253,6 +255,94 @@ class ChartGapTests(unittest.TestCase):
                 self.assertTrue(math.isfinite(p["days"]))
             else:
                 self.assertIsNone(p["days"])
+
+
+class HalfLifeTests(unittest.TestCase):
+    """Years for prices growing at a constant rate to double.
+
+    half-life = ln(2) / ln(1 + rate). Worked by hand to one decimal:
+    ln(2) / ln(1.02) = 35.0028… → 35.0 years
+    ln(2) / ln(1.07) = 10.2448… → 10.2 years
+    A rate at or below zero does not halve purchasing power.
+    """
+
+    def test_two_percent_is_35_years(self):
+        self.assertEqual(round(half_life_years(0.02), 1), 35.0)
+
+    def test_seven_percent_is_10_2_years(self):
+        self.assertEqual(round(half_life_years(0.07), 1), 10.2)
+
+    def test_non_positive_rates_are_a_gap(self):
+        self.assertIsNone(half_life_years(0))
+        self.assertIsNone(half_life_years(-0.01))
+        self.assertIsNone(half_life_years(float("-inf")))
+
+    def test_trailing_cpi_uses_the_print_twelve_months_earlier(self):
+        series = trailing_cpi_half_life([
+            ("2020-01-01", 100.0),
+            ("2020-06-01", 110.0),
+            ("2021-01-01", 102.0),
+        ])
+        self.assertEqual([row["date"] for row in series], ["2021-01-01"])
+        self.assertAlmostEqual(series[0]["rate"], 0.02)
+        self.assertEqual(round(series[0]["years"], 1), 35.0)
+
+    def test_a_decline_is_a_gap_on_the_chart(self):
+        series = trailing_cpi_half_life([
+            ("2020-01-01", 100.0),
+            ("2021-01-01", 102.0),
+            ("2022-01-01", 101.0),
+        ])
+        self.assertEqual(round(series[0]["years"], 1), 35.0)
+        self.assertLess(series[1]["rate"], 0)
+        self.assertIsNone(series[1]["years"])
+        rows = to_chart_data(series, "years")
+        self.assertAlmostEqual(rows[0]["value"], series[0]["years"])
+        self.assertEqual(rows[1], {"time": "2022-01-01"})
+        self.assertNotIn("value", rows[1])
+
+    def test_the_page_states_the_formula_and_the_two_percent_value(self):
+        page = (ROOT / "index.html").read_text(encoding="utf-8")
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        for text in (page, readme):
+            self.assertIn("ln(2)", text)
+            self.assertIn("35.0", text)
+            self.assertIn("10.2", text)
+            self.assertIn("CPIAUCSL", text)
+        self.assertIn('id="chart-halflife"', page)
+
+    def test_javascript_matches(self):
+        code = (
+            "const Pmb = require(" + json.dumps(str(ROOT / "js" / "metric.js")) + ");\n"
+            "const points = ["
+            '["2020-01-01", 100], ["2021-01-01", 102], ["2022-01-01", 101]'
+            "];\n"
+            "console.log(JSON.stringify({"
+            "two: Pmb.halfLifeYears(0.02),"
+            "seven: Pmb.halfLifeYears(0.07),"
+            "zero: Pmb.halfLifeYears(0),"
+            "neg: Pmb.halfLifeYears(-0.02),"
+            "series: Pmb.trailingCpiHalfLife(points)"
+            "}));"
+        )
+        raw = subprocess.check_output(["node", "-e", code], text=True)
+        js = json.loads(raw)
+        self.assertEqual(round(js["two"], 1), 35.0)
+        self.assertEqual(round(js["seven"], 1), 10.2)
+        self.assertIsNone(js["zero"])
+        self.assertIsNone(js["neg"])
+        py = trailing_cpi_half_life([
+            ("2020-01-01", 100.0),
+            ("2021-01-01", 102.0),
+            ("2022-01-01", 101.0),
+        ])
+        self.assertEqual(len(js["series"]), len(py))
+        for left, right in zip(js["series"], py):
+            self.assertEqual(left["date"], right["date"])
+            if right["years"] is None:
+                self.assertIsNone(left["years"])
+            else:
+                self.assertAlmostEqual(left["years"], right["years"], places=9)
 
 
 class JavascriptParityTests(unittest.TestCase):

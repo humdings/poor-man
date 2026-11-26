@@ -239,6 +239,8 @@ Optional deflators, used only when normalization is on:
 | Nominal GDP | [FRED GDP](https://fred.stlouisfed.org/series/GDP) | 1947-01-01 → 2026-07-01 | dollars. The series is an annual rate; only the ratio is used, so the annualization cancels |
 | CPI | [FRED CPIAUCSL](https://fred.stlouisfed.org/series/CPIAUCSL) | 1947-01-01 → 2026-10-01 | the index, including fractions of a point |
 
+The dollar half-life chart uses that same CPI print. Trailing 12-month inflation is this month's index divided by the index twelve months earlier, minus one. Years to lose half of purchasing power are ln(2) / ln(1 + inflation). At 2% that is 35.0 years. At 7% it is 10.2 years. A rate at or below zero leaves a gap.
+
 If Coin Metrics does not respond, bitcoin falls back to the Blockchain.com market-cap and market-price charts. If the FRED CSV endpoint does not respond, M2, the monetary base, and currency come from the Board's [H.6](https://www.federalreserve.gov/releases/h6/current/default.htm) release, the balance sheet from [H.4.1](https://www.federalreserve.gov/releases/h41/current/), and debt before 1993-04-01 from the Treasury [Historical Debt Outstanding](https://fiscaldata.treasury.gov/datasets/historical-debt-outstanding/historical-debt-outstanding) annual file. `data/series.json` records which path was used.
 
 Each level is stepped forward to every calendar day and held until the next print. Bitcoin's market cap and price on a day are the observations on that day, or the latest on or before it. The headline date is the later of the money print and the bitcoin print.

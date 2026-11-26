@@ -470,6 +470,42 @@
     if (!canNorm) state.norm = "0";
   }
 
+  function yearsLabel(value) {
+    return value.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  }
+
+  function paintHalfLife() {
+    var table = document.getElementById("half-table");
+    var latest = document.getElementById("half-latest");
+    var cpi = data.deflators && data.deflators.cpi;
+    if (table && !table.dataset.filled) {
+      var html = "";
+      for (var pct = 1; pct <= 10; pct++) {
+        var steady = Pmb.halfLifeYears(pct / 100);
+        html += '<div class="half-cell' + (pct === 2 ? " is-mark" : "") + '"><span>' + pct + '%</span><strong>' + yearsLabel(steady) + '</strong></div>';
+      }
+      table.innerHTML = html;
+      table.dataset.filled = "1";
+    }
+    if (!cpi || !cpi.points) {
+      if (latest) latest.textContent = "CPI is not in this snapshot.";
+      return [];
+    }
+    var series = Pmb.trailingCpiHalfLife(cpi.points);
+    var last = null;
+    for (var i = series.length - 1; i >= 0; i--) {
+      if (series[i].years != null) { last = series[i]; break; }
+    }
+    if (latest) {
+      if (!last) latest.textContent = "The trailing 12-month CPI rate is not positive.";
+      else {
+        var pct = (last.rate * 100).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+        latest.textContent = "Latest print " + last.date + ": " + pct + "% over the prior twelve months, " + yearsLabel(last.years) + " years.";
+      }
+    }
+    return Pmb.toChartData(series, "years");
+  }
+
   function render() {
     if (state.amount !== 0) state.amount = clamp(state.amount, state.unit);
     writeState();
@@ -495,6 +531,7 @@
       pace: Pmb.toChartData(result.points, "growthPerDay"),
       money: measure.points,
       btc: btcPairs(),
+      halfLife: paintHalfLife(),
       log: state.log,
     });
   }

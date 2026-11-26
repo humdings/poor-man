@@ -130,6 +130,19 @@
     </section>
 
     <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Dollar half-life</h2>
+          <p class="card-note">Years for the dollar to lose half its purchasing power. half-life = ln(2) / ln(1 + inflation). At 2% the formula gives 35.0 years. The line is the half-life implied by trailing 12-month <a href="https://fred.stlouisfed.org/series/CPIAUCSL">CPI (FRED CPIAUCSL)</a>, the same series the nightly job already fetches. A rate at or below zero does not halve purchasing power, and the line leaves a gap. Log scale.</p>
+          <p class="card-note" id="half-latest"></p>
+        </div>
+      </div>
+      <div class="chart" id="chart-halflife" role="img" aria-label="Years for the dollar to lose half its purchasing power, from trailing 12-month CPI"></div>
+      <p class="half-label">Years at a steady inflation rate</p>
+      <div class="half-table" id="half-table"></div>
+    </section>
+
+    <section class="card">
       <div class="card-head with-legend">
         <div>
           <h2>Days at a fixed bitcoin price</h2>
@@ -456,6 +469,8 @@ d(t) = C(t) / g(t)    when g(t) &gt; 0</pre>
       <pre>regression   g(t) = slope of daily M from s through t
 CAGR pace    g(t) = M(t) × ((M(t) / M(s))^(1/N) − 1)</pre>
       <p>The regression is an ordinary least-squares line on the forward-filled daily level, so the flat days between prints are part of the fit. The CAGR pace is the compound rate that links the level at the start of the window to today's level, stated in dollars per day at today's level. The default is the trailing change, on US M2, over 12 months.</p>
+      <h2>Dollar half-life</h2>
+      <p>How many years of inflation it takes for a dollar to buy half as much. half-life = ln(2) / ln(1 + inflation), with inflation a decimal. At 2% that is 35.0 years. At 7% it is 10.2 years. The chart uses trailing 12-month CPI: this month's index divided by the index twelve months earlier, minus one. A rate at or below zero leaves a gap. The table under the chart is the same formula at 1% through 10%.</p>
       <h2>Smoothing</h2>
       <p>The window and the averaging method are the smoothing. Several of each are above. <strong>None</strong> turns the smooth off and delivers the change as published:</p>
       <pre>p = the print in effect on t
