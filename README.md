@@ -1,10 +1,10 @@
 # Poor Man's Bailout
 
-**Bitcoin is more American than the Dollar!**
+**One path among many.**
 
-Washington, Madison, and Jefferson treated paper money as a standing danger, and the Constitution told the states to keep gold and silver as tender. Bitcoin is the hard-money side of that argument.
+Bitcoin is a choice each person can make, or leave alone. It is one possible path among many, not a destination anyone needs to reach. It is not easy: the price is volatile, custody is your own, and there is a real learning curve. Don't forget to enjoy the journey.
 
-To a bitcoiner, debasement is a slow-motion bailout. A bailout used to need a vote. Now it just needs time. Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.
+To a bitcoiner, debasement is a slow-motion bailout. That is one way of seeing it, not a call to act. Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.
 
 How many days of monetary expansion equal the entire bitcoin market cap.
 
@@ -12,7 +12,7 @@ Money spends the same, so expansion in any form counts as expansion. M2, the mon
 
 **[humdings.github.io/poor-man](https://humdings.github.io/poor-man/)**
 
-![Poor Man's Bailout. Bitcoin is more American than the Dollar. US M2, 12-month trailing change: 345.8 days.](docs/preview.png)
+![Poor Man's Bailout. One path among many. US M2, 12-month trailing change: 345.8 days.](docs/preview.png)
 
 On a date *t*, over a window that starts at *s* and spans *N* calendar days:
 

@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Poor Man's Bailout</title>
-  <meta name="description" content="Bitcoin is more American than the Dollar. Days for US monetary expansion to grow by one bitcoin market cap.">
+  <meta name="description" content="Days for US monetary expansion to grow by one bitcoin market cap. Bitcoin is one possible path among many, and each person can choose it or not.">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#10140f">
   <link rel="canonical" href="https://humdings.github.io/poor-man/">
   <meta property="og:title" content="Poor Man's Bailout">
-  <meta property="og:description" content="Bitcoin is more American than the Dollar. Days of monetary expansion equal to all of bitcoin.">
+  <meta property="og:description" content="Days of monetary expansion equal to all of bitcoin. One possible path, not a prescription.">
   <meta property="og:url" content="https://humdings.github.io/poor-man/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://humdings.github.io/poor-man/data/og.png">
@@ -35,19 +35,20 @@
     <p class="top-note">Days of monetary expansion equal to all of bitcoin.</p>
   </header>
   <main>
-    <p class="banner">Bitcoin is more American than the Dollar!</p>
-    <p class="banner-tie">Washington, Madison, and Jefferson treated paper money as a standing danger, and the Constitution told the states to keep gold and silver as tender. Bitcoin is the hard-money side of that argument.</p>
+    <p class="banner">One path among many.</p>
+    <p class="banner-tie">Bitcoin is a choice each person can make, or leave alone. It is one possible path among many, not a destination anyone needs to reach. It is not easy: the price is volatile, custody is your own, and there is a real learning curve. Don't forget to enjoy the journey.</p>
 
     <section class="why" aria-labelledby="why-title">
-      <h2 id="why-title">Why it's a bailout</h2>
+      <h2 id="why-title">A perspective</h2>
       <p class="why-lead">To a bitcoiner, debasement is a slow-motion bailout.</p>
-      <p>A bailout used to need a vote. Now it just needs time.</p>
+      <p>That is one way of seeing it, not a call to act.</p>
       <p>Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.</p>
     </section>
 
     <p class="axiom">Money spends the same, so expansion in any form counts as expansion.</p>
 
     <section class="hero">
+      <div class="hero-col">
       <div class="hero-main">
         <p class="kicker" id="kicker">US M2 · 12-month trailing change</p>
         <div class="days-row">
@@ -62,164 +63,8 @@
           <a class="share" id="share-x" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">Post on X</a>
         </div>
       </div>
-      <aside class="assumptions" aria-labelledby="assumptions-title">
-        <h2 id="assumptions-title">Assumptions</h2>
-        <dl id="assumption-list"></dl>
-      </aside>
-    </section>
 
-    <section class="split-section" aria-labelledby="split-title">
-      <h2 id="split-title">What moved</h2>
-      <div id="split" class="split"></div>
-    </section>
-
-    <p class="strip-note">Same assumptions for every monetary expansion measure. Public debt stays in the comparison: debt spends the same as cash, and one person's debt is another's asset.</p>
-    <ul class="strip" id="strip" aria-label="Same assumptions, other monetary expansion measures"></ul>
-
-    <section class="controls" aria-label="What to measure">
-      <div class="control">
-        <span class="control-label" id="measure-label">Series</span>
-        <div class="pills" role="radiogroup" aria-labelledby="measure-label">
-          <button type="button" data-measure="m2" aria-pressed="true">M2</button>
-          <button type="button" data-measure="base" aria-pressed="false">Monetary base</button>
-          <button type="button" data-measure="currency" aria-pressed="false">Currency in circulation</button>
-          <button type="button" data-measure="debt" aria-pressed="false">Public debt</button>
-          <span class="pill-also">Also</span>
-          <button type="button" class="quiet" data-measure="fed" aria-pressed="false" title="Kept last, and left off the comparison strip. Still monetary expansion.">Fed balance sheet</button>
-        </div>
-      </div>
-      <div class="control">
-        <span class="control-label" id="window-label">Smoothing</span>
-        <div class="pills" role="radiogroup" aria-labelledby="window-label">
-          <button type="button" data-window="0" data-unit="m" aria-pressed="false">None</button>
-          <button type="button" data-window="3" data-unit="m" aria-pressed="false">3m</button>
-          <button type="button" data-window="12" data-unit="m" aria-pressed="true">12m</button>
-          <button type="button" data-window="5" data-unit="y" aria-pressed="false">5y</button>
-          <button type="button" data-window="10" data-unit="y" aria-pressed="false">10y</button>
-        </div>
-        <label class="custom">
-          Custom
-          <input id="custom-amount" type="number" inputmode="numeric" min="1" max="600" step="1" value="12" aria-label="Window length">
-          <select id="custom-unit" aria-label="Window unit">
-            <option value="m" selected>months</option>
-            <option value="y">years</option>
-          </select>
-        </label>
-      </div>
-      <div class="control">
-        <span class="control-label" id="method-label">Averaging</span>
-        <div class="pills" role="radiogroup" aria-labelledby="method-label">
-          <button type="button" data-method="trailing" aria-pressed="true">Trailing change</button>
-          <button type="button" data-method="regression" aria-pressed="false">Regression</button>
-          <button type="button" data-method="cagr" aria-pressed="false">CAGR pace</button>
-        </div>
-      </div>
-      <div class="control">
-        <span class="control-label" id="norm-label">Normalize</span>
-        <label class="check" for="normalize">
-          <input type="checkbox" id="normalize">
-          Excess growth
-        </label>
-        <select id="norm-series" aria-label="Deflator" disabled>
-          <option value="gdp">Nominal GDP</option>
-          <option value="cpi">CPI</option>
-        </select>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="card-head">
-        <div>
-          <h2>Days per bitcoin market cap</h2>
-          <p class="card-note" id="gap-note">Gaps are contractions. Spikes are near-stalls: a barely positive pace makes one bitcoin market cap take much longer. Log scale is the default because the history spans several orders of magnitude.</p>
-        </div>
-        <label class="log-toggle">
-          <input type="checkbox" id="log-scale" checked>
-          Log scale on day counts
-        </label>
-      </div>
-      <div class="chart tall" id="chart-bailout" role="img" aria-label="History of the bailout day count"></div>
-      <p class="chart-empty" id="empty-bailout" hidden></p>
-    </section>
-
-    <section class="card">
-      <div class="card-head">
-        <div>
-          <h2>Dollar half-life</h2>
-          <p class="card-note">Years for the dollar to lose half its purchasing power. half-life = ln(2) / ln(1 + inflation). At 2% the formula gives 35.0 years. The line is the half-life implied by trailing 12-month <a href="https://fred.stlouisfed.org/series/CPIAUCSL">CPI (FRED CPIAUCSL)</a>, the same series the nightly job already fetches. A rate at or below zero does not halve purchasing power, and the line leaves a gap. Log scale.</p>
-          <p class="card-note" id="half-latest"></p>
-        </div>
-        <div class="share-row">
-          <button type="button" class="share" id="share-half">Copy link</button>
-          <a class="share" id="share-half-x" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">Post on X</a>
-        </div>
-      </div>
-      <div class="chart" id="chart-halflife" role="img" aria-label="Years for the dollar to lose half its purchasing power, from trailing 12-month CPI"></div>
-      <p class="half-label">Years at a steady inflation rate</p>
-      <div class="half-table" id="half-table"></div>
-    </section>
-
-    <section class="card">
-      <div class="card-head with-legend">
-        <div>
-          <h2>Days at a fixed bitcoin price</h2>
-          <p class="card-note" id="fixed-note">Gold is the bailout. Sage holds the bitcoin price from the start of each day's window and lets the coin count and the pace move. The dashed line holds the coin count instead, and lets the price move. When the gold line is higher, bitcoin is priced higher than it was at the start of the window: a longer bailout at a high price is a higher valuation relative to monetary expansion.</p>
-        </div>
-        <p class="legend">
-          <span><i class="swatch btc"></i> Bailout</span>
-          <span><i class="swatch money"></i> Fixed price</span>
-          <span><i class="swatch units"></i> Fixed units</span>
-        </p>
-      </div>
-      <div class="chart tall" id="chart-fixed" role="img" aria-label="Bailout days compared with days at a fixed bitcoin price and at a fixed coin count"></div>
-    </section>
-
-    <section class="card">
-      <div class="card-head">
-        <div>
-          <h2>Pace of monetary expansion</h2>
-          <p class="card-note" id="pace-note">Dollars per day, decreases included. The day count above is blank when this line is not positive. With smoothing off, each step is the change between one print and the next, held until the following print, so a decrease shows as a decrease.</p>
-        </div>
-      </div>
-      <div class="chart" id="chart-pace" role="img" aria-label="Pace of monetary expansion in dollars per day, including decreases"></div>
-    </section>
-
-    <section class="grid-charts">
-      <article class="card">
-        <div class="card-head">
-          <div>
-            <h2 id="money-title">US M2</h2>
-            <p class="card-note">Published prints, in dollars, with no smoothing. A fall in the line is a fall in the stock. Log scale.</p>
-          </div>
-        </div>
-        <div class="chart" id="chart-money" role="img" aria-label="Selected money measure"></div>
-      </article>
-      <article class="card">
-        <div class="card-head">
-          <div>
-            <h2>Bitcoin market cap</h2>
-            <p class="card-note" id="btc-note">Log scale.</p>
-          </div>
-        </div>
-        <div class="chart" id="chart-btc" role="img" aria-label="Bitcoin market cap"></div>
-      </article>
-    </section>
-
-    <section class="card">
-      <div class="card-head">
-        <div>
-          <h2>Both</h2>
-          <p class="card-note">Money on the left axis, bitcoin market cap on the right. Both log scales.</p>
-        </div>
-        <p class="legend">
-          <span><i class="swatch money"></i> <span id="legend-money">Money</span></span>
-          <span><i class="swatch btc"></i> Bitcoin</span>
-        </p>
-      </div>
-      <div class="chart" id="chart-overlay" role="img" aria-label="Money measure and bitcoin market cap"></div>
-    </section>
-
-    <section class="quotes" aria-labelledby="quotes-title">
+    <section class="quotes hero-quotes" aria-labelledby="quotes-title">
       <h2 id="quotes-title">In their words</h2>
       <p class="quotes-note">A scrolling strip, shuffled on each visit. Verbatim, except the cards marked attributed or paraphrase. The film lines are the picture's own words, with a one-line frame of ours above them. Spellings are the source's. Morgan, Saylor, and the IOU stay together, in that order. The strip pauses when you hover it.</p>
       <div class="quote-strip" id="quote-strip" tabindex="0" aria-label="Quotes">
@@ -471,6 +316,164 @@
         </div>
       </div>
     </section>
+      </div>
+      <aside class="assumptions" aria-labelledby="assumptions-title">
+        <h2 id="assumptions-title">Assumptions</h2>
+        <dl id="assumption-list"></dl>
+      </aside>
+    </section>
+
+    <section class="split-section" aria-labelledby="split-title">
+      <h2 id="split-title">What moved</h2>
+      <div id="split" class="split"></div>
+    </section>
+
+    <p class="strip-note">Same assumptions for every monetary expansion measure. Public debt stays in the comparison: debt spends the same as cash, and one person's debt is another's asset.</p>
+    <ul class="strip" id="strip" aria-label="Same assumptions, other monetary expansion measures"></ul>
+
+    <section class="controls" aria-label="What to measure">
+      <div class="control">
+        <span class="control-label" id="measure-label">Series</span>
+        <div class="pills" role="radiogroup" aria-labelledby="measure-label">
+          <button type="button" data-measure="m2" aria-pressed="true">M2</button>
+          <button type="button" data-measure="base" aria-pressed="false">Monetary base</button>
+          <button type="button" data-measure="currency" aria-pressed="false">Currency in circulation</button>
+          <button type="button" data-measure="debt" aria-pressed="false">Public debt</button>
+          <span class="pill-also">Also</span>
+          <button type="button" class="quiet" data-measure="fed" aria-pressed="false" title="Kept last, and left off the comparison strip. Still monetary expansion.">Fed balance sheet</button>
+        </div>
+      </div>
+      <div class="control">
+        <span class="control-label" id="window-label">Smoothing</span>
+        <div class="pills" role="radiogroup" aria-labelledby="window-label">
+          <button type="button" data-window="0" data-unit="m" aria-pressed="false">None</button>
+          <button type="button" data-window="3" data-unit="m" aria-pressed="false">3m</button>
+          <button type="button" data-window="12" data-unit="m" aria-pressed="true">12m</button>
+          <button type="button" data-window="5" data-unit="y" aria-pressed="false">5y</button>
+          <button type="button" data-window="10" data-unit="y" aria-pressed="false">10y</button>
+        </div>
+        <label class="custom">
+          Custom
+          <input id="custom-amount" type="number" inputmode="numeric" min="1" max="600" step="1" value="12" aria-label="Window length">
+          <select id="custom-unit" aria-label="Window unit">
+            <option value="m" selected>months</option>
+            <option value="y">years</option>
+          </select>
+        </label>
+      </div>
+      <div class="control">
+        <span class="control-label" id="method-label">Averaging</span>
+        <div class="pills" role="radiogroup" aria-labelledby="method-label">
+          <button type="button" data-method="trailing" aria-pressed="true">Trailing change</button>
+          <button type="button" data-method="regression" aria-pressed="false">Regression</button>
+          <button type="button" data-method="cagr" aria-pressed="false">CAGR pace</button>
+        </div>
+      </div>
+      <div class="control">
+        <span class="control-label" id="norm-label">Normalize</span>
+        <label class="check" for="normalize">
+          <input type="checkbox" id="normalize">
+          Excess growth
+        </label>
+        <select id="norm-series" aria-label="Deflator" disabled>
+          <option value="gdp">Nominal GDP</option>
+          <option value="cpi">CPI</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Days per bitcoin market cap</h2>
+          <p class="card-note" id="gap-note">Gaps are contractions. Spikes are near-stalls: a barely positive pace makes one bitcoin market cap take much longer. Log scale is the default because the history spans several orders of magnitude.</p>
+        </div>
+        <label class="log-toggle">
+          <input type="checkbox" id="log-scale" checked>
+          Log scale on day counts
+        </label>
+      </div>
+      <div class="chart tall" id="chart-bailout" role="img" aria-label="History of the bailout day count"></div>
+      <p class="chart-empty" id="empty-bailout" hidden></p>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Dollar half-life</h2>
+          <p class="card-note">Years for the dollar to lose half its purchasing power. half-life = ln(2) / ln(1 + inflation). At 2% the formula gives 35.0 years. The line is the half-life implied by trailing 12-month <a href="https://fred.stlouisfed.org/series/CPIAUCSL">CPI (FRED CPIAUCSL)</a>, the same series the nightly job already fetches. A rate at or below zero does not halve purchasing power, and the line leaves a gap. Log scale.</p>
+          <p class="card-note" id="half-latest"></p>
+        </div>
+        <div class="share-row">
+          <button type="button" class="share" id="share-half">Copy link</button>
+          <a class="share" id="share-half-x" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">Post on X</a>
+        </div>
+      </div>
+      <div class="chart" id="chart-halflife" role="img" aria-label="Years for the dollar to lose half its purchasing power, from trailing 12-month CPI"></div>
+      <p class="half-label">Years at a steady inflation rate</p>
+      <div class="half-table" id="half-table"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head with-legend">
+        <div>
+          <h2>Days at a fixed bitcoin price</h2>
+          <p class="card-note" id="fixed-note">Gold is the bailout. Sage holds the bitcoin price from the start of each day's window and lets the coin count and the pace move. The dashed line holds the coin count instead, and lets the price move. When the gold line is higher, bitcoin is priced higher than it was at the start of the window: a longer bailout at a high price is a higher valuation relative to monetary expansion.</p>
+        </div>
+        <p class="legend">
+          <span><i class="swatch btc"></i> Bailout</span>
+          <span><i class="swatch money"></i> Fixed price</span>
+          <span><i class="swatch units"></i> Fixed units</span>
+        </p>
+      </div>
+      <div class="chart tall" id="chart-fixed" role="img" aria-label="Bailout days compared with days at a fixed bitcoin price and at a fixed coin count"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Pace of monetary expansion</h2>
+          <p class="card-note" id="pace-note">Dollars per day, decreases included. The day count above is blank when this line is not positive. With smoothing off, each step is the change between one print and the next, held until the following print, so a decrease shows as a decrease.</p>
+        </div>
+      </div>
+      <div class="chart" id="chart-pace" role="img" aria-label="Pace of monetary expansion in dollars per day, including decreases"></div>
+    </section>
+
+    <section class="grid-charts">
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <h2 id="money-title">US M2</h2>
+            <p class="card-note">Published prints, in dollars, with no smoothing. A fall in the line is a fall in the stock. Log scale.</p>
+          </div>
+        </div>
+        <div class="chart" id="chart-money" role="img" aria-label="Selected money measure"></div>
+      </article>
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <h2>Bitcoin market cap</h2>
+            <p class="card-note" id="btc-note">Log scale.</p>
+          </div>
+        </div>
+        <div class="chart" id="chart-btc" role="img" aria-label="Bitcoin market cap"></div>
+      </article>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Both</h2>
+          <p class="card-note">Money on the left axis, bitcoin market cap on the right. Both log scales.</p>
+        </div>
+        <p class="legend">
+          <span><i class="swatch money"></i> <span id="legend-money">Money</span></span>
+          <span><i class="swatch btc"></i> Bitcoin</span>
+        </p>
+      </div>
+      <div class="chart" id="chart-overlay" role="img" aria-label="Money measure and bitcoin market cap"></div>
+    </section>
+
     <script src="js/quotes.js"></script>
     <section class="prose">
       <h2>The axiom</h2>

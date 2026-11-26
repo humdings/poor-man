@@ -7,9 +7,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED = [
-    "Bitcoin is more American than the Dollar!",
+    "One path among many.",
+    "Bitcoin is a choice each person can make, or leave alone.",
+    "not a destination anyone needs to reach.",
+    "the price is volatile, custody is your own, and there is a real learning curve.",
+    "Don't forget to enjoy the journey.",
     "To a bitcoiner, debasement is a slow-motion bailout.",
-    "A bailout used to need a vote. Now it just needs time.",
+    "That is one way of seeing it, not a call to act.",
     "Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.",
     "banking establishments are more dangerous than standing armies",
     "swindling futurity on a large scale",
@@ -95,6 +99,9 @@ FORBIDDEN = [
     "Seneca",
     "The impediment to action advances action",
     "What stands in the way becomes the way",
+    "Bitcoin is more American than the Dollar",
+    "A bailout used to need a vote",
+    "where we need to go",
 ]
 
 
@@ -117,6 +124,11 @@ class FramingTests(unittest.TestCase):
     def test_the_page_scrolls_the_quotes(self):
         self.assertIn('class="quote-strip"', self.page)
         self.assertIn("quote-marquee", (ROOT / "css" / "styles.css").read_text(encoding="utf-8"))
+        hero = self.page.split('<section class="hero">', 1)[1].split('<section class="split-section"', 1)[0]
+        column = hero.split('<div class="hero-col">', 1)[1].split('<aside class="assumptions"', 1)[0]
+        self.assertLess(column.index('id="share"'), column.index('id="quote-strip"'))
+        self.assertIn("hero-col", hero)
+        self.assertIn("hero-quotes", hero)
 
     def test_morgan_sits_immediately_before_the_saylor_riff(self):
         for text in (self.page, self.readme):
