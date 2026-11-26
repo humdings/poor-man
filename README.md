@@ -118,6 +118,60 @@ Margaret Thatcher, Thames TV *This Week*, 5 February 1976. [Thatcher Foundation]
 
 **Attributed to Voltaire.** Widely credited to him. The original source is uncertain.
 
+> Often has it crossed my fancy, that the city loves to deal With the very best and noblest members of her commonwealth, Just as with our ancient coinage, and the newly-minted gold. Yea, for these, our sterling pieces, all of pure Athenian mould, All of perfect die and metal, all the fairest of the fair, All of workmanship unequalled, proved and valued everywhere Both amongst our own Hellenes and Barbarians far away, These we use not: but the worthless pinchbeck coins of yesterday, Vilest die and basest metal, now we always use instead. Even so, our sterling townsmen, nobly born and nobly bred, Men of worth and rank and mettle, men of honourable fame, Trained in every liberal science, choral dance, and manly game, These we treat with scorn and insult, but the strangers newliest come, Worthless sons of worthless fathers, pinchbeck townsmen, yellowy scum, Whom in earlier days the city hardly would have stooped to use Even for her scapegoat victims, these for every task we choose. O unwise and foolish people, yet to mend your ways begin; Use again the good and useful: so hereafter, if ye win ’Twill be due to this your wisdom: if ye fall, at least ’twill be Not a fall that brings dishonour, falling from a worthy tree.
+
+Aristophanes, *The Frogs*, lines 718–737. Benjamin Bickley Rogers, Harvard Classics (1909–14). [Bartleby](https://www.bartleby.com/lit-hub/hc/the-frogs/lines-500-999/).
+
+> Further, the law enjoins that no private man shall be allowed to possess gold and silver, but only coin for daily use, which is almost necessary in dealing with artisans, and for payment of hirelings, whether slaves or immigrants, by all those persons who require the use of them. Wherefore our citizens, as we say, should have a coin passing current among themselves, but not accepted among the rest of mankind;
+
+**the villain's view.** Plato, *Laws*, Book V, 742a–b. Benjamin Jowett. [Internet Classics Archive](http://classics.mit.edu/Plato/laws.5.v.html).
+
+> for the mind converts and changes every hindrance to its activity into an aid; and so that which is a hindrance is made a furtherance to an act; and that which is an obstacle on the road helps us on this road.
+
+**Marcus Aurelius, and all HODLers.** *Meditations* 5.20, translated by George Long (1862). [Internet Classics Archive](http://classics.mit.edu/Antoninus/meditations.5.five.html).
+
+> He that loveth silver shall not be satisfied with silver; nor he that loveth abundance with increase: this is also vanity.
+
+**Ecclesiastes, and 2026 silver holders.** Ecclesiastes 5:10, King James Version. [Bible Gateway](https://www.biblegateway.com/passage/?search=Ecclesiastes+5%3A10&version=KJV).
+
+> A false balance is abomination to the LORD: but a just weight is his delight.
+
+Proverbs 11:1, King James Version. [Bible Gateway](https://www.biblegateway.com/passage/?search=Proverbs+11%3A1&version=KJV).
+
+> Thy silver is become dross, thy wine mixed with water:
+
+Isaiah 1:22, King James Version. [Bible Gateway](https://www.biblegateway.com/passage/?search=Isaiah+1%3A22&version=KJV).
+
+> Divers weights, and divers measures, both of them are alike abomination to the LORD.
+
+Proverbs 20:10, King James Version. [Bible Gateway](https://www.biblegateway.com/passage/?search=Proverbs+20%3A10&version=KJV).
+
+> Saying, When will the new moon be gone, that we may sell corn? and the sabbath, that we may set forth wheat, making the ephah small, and the shekel great, and falsifying the balances by deceit?
+
+Amos 8:5, King James Version. [Bible Gateway](https://www.biblegateway.com/passage/?search=Amos+8%3A5&version=KJV).
+
+> Shall I count them pure with the wicked balances, and with the bag of deceitful weights?
+
+Micah 6:11, King James Version. [Bible Gateway](https://www.biblegateway.com/passage/?search=Micah+6%3A11&version=KJV).
+
+> Ye shall have just balances, and a just ephah, and a just bath.
+
+Ezekiel 45:10, King James Version. [Bible Gateway](https://www.biblegateway.com/passage/?search=Ezekiel+45%3A10&version=KJV).
+
+> Woe to those who give less [than due], Who, when they take a measure from people, take in full. But if they give by measure or by weight to them, they cause loss.
+
+Quran 83:1–3, Saheeh International. [Quran.com](https://quran.com/83/1-3).
+
+> And the heaven He raised and imposed the balance
+> That you not transgress within the balance.
+> And establish weight in justice and do not make deficient the balance.
+
+Quran 55:7–9, Saheeh International. [Quran.com](https://quran.com/55/7-9).
+
+> And give full measure when you measure, and weigh with an even [i.e., honest] balance. That is the best [way] and best in result.
+
+Quran 17:35, Saheeh International. [Quran.com](https://quran.com/17/35).
+
 > Money is gold, and nothing else.
 
 J. Pierpont Morgan, Money Trust Investigation, 19 December 1912. [FRASER](https://fraser.stlouisfed.org/files/docs/historical/house/money_trust/montru_pt15.pdf). The popular line "Gold is money. Everything else is credit." is a paraphrase.

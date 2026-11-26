@@ -55,6 +55,24 @@ REQUIRED = [
     "Are you not entertained?",
     "We landed on the moon!",
     "That's as good as money, sir. Those are I.O.U.'s.",
+    "ancient coinage, and the newly-minted gold",
+    "worthless pinchbeck coins of yesterday",
+    "no private man shall be allowed to possess gold and silver",
+    "not accepted among the rest of mankind",
+    "the villain's view",
+    "that which is an obstacle on the road helps us on this road.",
+    "Marcus Aurelius, and all HODLers",
+    "He that loveth silver shall not be satisfied with silver",
+    "Ecclesiastes, and 2026 silver holders",
+    "A false balance is abomination to the LORD: but a just weight is his delight.",
+    "Thy silver is become dross, thy wine mixed with water:",
+    "Divers weights, and divers measures, both of them are alike abomination to the LORD.",
+    "making the ephah small, and the shekel great",
+    "the bag of deceitful weights",
+    "Ye shall have just balances, and a just ephah, and a just bath.",
+    "Woe to those who give less [than due]",
+    "do not make deficient the balance.",
+    "weigh with an even [i.e., honest] balance.",
 ]
 
 # The circulating line attributed to Jefferson about private banks and a
@@ -73,6 +91,10 @@ FORBIDDEN = [
     "That's an IOU. It's as good as money",
     "totally redeem yourself",
     "Harry Dunne",
+    "Aristotle",
+    "Seneca",
+    "The impediment to action advances action",
+    "What stands in the way becomes the way",
 ]
 
 
