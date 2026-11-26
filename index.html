@@ -4,14 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Poor Man's Bailout</title>
-  <meta name="description" content="Days for US monetary expansion to grow by one bitcoin market cap. M2, the monetary base, currency in circulation, public debt, and the Fed balance sheet.">
+  <meta name="description" content="Bitcoin is more American than the Dollar. Days for US monetary expansion to grow by one bitcoin market cap.">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#10140f">
   <link rel="canonical" href="https://humdings.github.io/poor-man/">
   <meta property="og:title" content="Poor Man's Bailout">
-  <meta property="og:description" content="Days for US monetary expansion to grow by one bitcoin market cap.">
+  <meta property="og:description" content="Bitcoin is more American than the Dollar. Days of monetary expansion equal to all of bitcoin.">
   <meta property="og:url" content="https://humdings.github.io/poor-man/">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://humdings.github.io/poor-man/data/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Poor Man's Bailout: days for US M2 to grow by one bitcoin market cap, and the dollar's half-life.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Poor Man's Bailout">
+  <meta name="twitter:description" content="The money printer makes a whole bitcoin market cap every few hundred days. The dollar's half-life is on the card.">
+  <meta name="twitter:image" content="https://humdings.github.io/poor-man/data/og.png">
+  <meta name="twitter:image:alt" content="Poor Man's Bailout days and the dollar's half-life.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,9 +34,19 @@
     <a class="wordmark" href="./">Poor Man's Bailout</a>
     <p class="top-note">Days of monetary expansion equal to all of bitcoin.</p>
   </header>
-  <p class="axiom">Money spends the same, so expansion in any form counts as expansion.</p>
-
   <main>
+    <p class="banner">Bitcoin is more American than the Dollar!</p>
+    <p class="banner-tie">Washington, Madison, and Jefferson treated paper money as a standing danger, and the Constitution told the states to keep gold and silver as tender. Bitcoin is the hard-money side of that argument.</p>
+
+    <section class="why" aria-labelledby="why-title">
+      <h2 id="why-title">Why it's a bailout</h2>
+      <p class="why-lead">To a bitcoiner, debasement is a slow-motion bailout.</p>
+      <p>A bailout used to need a vote. Now it just needs time.</p>
+      <p>Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.</p>
+    </section>
+
+    <p class="axiom">Money spends the same, so expansion in any form counts as expansion.</p>
+
     <section class="hero">
       <div class="hero-main">
         <p class="kicker" id="kicker">US M2 · 12-month trailing change</p>
@@ -37,11 +57,14 @@
         <p class="sentence" id="sentence">Loading the snapshot.</p>
         <p class="pace" id="pace"></p>
         <p class="asof" id="asof"></p>
+        <div class="share-row">
+          <button type="button" class="share" id="share">Copy link</button>
+          <a class="share" id="share-x" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">Post on X</a>
+        </div>
       </div>
       <aside class="assumptions" aria-labelledby="assumptions-title">
         <h2 id="assumptions-title">Assumptions</h2>
         <dl id="assumption-list"></dl>
-        <button type="button" class="share" id="share">Copy link</button>
       </aside>
     </section>
 
@@ -120,6 +143,23 @@
     </section>
 
     <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Dollar half-life</h2>
+          <p class="card-note">Years for the dollar to lose half its purchasing power. half-life = ln(2) / ln(1 + inflation). At 2% the formula gives 35.0 years. The line is the half-life implied by trailing 12-month <a href="https://fred.stlouisfed.org/series/CPIAUCSL">CPI (FRED CPIAUCSL)</a>, the same series the nightly job already fetches. A rate at or below zero does not halve purchasing power, and the line leaves a gap. Log scale.</p>
+          <p class="card-note" id="half-latest"></p>
+        </div>
+        <div class="share-row">
+          <button type="button" class="share" id="share-half">Copy link</button>
+          <a class="share" id="share-half-x" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">Post on X</a>
+        </div>
+      </div>
+      <div class="chart" id="chart-halflife" role="img" aria-label="Years for the dollar to lose half its purchasing power, from trailing 12-month CPI"></div>
+      <p class="half-label">Years at a steady inflation rate</p>
+      <div class="half-table" id="half-table"></div>
+    </section>
+
+    <section class="card">
       <div class="card-head with-legend">
         <div>
           <h2>Days at a fixed bitcoin price</h2>
@@ -179,6 +219,259 @@
       <div class="chart" id="chart-overlay" role="img" aria-label="Money measure and bitcoin market cap"></div>
     </section>
 
+    <section class="quotes" aria-labelledby="quotes-title">
+      <h2 id="quotes-title">In their words</h2>
+      <p class="quotes-note">A scrolling strip, shuffled on each visit. Verbatim, except the cards marked attributed or paraphrase. The film lines are the picture's own words, with a one-line frame of ours above them. Spellings are the source's. Morgan, Saylor, and the IOU stay together, in that order. The strip pauses when you hover it.</p>
+      <div class="quote-strip" id="quote-strip" tabindex="0" aria-label="Quotes">
+        <div class="quote-track" id="quote-track">
+          <div class="quote-set" id="quote-set">
+
+            <figure>
+              <blockquote><p>And I sincerely believe with you, that banking establishments are more dangerous than standing armies; &amp; that the principle of spending money to be paid by posterity, under the name of funding, is but swindling futurity on a large scale</p></blockquote>
+              <figcaption>Thomas Jefferson to John Taylor, 28 May 1816. <a href="https://founders.archives.gov/documents/Jefferson/03-10-02-0053">Founders Online</a>.</figcaption>
+            </figure>
+
+            <figure class="film">
+              <p class="quote-frame">The dollar, and a bitcoin.</p>
+              <blockquote><p>That's not a knife. That's a knife.</p></blockquote>
+              <figcaption>Michael J. &ldquo;Crocodile&rdquo; Dundee, <cite>Crocodile Dundee</cite> (1986). <a href="https://en.wikiquote.org/wiki/Crocodile_Dundee">Wikiquote</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>No State shall enter into any Treaty, Alliance, or Confederation; grant Letters of Marque and Reprisal; coin Money; emit Bills of Credit; make any Thing but gold and silver Coin a Tender in Payment of Debts; pass any Bill of Attainder, ex post facto Law, or Law impairing the Obligation of Contracts, or grant any Title of Nobility.</p></blockquote>
+              <figcaption>United States Constitution, Article I, Section 10. <a href="https://www.archives.gov/founding-docs/constitution-transcript">National Archives transcript</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>All warfare is based on deception.</p></blockquote>
+              <figcaption>Sun Tzu, <cite>The Art of War</cite>, chapter I, verse 18, translated by Lionel Giles (1910). <a href="https://www.gutenberg.org/files/17405/17405-h/17405-h.htm">Project Gutenberg</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>The loss which America has sustained since the peace, from the pestilent effects of paper money on the necessary confidence between man and man, on the necessary confidence in the public councils, on the industry and morals of the people, and on the character of republican government, constitutes an enormous debt against the States chargeable with this unadvised measure, which must long remain unsatisfied; or rather an accumulation of guilt, which can be expiated no otherwise than by a voluntary sacrifice on the altar of justice, of the power which has been the instrument of it.</p></blockquote>
+              <figcaption>James Madison, Federalist No. 44, New York Packet, 25 January 1788. <a href="https://avalon.law.yale.edu/18th_century/fed44.asp">Avalon Project</a>.</figcaption>
+            </figure>
+
+            <figure class="film">
+              <p class="quote-frame">When it tanks.</p>
+              <blockquote><p>I have a feeling that in a few years people are gonna be doing what they always do when the economy tanks.</p></blockquote>
+              <figcaption>Mark Baum, <cite>The Big Short</cite> (2015). The next sentence is left off. <a href="https://clip.cafe/the-big-short-2015/i-have-a-feelingthat-in-a-few-years-people-are-gonna-be-doingwhat-they-always-do-when-the-economy/">Clip.Cafe transcript</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Paper money has had the effect in your State that it ever will have, to ruin commerce—oppress the honest, and open a door to every species of fraud and injustice.</p></blockquote>
+              <figcaption>George Washington to Jabez Bowen, 9 January 1787. <a href="https://founders.archives.gov/documents/Washington/04-04-02-0428">Founders Online</a>.</figcaption>
+            </figure>
+
+            <figure class="film">
+              <p class="quote-frame">The defense of the printer.</p>
+              <blockquote><p>The point is, ladies and gentlemen, that greed, for lack of a better word, is good.</p></blockquote>
+              <figcaption>Gordon Gekko, <cite>Wall Street</cite> (1987). <a href="https://en.wikiquote.org/wiki/Wall_Street_(1987_film)">Wikiquote</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Bank-paper must be suppressed, and the circulating medium must be restored to the nation to whom it belongs.</p></blockquote>
+              <figcaption>Thomas Jefferson to John Wayles Eppes, 11 September 1813. <a href="https://founders.archives.gov/documents/Jefferson/03-06-02-0388">Founders Online</a>.</figcaption>
+            </figure>
+
+            <figure class="film">
+              <p class="quote-frame">The dollar.</p>
+              <blockquote><p>There is no spoon.</p></blockquote>
+              <figcaption>Spoon Boy, <cite>The Matrix</cite> (1999). <a href="https://en.wikiquote.org/wiki/The_Matrix_(film)">Wikiquote</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>This law, briefly expressed, is that bad money drives out good money, but that good money cannot drive out bad money.</p></blockquote>
+              <figcaption>William Stanley Jevons, <cite>Money and the Mechanism of Exchange</cite> (1875), stating the law Henry Dunning Macleod named for Sir Thomas Gresham. <a href="https://www.econlib.org/book-chapters/chapter-chapter-viii-the-principles-of-circulation/">Econlib</a>.</figcaption>
+            </figure>
+
+            <figure class="film">
+              <p class="quote-frame">The purchasing power.</p>
+              <blockquote><p>Excuse me. I believe you have my stapler.</p></blockquote>
+              <figcaption>Milton Waddams, <cite>Office Space</cite> (1999).</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>By a continuing process of inflation, governments can confiscate, secretly and unobserved, an important part of the wealth of their citizens.</p></blockquote>
+              <figcaption>John Maynard Keynes, <cite>The Economic Consequences of the Peace</cite>, chapter 6 (1919). <a href="https://en.wikisource.org/wiki/The_Economic_Consequences_of_the_Peace/Chapter_6">Wikisource</a>.</figcaption>
+            </figure>
+
+            <figure class="film">
+              <p class="quote-frame">The trading desk.</p>
+              <blockquote><p>There are three ways to make a living in this business: be first, be smarter, or cheat.</p></blockquote>
+              <figcaption>John Tuld, <cite>Margin Call</cite> (2011). <a href="https://en.wikiquote.org/wiki/Margin_Call_(film)">Wikiquote</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>The first panacea for a mismanaged nation is inflation of the currency; the second is war. Both bring a temporary prosperity; both bring a permanent ruin. But both are the refuge of political and economic opportunists.</p></blockquote>
+              <figcaption>Ernest Hemingway, &ldquo;Notes on the Next War: A Serious Topical Letter,&rdquo; <cite>Esquire</cite>, September 1935. <a href="https://harpers.org/2007/09/hemingway-on-the-politics-of-war/">Harper's</a>.</figcaption>
+            </figure>
+
+            <figure class="film">
+              <p class="quote-frame">The dollar holds.</p>
+              <blockquote><p>So you're telling me there's a chance.</p></blockquote>
+              <figcaption>Lloyd Christmas, <cite>Dumb and Dumber</cite> (1994). <a href="https://clip.cafe/dumb-dumber-1994/i-want-ask-a-question-straight-out-flat-out/">Clip.Cafe transcript</a>.</figcaption>
+            </figure>
+
+            <figure class="film">
+              <p class="quote-frame">The bulletin.</p>
+              <blockquote><p>No way. That's great. We landed on the moon!</p></blockquote>
+              <figcaption>Lloyd Christmas, <cite>Dumb and Dumber</cite> (1994). <a href="https://clip.cafe/dumb-dumber-1994/no-way/">Clip.Cafe transcript</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>It follows from the propositions I have so far stated that inflation is always and everywhere a monetary phenomenon in the sense that it is and can be produced only by a more rapid increase in the quantity of money than in output.</p></blockquote>
+              <figcaption>Milton Friedman, &ldquo;The Counter-Revolution in Monetary Theory,&rdquo; Wincott Memorial Lecture, 16 September 1970. <a href="https://miltonfriedman.hoover.org/internal/media/dispatcher/214480/full">Hoover Institution</a>.</figcaption>
+            </figure>
+
+            <figure class="film">
+              <p class="quote-frame">The show.</p>
+              <blockquote><p>Are you not entertained?</p></blockquote>
+              <figcaption>Maximus, <cite>Gladiator</cite> (2000).</figcaption>
+            </figure>
+
+            <figure class="flagged">
+              <p class="quote-flag">Attributed to Milton Friedman</p>
+              <blockquote><p>Inflation is taxation without legislation.</p></blockquote>
+              <figcaption>No source in his own words has been found. What he said, at an AEI round table on 17 July 1974, was that inflation &ldquo;is the one form of taxation that can be imposed without legislation.&rdquo; <a href="https://miltonfriedman.org/misattributed">MiltonFriedman.org</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Governments will never allow monetary competition, and even bankers do not understand the idea because they have all grown up in the system which is so completely dependent on central banks. So I think we need a roundabout way.</p></blockquote>
+              <figcaption>F. A. Hayek, interview with James U. Blanchard III, <cite>Cato Policy Report</cite>, May/June 1984. <a href="https://web.archive.org/web/20130121123902/https://www.cato.org/policy-report/mayjune-1984/exclusive-interview-fa-hayek">Cato Institute</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>I think they've made the biggest financial mess that any government's ever made in this country for a very long time, and Socialist governments traditionally do make a financial mess. They always run out of other people's money. It's quite a characteristic of them.</p></blockquote>
+              <figcaption>Margaret Thatcher, interview with Llew Gardner, Thames TV <em>This Week</em>, 5 February 1976. <a href="https://www.margaretthatcher.org/document/102953">Margaret Thatcher Foundation</a>.</figcaption>
+            </figure>
+
+            <figure class="flagged">
+              <p class="quote-flag">Attributed to Voltaire</p>
+              <blockquote><p>Paper money eventually returns to its intrinsic value: zero.</p></blockquote>
+              <figcaption>Widely credited to Voltaire. The original source is uncertain.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Often has it crossed my fancy, that the city loves to deal With the very best and noblest members of her commonwealth, Just as with our ancient coinage, and the newly-minted gold. Yea, for these, our sterling pieces, all of pure Athenian mould, All of perfect die and metal, all the fairest of the fair, All of workmanship unequalled, proved and valued everywhere Both amongst our own Hellenes and Barbarians far away, These we use not: but the worthless pinchbeck coins of yesterday, Vilest die and basest metal, now we always use instead. Even so, our sterling townsmen, nobly born and nobly bred, Men of worth and rank and mettle, men of honourable fame, Trained in every liberal science, choral dance, and manly game, These we treat with scorn and insult, but the strangers newliest come, Worthless sons of worthless fathers, pinchbeck townsmen, yellowy scum, Whom in earlier days the city hardly would have stooped to use Even for her scapegoat victims, these for every task we choose. O unwise and foolish people, yet to mend your ways begin; Use again the good and useful: so hereafter, if ye win ’Twill be due to this your wisdom: if ye fall, at least ’twill be Not a fall that brings dishonour, falling from a worthy tree.</p></blockquote>
+              <figcaption>Aristophanes, <cite>The Frogs</cite>, lines 718–737. Benjamin Bickley Rogers, Harvard Classics (1909–14). <a href="https://www.bartleby.com/lit-hub/hc/the-frogs/lines-500-999/">Bartleby</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <p class="quote-frame">the villain's view</p>
+              <blockquote><p>Further, the law enjoins that no private man shall be allowed to possess gold and silver, but only coin for daily use, which is almost necessary in dealing with artisans, and for payment of hirelings, whether slaves or immigrants, by all those persons who require the use of them. Wherefore our citizens, as we say, should have a coin passing current among themselves, but not accepted among the rest of mankind;</p></blockquote>
+              <figcaption>Plato, <cite>Laws</cite>, Book V, 742a–b. Benjamin Jowett. <a href="http://classics.mit.edu/Plato/laws.5.v.html">Internet Classics Archive</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>for the mind converts and changes every hindrance to its activity into an aid; and so that which is a hindrance is made a furtherance to an act; and that which is an obstacle on the road helps us on this road.</p></blockquote>
+              <figcaption>Marcus Aurelius, and all HODLers. <cite>Meditations</cite> 5.20, translated by George Long (1862). <a href="http://classics.mit.edu/Antoninus/meditations.5.five.html">Internet Classics Archive</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>He that loveth silver shall not be satisfied with silver; nor he that loveth abundance with increase: this is also vanity.</p></blockquote>
+              <figcaption>Ecclesiastes, and 2026 silver holders. Ecclesiastes 5:10, King James Version. <a href="https://www.biblegateway.com/passage/?search=Ecclesiastes+5%3A10&amp;version=KJV">Bible Gateway</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>A false balance is abomination to the LORD: but a just weight is his delight.</p></blockquote>
+              <figcaption>Proverbs 11:1, King James Version. <a href="https://www.biblegateway.com/passage/?search=Proverbs+11%3A1&amp;version=KJV">Bible Gateway</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Thy silver is become dross, thy wine mixed with water:</p></blockquote>
+              <figcaption>Isaiah 1:22, King James Version. <a href="https://www.biblegateway.com/passage/?search=Isaiah+1%3A22&amp;version=KJV">Bible Gateway</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Divers weights, and divers measures, both of them are alike abomination to the LORD.</p></blockquote>
+              <figcaption>Proverbs 20:10, King James Version. <a href="https://www.biblegateway.com/passage/?search=Proverbs+20%3A10&amp;version=KJV">Bible Gateway</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Saying, When will the new moon be gone, that we may sell corn? and the sabbath, that we may set forth wheat, making the ephah small, and the shekel great, and falsifying the balances by deceit?</p></blockquote>
+              <figcaption>Amos 8:5, King James Version. <a href="https://www.biblegateway.com/passage/?search=Amos+8%3A5&amp;version=KJV">Bible Gateway</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Shall I count them pure with the wicked balances, and with the bag of deceitful weights?</p></blockquote>
+              <figcaption>Micah 6:11, King James Version. <a href="https://www.biblegateway.com/passage/?search=Micah+6%3A11&amp;version=KJV">Bible Gateway</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Ye shall have just balances, and a just ephah, and a just bath.</p></blockquote>
+              <figcaption>Ezekiel 45:10, King James Version. <a href="https://www.biblegateway.com/passage/?search=Ezekiel+45%3A10&amp;version=KJV">Bible Gateway</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Woe to those who give less [than due], Who, when they take a measure from people, take in full. But if they give by measure or by weight to them, they cause loss.</p></blockquote>
+              <figcaption>Quran 83:1–3, Saheeh International. <a href="https://quran.com/83/1-3">Quran.com</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>And the heaven He raised and imposed the balance<br>That you not transgress within the balance.<br>And establish weight in justice and do not make deficient the balance.</p></blockquote>
+              <figcaption>Quran 55:7–9, Saheeh International. <a href="https://quran.com/55/7-9">Quran.com</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>And give full measure when you measure, and weigh with an even [i.e., honest] balance. That is the best [way] and best in result.</p></blockquote>
+              <figcaption>Quran 17:35, Saheeh International. <a href="https://quran.com/17/35">Quran.com</a>.</figcaption>
+            </figure>
+
+            <div class="quote-trio">
+              <figure>
+                <blockquote><p>Money is gold, and nothing else.</p></blockquote>
+                <figcaption>J. Pierpont Morgan to Samuel Untermyer, Money Trust Investigation, 19 December 1912. <a href="https://fraser.stlouisfed.org/files/docs/historical/house/money_trust/montru_pt15.pdf">FRASER, part 15</a>. <span class="paraphrase">The popular line &ldquo;Gold is money. Everything else is credit.&rdquo; is a paraphrase.</span></figcaption>
+              </figure>
+
+              <figure class="flagged">
+                <p class="quote-flag">Michael Saylor (paraphrase)</p>
+                <blockquote><p>Bitcoin is money, everything else is credit.</p></blockquote>
+                <figcaption>The compact line is widely repeated. No post or checked transcript prints it as one sentence.</figcaption>
+              </figure>
+
+              <figure class="film featured">
+                <p class="quote-frame">The tender.</p>
+                <blockquote><p>That's as good as money, sir. Those are I.O.U.'s.</p></blockquote>
+                <figcaption>Lloyd Christmas, <cite>Dumb and Dumber</cite> (1994). <a href="https://clip.cafe/dumb-dumber-1994/listen-mr-samsonite-about-the-briefcase/">Clip.Cafe transcript</a>.</figcaption>
+              </figure>
+            </div>
+
+            <figure>
+              <blockquote><p>You can tell everybody to go fuck themselves. […] the classic Bitcoiner response is, Oh, yeah, my Bitcoin, I lost it in a boating accident. You ever heard that phrase? It's kind of a trope, but what it means is at the end of the day, if you push me too far, I lost it. It's gone. Sorry. Tax that.</p></blockquote>
+              <figcaption>Michael Saylor, METAL interview, January 2021. <a href="https://www.youtube.com/watch?v=BoVlCnZe5vQ">YouTube</a>. The bracket skips a clause whose wording the captions and the write-ups do not agree on. A later report of the same remarks is at <a href="https://coinmarketcap.com/academy/article/coinmarketcap-news-sept-1-is-bitcoin-an-ideal-tool-for-evading-taxes">CoinMarketCap</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Bitcoin isn’t strictly a monetary protocol.</p></blockquote>
+              <figcaption>Jason Lowery, <cite>Softwar</cite> (MIT, February 2023). <a href="https://hdl.handle.net/1721.1/153030">MIT DSpace</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Instead, Bitcoin appears to be emerging as a cyber power projection tactic for the digital age.</p></blockquote>
+              <figcaption>Jason Lowery, <cite>Softwar</cite> (MIT, February 2023). <a href="https://hdl.handle.net/1721.1/153030">MIT DSpace</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>While most software can only logically constrain computers, Bitcoin can physically constrain computers and impose severe physical costs (as measured in watts) on belligerent actors in, from, and through cyberspace.</p></blockquote>
+              <figcaption>Jason Lowery, <cite>Softwar</cite> (MIT, February 2023). <a href="https://hdl.handle.net/1721.1/153030">MIT DSpace</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Bitcoin is proof that proof-of-work works.</p></blockquote>
+              <figcaption>Jason Lowery, <cite>Softwar</cite> (MIT, February 2023). <a href="https://hdl.handle.net/1721.1/153030">MIT DSpace</a>.</figcaption>
+            </figure>
+
+            <figure>
+              <blockquote><p>Bitcoin could represent a strategically vital national security technology for the digital age.</p></blockquote>
+              <figcaption>Jason Lowery, <cite>Softwar</cite> (MIT, February 2023). <a href="https://hdl.handle.net/1721.1/153030">MIT DSpace</a>.</figcaption>
+            </figure>
+
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="js/quotes.js"></script>
     <section class="prose">
       <h2>The axiom</h2>
       <p>Money spends the same, so expansion in any form counts as expansion. That includes M2, the monetary base, currency in circulation, the Fed balance sheet, and the public debt. Debt spends the same as cash. One person's debt is another's asset. Public debt stays in the comparison, on the same terms as the other measures.</p>
@@ -193,6 +486,8 @@ d(t) = C(t) / g(t)    when g(t) &gt; 0</pre>
       <pre>regression   g(t) = slope of daily M from s through t
 CAGR pace    g(t) = M(t) × ((M(t) / M(s))^(1/N) − 1)</pre>
       <p>The regression is an ordinary least-squares line on the forward-filled daily level, so the flat days between prints are part of the fit. The CAGR pace is the compound rate that links the level at the start of the window to today's level, stated in dollars per day at today's level. The default is the trailing change, on US M2, over 12 months.</p>
+      <h2>Dollar half-life</h2>
+      <p>How many years of inflation it takes for a dollar to buy half as much. half-life = ln(2) / ln(1 + inflation), with inflation a decimal. At 2% that is 35.0 years. At 7% it is 10.2 years. The chart uses trailing 12-month CPI: this month's index divided by the index twelve months earlier, minus one. A rate at or below zero leaves a gap. The table under the chart is the same formula at 1% through 10%.</p>
       <h2>Smoothing</h2>
       <p>The window and the averaging method are the smoothing. Several of each are above. <strong>None</strong> turns the smooth off and delivers the change as published:</p>
       <pre>p = the print in effect on t
@@ -228,6 +523,24 @@ regression
   <footer>
     <p>A static reading of public series. Not a forecast and not investment advice.</p>
     <p><a href="https://github.com/humdings/poor-man">Source</a> · MIT</p>
+    <div class="tip">
+      <p class="tip-lead">Stack sats? Tip the printer-watcher.</p>
+      <p class="tip-links"><a href="https://njump.me/npub17z7t6hf6e3xru2lkc79lmkddljnswkn5xz86gppqt7amzvre90kqlew3u8">Zap me on Nostr</a></p>
+      <div class="tip-ln">
+        <img src="img/lightning.svg" width="96" height="96" alt="QR code for lightning:ivoryfireant9@primal.net">
+        <p class="tip-addr">
+          <code>ivoryfireant9@primal.net</code>
+          <button type="button" class="tip-copy" id="copy-ln" data-address="ivoryfireant9@primal.net">Copy</button>
+        </p>
+      </div>
+      <div class="tip-ln">
+        <img src="img/onchain.svg" width="96" height="96" alt="QR code for bitcoin:bc1qyut5d3gmlf2lnuntl7aqx3l89sjd6m0ewzs845">
+        <p class="tip-addr">
+          <code>bc1qyut5d3gmlf2lnuntl7aqx3l89sjd6m0ewzs845</code>
+          <button type="button" class="tip-copy" id="copy-btc" data-address="bc1qyut5d3gmlf2lnuntl7aqx3l89sjd6m0ewzs845">Copy</button>
+        </p>
+      </div>
+    </div>
   </footer>
 
   <noscript>

@@ -1,0 +1,162 @@
+"""The framing and the quotes stay verbatim, and the spurious line stays out."""
+
+import subprocess
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+REQUIRED = [
+    "Bitcoin is more American than the Dollar!",
+    "To a bitcoiner, debasement is a slow-motion bailout.",
+    "A bailout used to need a vote. Now it just needs time.",
+    "Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.",
+    "banking establishments are more dangerous than standing armies",
+    "swindling futurity on a large scale",
+    "Bank-paper must be suppressed, and the circulating medium must be restored to the nation to whom it belongs.",
+    "11 September 1813",
+    "make any Thing but gold and silver Coin a Tender in Payment of Debts",
+    "pestilent effects of paper money",
+    "Paper money has had the effect in your State that it ever will have, to ruin commerce—oppress the honest, and open a door to every species of fraud and injustice.",
+    "They always run out of other people's money.",
+    "inflation is always and everywhere a monetary phenomenon in the sense that it is and can be produced only by a more rapid increase in the quantity of money than in output.",
+    "https://founders.archives.gov/documents/Jefferson/03-10-02-0053",
+    "https://founders.archives.gov/documents/Jefferson/03-06-02-0388",
+    "https://www.archives.gov/founding-docs/constitution-transcript",
+    "https://avalon.law.yale.edu/18th_century/fed44.asp",
+    "https://founders.archives.gov/documents/Washington/04-04-02-0428",
+    "https://www.margaretthatcher.org/document/102953",
+    "https://miltonfriedman.hoover.org/internal/media/dispatcher/214480/full",
+    "All warfare is based on deception.",
+    "bad money drives out good money, but that good money cannot drive out bad money.",
+    "By a continuing process of inflation, governments can confiscate, secretly and unobserved, an important part of the wealth of their citizens.",
+    "The first panacea for a mismanaged nation is inflation of the currency; the second is war.",
+    "September 1935",
+    "Money is gold, and nothing else.",
+    "Gold is money. Everything else is credit.",
+    "Michael Saylor (paraphrase)",
+    "Bitcoin is money, everything else is credit.",
+    "You can tell everybody to go fuck themselves.",
+    "I lost it in a boating accident.",
+    "Attributed to Voltaire",
+    "Paper money eventually returns to its intrinsic value: zero.",
+    "Attributed to Milton Friedman",
+    "So I think we need a roundabout way.",
+    "Bitcoin isn\u2019t strictly a monetary protocol.",
+    "Bitcoin is proof that proof-of-work works.",
+    "cyber power projection tactic for the digital age.",
+    "That's not a knife. That's a knife.",
+    "people are gonna be doing what they always do when the economy tanks.",
+    "greed, for lack of a better word, is good.",
+    "There is no spoon.",
+    "Excuse me. I believe you have my stapler.",
+    "be first, be smarter, or cheat.",
+    "So you're telling me there's a chance.",
+    "Are you not entertained?",
+    "We landed on the moon!",
+    "That's as good as money, sir. Those are I.O.U.'s.",
+    "ancient coinage, and the newly-minted gold",
+    "worthless pinchbeck coins of yesterday",
+    "no private man shall be allowed to possess gold and silver",
+    "not accepted among the rest of mankind",
+    "the villain's view",
+    "that which is an obstacle on the road helps us on this road.",
+    "Marcus Aurelius, and all HODLers",
+    "He that loveth silver shall not be satisfied with silver",
+    "Ecclesiastes, and 2026 silver holders",
+    "A false balance is abomination to the LORD: but a just weight is his delight.",
+    "Thy silver is become dross, thy wine mixed with water:",
+    "Divers weights, and divers measures, both of them are alike abomination to the LORD.",
+    "making the ephah small, and the shekel great",
+    "the bag of deceitful weights",
+    "Ye shall have just balances, and a just ephah, and a just bath.",
+    "Woe to those who give less [than due]",
+    "do not make deficient the balance.",
+    "weigh with an even [i.e., honest] balance.",
+]
+
+# The circulating line attributed to Jefferson about private banks and a
+# sequence of inflation and deflation. Monticello marks it spurious.
+FORBIDDEN = [
+    "private banks",
+    "homeless on the continent",
+    "banking institutions are more dangerous to our liberties",
+    "6 November 1813",
+    "problem with socialism",
+    "ship with no anchor",
+    "I do not think it means what you think it means",
+    "bigger boat",
+    "good money again",
+    "I thought you couldn't possibly be any dumber",
+    "That's an IOU. It's as good as money",
+    "totally redeem yourself",
+    "Harry Dunne",
+    "Aristotle",
+    "Seneca",
+    "The impediment to action advances action",
+    "What stands in the way becomes the way",
+]
+
+
+class FramingTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.page = (ROOT / "index.html").read_text(encoding="utf-8")
+        cls.readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    def test_page_and_readme_carry_the_verified_lines(self):
+        for text in REQUIRED:
+            self.assertIn(text, self.page, text)
+            self.assertIn(text, self.readme, text)
+
+    def test_spurious_and_paraphrase_lines_stay_out(self):
+        for text in FORBIDDEN:
+            self.assertNotIn(text, self.page, text)
+            self.assertNotIn(text, self.readme, text)
+
+    def test_the_page_scrolls_the_quotes(self):
+        self.assertIn('class="quote-strip"', self.page)
+        self.assertIn("quote-marquee", (ROOT / "css" / "styles.css").read_text(encoding="utf-8"))
+
+    def test_morgan_sits_immediately_before_the_saylor_riff(self):
+        for text in (self.page, self.readme):
+            morgan = text.index("Money is gold, and nothing else.")
+            paraphrase = text.index("Gold is money. Everything else is credit.")
+            saylor = text.index("Michael Saylor (paraphrase)")
+            riff = text.index("Bitcoin is money, everything else is credit.")
+            iou = text.index("That's as good as money, sir. Those are I.O.U.'s.")
+            self.assertLess(morgan, paraphrase)
+            self.assertLess(paraphrase, saylor)
+            self.assertLess(saylor, riff)
+            self.assertLess(riff, iou)
+            moon = text.index("We landed on the moon!")
+            self.assertIn("Lloyd Christmas", text[moon:moon + 400])
+        trio = self.page.split('class="quote-trio"', 1)[1].split("</div>", 1)[0]
+        self.assertLess(trio.index("Money is gold, and nothing else."), trio.index("Michael Saylor (paraphrase)"))
+        self.assertLess(
+            trio.index("Bitcoin is money, everything else is credit."),
+            trio.index("That's as good as money, sir. Those are I.O.U.'s."),
+        )
+        self.assertIn("featured", trio)
+
+    def test_shuffle_keeps_every_card_once_and_the_trio_in_order(self):
+        css = (ROOT / "css" / "styles.css").read_text(encoding="utf-8")
+        self.assertIn(".quote-strip:hover .quote-track", css)
+        self.assertIn("animation-play-state: paused", css)
+        runner = ROOT / "tests" / "quote_shuffle.mjs"
+        done = subprocess.run(
+            ["node", str(runner)],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(done.returncode, 0, done.stderr or done.stdout)
+        self.assertIn("ok ", done.stdout)
+
+    def test_the_data_axiom_stays_with_the_formula(self):
+        for text in (self.page, self.readme):
+            self.assertIn(
+                "Money spends the same, so expansion in any form counts as expansion.",
+                text,
+            )

@@ -115,6 +115,46 @@ def _at(levels, origin: date | None, day: date):
     return levels[idx], idx
 
 
+def half_life_years(rate: float) -> float | None:
+    """Years for a price level growing at `rate` to double.
+
+    Purchasing power halves when prices double:
+    half-life = ln(2) / ln(1 + rate), with rate a decimal.
+    A rate at or below zero does not halve purchasing power.
+    """
+    if isinstance(rate, bool) or not isinstance(rate, (int, float)):
+        return None
+    if not math.isfinite(rate) or rate <= 0:
+        return None
+    growth = math.log(1.0 + rate)
+    if growth <= 0 or not math.isfinite(growth):
+        return None
+    return math.log(2.0) / growth
+
+
+def trailing_cpi_half_life(points) -> list[dict]:
+    """Half-life implied by trailing 12-month CPI.
+
+    Inflation on a print is that index divided by the index twelve months
+    earlier, minus one. A missing prior print is skipped until the series
+    has started, and then left as a gap. A rate at or below zero is a gap.
+    """
+    series = normalize(points)
+    levels = {day: level for day, level in series}
+    out: list[dict] = []
+    started = False
+    for day, level in series:
+        prior = levels.get(shift_months(day, -12))
+        if prior is None or prior <= 0 or level <= 0:
+            if started:
+                out.append({"date": day.isoformat(), "rate": None, "years": None})
+            continue
+        rate = level / prior - 1.0
+        out.append({"date": day.isoformat(), "rate": rate, "years": half_life_years(rate)})
+        started = True
+    return out
+
+
 def _positive(value) -> bool:
     return (
         isinstance(value, (int, float))

@@ -41,6 +41,11 @@
     return "$" + Math.round(value).toLocaleString("en-US");
   }
 
+  function years(value) {
+    if (Math.abs(value) >= 100) return Math.round(value).toLocaleString("en-US");
+    return value.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  }
+
   function days(value) {
     if (value >= 1000) return Math.round(value).toLocaleString("en-US");
     return value.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -66,6 +71,7 @@
     charts.money = mount("chart-money");
     charts.btc = mount("chart-btc");
     charts.overlay = mount("chart-overlay");
+    charts.halflife = mount("chart-halflife");
     if (!charts.bailout) return null;
 
     charts.bailoutSeries = charts.bailout.addLineSeries({
@@ -142,6 +148,16 @@
       priceFormat: { type: "custom", formatter: usd },
       priceLineVisible: false,
     });
+    if (charts.halflife) {
+      charts.halflifeSeries = charts.halflife.addLineSeries({
+        color: GOLD,
+        lineWidth: 2,
+        priceFormat: { type: "custom", formatter: years, minMove: 0.1 },
+        priceLineVisible: false,
+        lastValueVisible: true,
+      });
+      charts.halflife.priceScale("right").applyOptions({ mode: 1 });
+    }
     charts.overlayBtc = charts.overlay.addLineSeries({
       color: GOLD,
       lineWidth: 2,
@@ -171,7 +187,7 @@
 
   function render(spec) {
     if (!ensure()) {
-      ["chart-bailout", "chart-fixed", "chart-pace", "chart-money", "chart-btc", "chart-overlay"].forEach(function (id) {
+      ["chart-bailout", "chart-fixed", "chart-pace", "chart-money", "chart-btc", "chart-overlay", "chart-halflife"].forEach(function (id) {
         var el = document.getElementById(id);
         if (el && !el.dataset.missing) {
           el.dataset.missing = "1";
@@ -190,6 +206,7 @@
       charts.btcSeries.setData(levels(spec.btc));
       charts.overlayMoney.setData(levels(spec.money));
       charts.overlayBtc.setData(levels(spec.btc));
+      if (charts.halflifeSeries) charts.halflifeSeries.setData(monotonic(spec.halfLife || []));
     } catch (err) {
       console.error(err);
     }
@@ -199,6 +216,7 @@
     charts.money.timeScale().fitContent();
     charts.btc.timeScale().fitContent();
     charts.overlay.timeScale().fitContent();
+    if (charts.halflife) charts.halflife.timeScale().fitContent();
     setLog(spec.log);
   }
 

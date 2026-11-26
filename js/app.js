@@ -3,6 +3,7 @@
   var MEASURES = ["m2", "base", "currency", "debt", "fed"];
   var METHODS = ["trailing", "regression", "cagr"];
   var data = null;
+  var shareHalfYears = null;
   var state = readState();
 
   var els = {
@@ -16,6 +17,9 @@
     strip: document.getElementById("strip"),
     assumptions: document.getElementById("assumption-list"),
     share: document.getElementById("share"),
+    shareX: document.getElementById("share-x"),
+    shareHalf: document.getElementById("share-half"),
+    shareHalfX: document.getElementById("share-half-x"),
     amount: document.getElementById("custom-amount"),
     unit: document.getElementById("custom-unit"),
     log: document.getElementById("log-scale"),
@@ -470,6 +474,72 @@
     if (!canNorm) state.norm = "0";
   }
 
+  function yearsLabel(value) {
+    return value.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  }
+
+  function paintHalfLife() {
+    var table = document.getElementById("half-table");
+    var latest = document.getElementById("half-latest");
+    var cpi = data.deflators && data.deflators.cpi;
+    if (table && !table.dataset.filled) {
+      var html = "";
+      for (var pct = 1; pct <= 10; pct++) {
+        var steady = Pmb.halfLifeYears(pct / 100);
+        html += '<div class="half-cell' + (pct === 2 ? " is-mark" : "") + '"><span>' + pct + '%</span><strong>' + yearsLabel(steady) + '</strong></div>';
+      }
+      table.innerHTML = html;
+      table.dataset.filled = "1";
+    }
+    if (!cpi || !cpi.points) {
+      shareHalfYears = null;
+      if (latest) latest.textContent = "CPI is not in this snapshot.";
+      return [];
+    }
+    var series = Pmb.trailingCpiHalfLife(cpi.points);
+    var last = null;
+    for (var i = series.length - 1; i >= 0; i--) {
+      if (series[i].years != null) { last = series[i]; break; }
+    }
+    shareHalfYears = last ? last.years : null;
+    if (latest) {
+      if (!last) latest.textContent = "The trailing 12-month CPI rate is not positive.";
+      else {
+        var pct = (last.rate * 100).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+        latest.textContent = "Latest print " + last.date + ": " + pct + "% over the prior twelve months, " + yearsLabel(last.years) + " years.";
+      }
+    }
+    return Pmb.toChartData(series, "years");
+  }
+
+  function shareSentence() {
+    var line = els.daysUnit.hidden
+      ? "The Poor Man's Bailout clock is paused."
+      : "The Poor Man's Bailout: the money printer makes a whole bitcoin market cap every " + els.days.textContent.trim() + " days.";
+    if (shareHalfYears != null) line += " Your dollar's half-life: " + yearsLabel(shareHalfYears) + " years.";
+    return line;
+  }
+
+  function paintShare() {
+    var text = shareSentence();
+    var href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(location.href);
+    els.shareX.href = href;
+    els.shareHalfX.href = href;
+  }
+
+  function copyLink(button) {
+    var url = location.href;
+    function done(label) {
+      button.textContent = label;
+      setTimeout(function () { button.textContent = "Copy link"; }, 1400);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { done("Copied"); }, function () { done("Copy the address bar"); });
+    } else {
+      done("Copy the address bar");
+    }
+  }
+
   function render() {
     if (state.amount !== 0) state.amount = clamp(state.amount, state.unit);
     writeState();
@@ -495,8 +565,10 @@
       pace: Pmb.toChartData(result.points, "growthPerDay"),
       money: measure.points,
       btc: btcPairs(),
+      halfLife: paintHalfLife(),
       log: state.log,
     });
+    paintShare();
   }
 
   function bind() {
@@ -547,18 +619,8 @@
       state.norm = els.normSeries.value === "cpi" ? "cpi" : "gdp";
       render();
     });
-    els.share.addEventListener("click", function () {
-      var url = location.href;
-      function done(label) {
-        els.share.textContent = label;
-        setTimeout(function () { els.share.textContent = "Copy link"; }, 1400);
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(function () { done("Copied"); }, function () { done("Copy the address bar"); });
-      } else {
-        done("Copy the address bar");
-      }
-    });
+    els.share.addEventListener("click", function () { copyLink(els.share); });
+    els.shareHalf.addEventListener("click", function () { copyLink(els.shareHalf); });
   }
 
   function fail(message) {
@@ -567,6 +629,21 @@
     els.daysUnit.hidden = true;
     els.sentence.textContent = message;
   }
+
+  document.querySelectorAll(".tip-copy").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var address = button.getAttribute("data-address") || "";
+      function done(label) {
+        button.textContent = label;
+        setTimeout(function () { button.textContent = "Copy"; }, 1400);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(address).then(function () { done("Copied"); }, function () { done("Copy the address"); });
+      } else {
+        done("Copy the address");
+      }
+    });
+  });
 
   fetch("data/series.json")
     .then(function (response) {
