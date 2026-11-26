@@ -50,7 +50,9 @@ REQUIRED = [
     "Bitcoin is proof that proof-of-work works.",
     "cyber power projection tactic for the digital age.",
     "That's not a knife. That's a knife.",
-    "people are gonna be doing what they always do when the economy tanks.",
+    "all forms of monetary entropy. They drain energy from the system.",
+    "Good money conserves energy. Bad money dissipates it.",
+    "https://www.michael.com/articles/what-is-money",
     "greed, for lack of a better word, is good.",
     "There is no spoon.",
     "Excuse me. I believe you have my stapler.",
@@ -59,8 +61,6 @@ REQUIRED = [
     "Are you not entertained?",
     "We landed on the moon!",
     "That's as good as money, sir. Those are I.O.U.'s.",
-    "ancient coinage, and the newly-minted gold",
-    "worthless pinchbeck coins of yesterday",
     "no private man shall be allowed to possess gold and silver",
     "not accepted among the rest of mankind",
     "the villain's view",
@@ -141,6 +141,14 @@ class FramingTests(unittest.TestCase):
         for text in FORBIDDEN:
             self.assertNotIn(text, self.page, text)
             self.assertNotIn(text, self.readme, text)
+
+    def test_the_frogs_and_the_big_short_cards_are_gone(self):
+        for text in (self.page, self.readme):
+            self.assertNotIn("Mark Baum", text)
+            self.assertNotIn("The Big Short", text)
+            self.assertNotIn("Aristophanes", text)
+            self.assertNotIn("The Frogs", text)
+            self.assertNotIn("pinchbeck", text)
 
     def test_the_chance_card_headline_is_the_whitepaper(self):
         card = self.page.split("So you're telling me there's a chance.", 1)[0].rsplit("<figure", 1)[1]

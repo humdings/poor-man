@@ -46,9 +46,9 @@ Sun Tzu, *The Art of War*, Lionel Giles translation (1910). [Project Gutenberg](
 
 James Madison, Federalist No. 44, New York Packet, 25 January 1788. [Avalon Project](https://avalon.law.yale.edu/18th_century/fed44.asp).
 
-> I have a feeling that in a few years people are gonna be doing what they always do when the economy tanks.
+> Inflation, taxation, storage costs, custody fees, transaction friction, counterparty risk, political intervention, and confiscation are all forms of monetary entropy. They drain energy from the system. Good money conserves energy. Bad money dissipates it.
 
-Mark Baum, *The Big Short* (2015). The next sentence is left off. [Clip.Cafe](https://clip.cafe/the-big-short-2015/i-have-a-feelingthat-in-a-few-years-people-are-gonna-be-doingwhat-they-always-do-when-the-economy/).
+Michael Saylor, "What is Money?", 15 August 2026. [michael.com](https://www.michael.com/articles/what-is-money).
 
 > Paper money has had the effect in your State that it ever will have, to ruin commerce—oppress the honest, and open a door to every species of fraud and injustice.
 
@@ -117,10 +117,6 @@ Margaret Thatcher, Thames TV *This Week*, 5 February 1976. [Thatcher Foundation]
 > Paper money eventually returns to its intrinsic value: zero.
 
 **Attributed to Voltaire.** Widely credited to him. The original source is uncertain.
-
-> Often has it crossed my fancy, that the city loves to deal With the very best and noblest members of her commonwealth, Just as with our ancient coinage, and the newly-minted gold. Yea, for these, our sterling pieces, all of pure Athenian mould, All of perfect die and metal, all the fairest of the fair, All of workmanship unequalled, proved and valued everywhere Both amongst our own Hellenes and Barbarians far away, These we use not: but the worthless pinchbeck coins of yesterday, Vilest die and basest metal, now we always use instead. Even so, our sterling townsmen, nobly born and nobly bred, Men of worth and rank and mettle, men of honourable fame, Trained in every liberal science, choral dance, and manly game, These we treat with scorn and insult, but the strangers newliest come, Worthless sons of worthless fathers, pinchbeck townsmen, yellowy scum, Whom in earlier days the city hardly would have stooped to use Even for her scapegoat victims, these for every task we choose. O unwise and foolish people, yet to mend your ways begin; Use again the good and useful: so hereafter, if ye win ’Twill be due to this your wisdom: if ye fall, at least ’twill be Not a fall that brings dishonour, falling from a worthy tree.
-
-Aristophanes, *The Frogs*, lines 718–737. Benjamin Bickley Rogers, Harvard Classics (1909–14). [Bartleby](https://www.bartleby.com/lit-hub/hc/the-frogs/lines-500-999/).
 
 > Further, the law enjoins that no private man shall be allowed to possess gold and silver, but only coin for daily use, which is almost necessary in dealing with artisans, and for payment of hirelings, whether slaves or immigrants, by all those persons who require the use of them. Wherefore our citizens, as we say, should have a coin passing current among themselves, but not accepted among the rest of mankind;
 
