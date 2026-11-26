@@ -312,7 +312,7 @@ The site is [https://humdings.github.io/poor-man/](https://humdings.github.io/po
 
 Stack sats? Tip the printer-watcher.
 
-[Zap me on Nostr](https://njump.me/npub17z7t6hf6e3xru2lkc79lmkddljnswkn5xz86gppqt7amzvre90kqlew3u8) · Lightning `ivoryfireant9@primal.net`
+[Zap me on Nostr](https://njump.me/npub17z7t6hf6e3xru2lkc79lmkddljnswkn5xz86gppqt7amzvre90kqlew3u8) · Lightning `ivoryfireant9@primal.net` · On-chain `bc1qyut5d3gmlf2lnuntl7aqx3l89sjd6m0ewzs845`
 
 ## License
 

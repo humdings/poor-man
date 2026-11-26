@@ -630,13 +630,12 @@
     els.sentence.textContent = message;
   }
 
-  var lnButton = document.getElementById("copy-ln");
-  if (lnButton) {
-    lnButton.addEventListener("click", function () {
-      var address = lnButton.getAttribute("data-address") || "";
+  document.querySelectorAll(".tip-copy").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var address = button.getAttribute("data-address") || "";
       function done(label) {
-        lnButton.textContent = label;
-        setTimeout(function () { lnButton.textContent = "Copy"; }, 1400);
+        button.textContent = label;
+        setTimeout(function () { button.textContent = "Copy"; }, 1400);
       }
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(address).then(function () { done("Copied"); }, function () { done("Copy the address"); });
@@ -644,7 +643,7 @@
         done("Copy the address");
       }
     });
-  }
+  });
 
   fetch("data/series.json")
     .then(function (response) {
