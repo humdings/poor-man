@@ -99,6 +99,24 @@ class SnapshotTests(unittest.TestCase):
         )
         self.assertTrue(all(p["days"] is None or p["days"] > 0 for p in series))
 
+    def test_deflators_are_public_fred_series(self):
+        gdp = self.doc["deflators"]["gdp"]
+        cpi = self.doc["deflators"]["cpi"]
+        self.assertEqual(gdp["fred_id"], "GDP")
+        self.assertEqual(cpi["fred_id"], "CPIAUCSL")
+        self.assertLess(gdp["start"], "1948-01-01")
+        self.assertLess(cpi["start"], "1948-01-01")
+        self.assertGreater(gdp["points"][-1][1], 1.5e13)
+        self.assertLess(gdp["points"][-1][1], 8e13)
+        self.assertGreater(cpi["points"][-1][1], 200)
+        self.assertLess(cpi["points"][-1][1], 500)
+        # A monthly CPI change has to survive in the file. Integer rounding would
+        # pin many recent months to the same point.
+        recent = [row[1] for row in cpi["points"][-6:]]
+        self.assertGreater(len(set(recent)), 1)
+        self.assertIn("normalization", self.doc["bailout"])
+        self.assertIn("axiom", self.doc["bailout"])
+
 
 if __name__ == "__main__":
     unittest.main()

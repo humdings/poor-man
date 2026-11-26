@@ -78,6 +78,14 @@ FRED_MULTIPLIER = {
     "MBCURRCIR": 1_000_000_000,  # billions
     "WALCL": 1_000_000,  # millions
     "GFDEBTN": 1_000_000,  # millions
+    "GDP": 1_000_000_000,  # billions
+    "CPIAUCSL": 1,  # index, 1982-84=100
+}
+
+# CPI moves by fractions of an index point. Rounding to an integer would
+# erase a typical month. Dollar stocks stay whole dollars.
+FRED_INTEGRAL = {
+    "CPIAUCSL": False,
 }
 
 
@@ -106,7 +114,11 @@ def fred_csv(series_id: str):
     if "observation_date" not in first:
         print(f"  FRED {series_id} returned something other than CSV")
         return None
-    rows = parse_fred_csv(text, FRED_MULTIPLIER[series_id])
+    rows = parse_fred_csv(
+        text,
+        FRED_MULTIPLIER[series_id],
+        integral=FRED_INTEGRAL.get(series_id, True),
+    )
     if len(rows) < 2:
         print(f"  FRED {series_id} CSV was empty")
         return None
@@ -270,6 +282,87 @@ def require_range(name, rows, last_low, last_high, fresh_days):
 def measure_record(**kwargs):
     points = kwargs.pop("points")
     return dict(kwargs, start=points[0][0].isoformat(), end=points[-1][0].isoformat(), count=len(points), points=[[d.isoformat(), v] for d, v in points])
+
+
+def load_deflators() -> dict:
+    """Nominal GDP and CPI, the two public deflators the page can subtract.
+
+    No API key. Both are FRED CSV. CPI is stored as the index, because the
+    normalization uses ratios. GDP is stored in dollars; the annualized rate
+    cancels in the ratio.
+    """
+    print("Deflators…")
+    specs = [
+        (
+            "gdp",
+            "GDP",
+            "Nominal GDP",
+            "quarterly",
+            "Seasonally adjusted annual rate",
+            "Billions of dollars",
+            1_000_000_000,
+            "https://fred.stlouisfed.org/series/GDP",
+            "Gross Domestic Product. Only the ratio of levels is used, so the annualized rate cancels.",
+            date(1948, 1, 1),
+            1.5e13,
+            8e13,
+        ),
+        (
+            "cpi",
+            "CPIAUCSL",
+            "CPI",
+            "monthly",
+            "Seasonally adjusted",
+            "Index 1982-84=100",
+            1,
+            "https://fred.stlouisfed.org/series/CPIAUCSL",
+            "Consumer Price Index for All Urban Consumers, all items. Stored as the index.",
+            date(1948, 1, 1),
+            200,
+            500,
+        ),
+    ]
+    out = {}
+    for (
+        key,
+        series_id,
+        name,
+        frequency,
+        seasonal,
+        published_units,
+        multiplier,
+        url,
+        role,
+        start_before,
+        latest_low,
+        latest_high,
+    ) in specs:
+        rows = fred_csv(series_id)
+        if not rows:
+            raise SystemExit(
+                f"{series_id} is required for the normalization option and the FRED CSV endpoint did not respond."
+            )
+        if rows[0][0] > start_before:
+            raise SystemExit(f"{series_id} starts too late ({rows[0][0]})")
+        latest = rows[-1][1]
+        if not latest_low <= latest <= latest_high:
+            raise SystemExit(f"{series_id} latest value {latest} failed the unit check")
+        out[key] = measure_record(
+            points=rows,
+            id=key,
+            name=name,
+            fred_id=series_id,
+            fred_url=url,
+            frequency=frequency,
+            seasonal=seasonal,
+            published_units=published_units,
+            multiplier=multiplier,
+            role=role,
+            retrieval=(
+                f"FRED CSV for {series_id}, no API key. {role}"
+            ),
+        )
+    return out
 
 
 def main() -> int:
@@ -472,7 +565,8 @@ def main() -> int:
             multiplier=1,
             retrieval=(
                 "Treasury Fiscal Data Debt to the Penny, field tot_pub_debt_out_amt, "
-                "daily from 1993-04-01, already in dollars. " + early_note
+                "daily from 1993-04-01, already in dollars. " + early_note +
+                " Counted as monetary expansion: debt spends the same as cash, and one person's debt is another's asset."
             ),
         ),
         measure_record(
@@ -552,6 +646,29 @@ def main() -> int:
                 "If g(t) is zero or negative the day count is undefined. "
                 "It is not plotted, and it is never stored as a negative or infinite number."
             ),
+            "axiom": "Money spends the same, so expansion in any form counts as expansion.",
+            "smoothing": (
+                "A window and an averaging method smooth the pace. No smoothing uses the change "
+                "between the money print in effect and the print before it, held until the next print. "
+                "A decrease stays a decrease: the pace is negative and the day count is left blank."
+            ),
+            "normalization": (
+                "Off by default. When on, the pace is money growth in excess of nominal GDP (FRED GDP) "
+                "or CPI (FRED CPIAUCSL) over the same interval the averaging method already uses. "
+                "Trailing and print-to-print: g* = g − M(start) × (D(end) − D(start)) / (N × D(start)). "
+                "CAGR: g* = M(end) × (r(M) − r(D)), with r the compound daily rate. "
+                "Regression: g* = slope(M) − M(end) × slope(ln D). "
+                "A flat deflator leaves the pace unchanged. Equal percentage growth has excess zero "
+                "for the trailing and CAGR paces. GDP is a seasonally adjusted annual rate; only the "
+                "ratio of levels is used, so the annualization cancels."
+            ),
+            "decomposition": (
+                "The change in the day count splits exactly into money growth, then the bitcoin price, "
+                "then coins outstanding. Money growth moves first, with price and supply held at the "
+                "start of the window. Days at a fixed bitcoin price hold that starting price and use "
+                "today's coin count and pace. A longer bailout at a high price is a higher valuation "
+                "relative to monetary expansion."
+            ),
         },
         "btc": {
             "name": "Bitcoin market cap",
@@ -567,6 +684,7 @@ def main() -> int:
         },
         "headlines_default": headlines,
         "measures": measures,
+        "deflators": load_deflators(),
     }
 
     OUT.parent.mkdir(parents=True, exist_ok=True)

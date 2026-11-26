@@ -36,6 +36,8 @@ def regression_slope(values, start: int = 0, end: int | None = None) -> float | 
     sum_ty = 0.0
     for i in range(n):
         y = values[start + i]
+        if y is None:
+            return None
         sum_y += y
         sum_ty += i * y
     denom = n * sum_t2 - sum_t * sum_t
@@ -86,7 +88,61 @@ def _months(amount: int, unit: str) -> int:
     raise ValueError(f"unknown window unit {unit!r}")
 
 
+def normalize_btc(points):
+    """Bitcoin rows are (date, market cap) or (date, market cap, price)."""
+    dedup: dict[date, tuple[float, float | None]] = {}
+    for row in points:
+        observed = _as_date(row[0])
+        raw = row[1]
+        if raw is None or raw == "":
+            continue
+        price = None
+        if len(row) > 2 and row[2] is not None and row[2] != "":
+            price = float(row[2])
+        dedup[observed] = (float(raw), price)
+    rows = sorted(dedup.items())
+    caps = [(observed, pair[0]) for observed, pair in rows]
+    prices = [(observed, pair[1]) for observed, pair in rows if pair[1] is not None]
+    return caps, prices
+
+
+def _at(levels, origin: date | None, day: date):
+    if not levels or origin is None or day < origin:
+        return None, None
+    idx = (day - origin).days
+    if idx < 0 or idx >= len(levels):
+        return None, None
+    return levels[idx], idx
+
+
+def _positive(value) -> bool:
+    return (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and math.isfinite(value)
+        and value > 0
+    )
+
+
+def log_slope(levels, start: int, end: int) -> float | None:
+    """OLS slope of ln(level). A nonpositive level has no log-slope."""
+    if start is None or end is None or start < 0:
+        return None
+    n = end - start + 1
+    if n < 2:
+        return None
+    logs = []
+    for i in range(start, end + 1):
+        value = levels[i]
+        if value is None or value <= 0:
+            return None
+        logs.append(math.log(value))
+    return regression_slope(logs)
+
+
 def _growth(method, levels, start_i, end_i, level_start, level, n_days):
+    if level is None or level_start is None or n_days <= 0:
+        return None
     if method == "trailing":
         return (level - level_start) / n_days
     if method == "cagr":
@@ -96,6 +152,42 @@ def _growth(method, levels, start_i, end_i, level_start, level, n_days):
     if method == "regression":
         return regression_slope(levels, start_i, end_i)
     raise ValueError(f"unknown averaging method {method!r}")
+
+
+def proportional_rate(method, levels, start_i, end_i, level_start, level, n_days):
+    """Daily proportional rate of a deflator, using the same method as the money pace.
+
+    Trailing and the unsmoothed print-to-print pace use the two endpoints.
+    CAGR uses the compound endpoint rate. Regression uses the slope of the
+    log level on every forward-filled day in the window.
+    """
+    if n_days <= 0 or level_start is None or level is None:
+        return None
+    if method in ("trailing", "none"):
+        if level_start <= 0:
+            return None
+        return (level - level_start) / (n_days * level_start)
+    if method == "cagr":
+        if level_start <= 0 or level <= 0:
+            return None
+        return (level / level_start) ** (1 / n_days) - 1
+    if method == "regression":
+        return log_slope(levels, start_i, end_i)
+    raise ValueError(f"unknown averaging method {method!r}")
+
+
+def excess_growth(method, growth, level, level_start, rate):
+    """Money growth per day minus the deflator's rate, in dollars of the money stock.
+
+    Trailing and print-to-print scale the deflator by the money level at the
+    start of the window, so equal percentage growth is an excess of zero and
+    a flat deflator leaves the pace unchanged. CAGR and regression scale by
+    today's money level, which is the level those paces are already stated at.
+    """
+    if growth is None or rate is None or level is None or level_start is None:
+        return None
+    base = level_start if method in ("trailing", "none") else level
+    return growth - base * rate
 
 
 def _classify(growth, mcap):
@@ -109,61 +201,189 @@ def _classify(growth, mcap):
     return "expanding", days
 
 
-def compute_bailout(money, btc, amount: int, unit: str, method: str) -> list[dict]:
+def compute_bailout(money, btc, amount: int, unit: str, method: str, deflator=None) -> list[dict]:
     """One point per calendar day from the first day both series exist.
 
     The series runs through the later of the two last prints. Whichever
     series ended first is carried forward to that date. Bitcoin's market
     cap on a day is the last print on or before that day, and the money
     level is the same kind of step.
+
+    amount <= 0 turns smoothing off. The pace is then the change between the
+    money print in effect and the print before it, held until the next print.
+    A decrease stays negative and is classified as contracting.
+
+    Passing a deflator turns normalization on. The pace becomes money growth
+    in excess of that deflator over the same interval. Coverage gaps in the
+    deflator make the day count insufficient rather than falling back to the
+    unadjusted pace.
     """
     money = normalize(money)
-    btc = normalize(btc)
-    if not money or not btc:
+    caps, prices = normalize_btc(btc)
+    normalizing = deflator is not None
+    deflator_points = normalize(deflator) if normalizing else []
+    if not money or not caps:
         return []
-    months = _months(int(amount), unit)
+    smooth = int(amount) > 0
+    if smooth:
+        months = _months(int(amount), unit)
+        if method not in ("trailing", "cagr", "regression"):
+            raise ValueError(f"unknown averaging method {method!r}")
+    else:
+        months = 0
+        method = "none"
+
     m0 = money[0][0]
-    b0 = btc[0][0]
-    end = max(money[-1][0], btc[-1][0])
+    b0 = caps[0][0]
+    end = max(money[-1][0], caps[-1][0])
     eval_start = max(m0, b0)
     if eval_start > end:
         return []
 
     m_levels = forward_fill(money, m0, end)
-    c_levels = forward_fill(btc, b0, end)
+    c_levels = forward_fill(caps, b0, end)
+    if prices:
+        p0 = prices[0][0]
+        p_levels = forward_fill(prices, p0, end)
+    else:
+        p0 = None
+        p_levels = []
+    if deflator_points:
+        d0 = deflator_points[0][0]
+        d_levels = forward_fill(deflator_points, d0, end)
+    else:
+        d0 = None
+        d_levels = []
+
     points = []
+    print_index = -1
     day = eval_start
     while day <= end:
+        while print_index + 1 < len(money) and money[print_index + 1][0] <= day:
+            print_index += 1
         level = m_levels[(day - m0).days]
         mcap = c_levels[(day - b0).days]
-        start = shift_months(day, -months)
-        n_days = (day - start).days
-        if start < m0 or n_days <= 0 or level is None or mcap is None:
-            points.append(_point(day, "insufficient", None, None, level, None, mcap))
+        price, _price_i = _at(p_levels, p0, day)
+        supply = mcap / price if _positive(price) and _positive(mcap) else None
+
+        if smooth:
+            start = shift_months(day, -months)
+            growth_end = day
+            n_days = (day - start).days
+        elif print_index >= 1:
+            growth_end = money[print_index][0]
+            start = money[print_index - 1][0]
+            n_days = (growth_end - start).days
+        else:
+            start = None
+            growth_end = None
+            n_days = 0
+
+        ref_date = start.isoformat() if start is not None and start >= eval_start else None
+        if start is None or start < m0 or n_days <= 0 or level is None or mcap is None:
+            points.append(
+                _point(day, "insufficient", None, None, None, level, None, mcap, price, supply, ref_date)
+            )
         else:
             start_i = (start - m0).days
+            end_i = (growth_end - m0).days
             level_start = m_levels[start_i]
-            end_i = (day - m0).days
-            growth = _growth(method, m_levels, start_i, end_i, level_start, level, n_days)
+            level_end = m_levels[end_i]
+            growth_method = "trailing" if method == "none" else method
+            raw = _growth(growth_method, m_levels, start_i, end_i, level_start, level_end, n_days)
+            growth = raw
+            if normalizing:
+                d_start, d_start_i = _at(d_levels, d0, start)
+                d_end, d_end_i = _at(d_levels, d0, growth_end)
+                rate = proportional_rate(
+                    growth_method, d_levels, d_start_i, d_end_i, d_start, d_end, n_days
+                )
+                growth = excess_growth(method, raw, level_end, level_start, rate)
             state, days = _classify(growth, mcap)
-            points.append(_point(day, state, days, growth, level, level_start, mcap))
+            points.append(
+                _point(
+                    day, state, days, growth, raw, level, level_start, mcap, price, supply, ref_date
+                )
+            )
         day += timedelta(days=1)
-    return points
+    return annotate_counters(points)
 
 
-def _point(day, state, days, growth, level, level_start, mcap) -> dict:
+def _point(day, state, days, growth, growth_unadjusted, level, level_start, mcap, price, supply, ref_date) -> dict:
     return {
         "date": day.isoformat(),
         "state": state,
         "days": days,
         "growth_per_day": growth,
+        "growth_unadjusted": growth_unadjusted,
         "level": level,
         "level_start": level_start,
         "mcap": mcap,
+        "price": price,
+        "supply": supply,
+        "ref_date": ref_date,
+        "fixed_price_days": None,
+        "fixed_units_days": None,
     }
 
 
-def to_chart_data(points) -> list[dict]:
+def annotate_counters(points) -> list[dict]:
+    """Days at the reference bitcoin price, and days at the reference coin count.
+
+    The reference is the start of the window, or the previous money print when
+    smoothing is off. Both counters use today's pace, so they can be compared
+    with today's bailout.
+    """
+    by_date = {point["date"]: point for point in points}
+    for point in points:
+        point["fixed_price_days"] = None
+        point["fixed_units_days"] = None
+        ref = by_date.get(point.get("ref_date") or "")
+        growth = point.get("growth_per_day")
+        if ref is None or not _positive(growth):
+            continue
+        if _positive(ref.get("price")) and _positive(point.get("supply")):
+            point["fixed_price_days"] = ref["price"] * point["supply"] / growth
+        if _positive(point.get("price")) and _positive(ref.get("supply")):
+            point["fixed_units_days"] = point["price"] * ref["supply"] / growth
+    return points
+
+
+def decompose(start: dict, end: dict) -> dict | None:
+    """Split end days minus start days into money growth, bitcoin price, and new coins.
+
+    Order, which adds up exactly: money growth moves first, with bitcoin's
+    price and the coins outstanding held at the reference date. Price moves
+    next, coins still held. Coins outstanding move last.
+
+    fixed_price_days holds today's coin count at the reference price.
+    fixed_units_days holds today's price at the reference coin count.
+    """
+    g0 = start.get("growth_per_day")
+    g1 = end.get("growth_per_day")
+    p0 = start.get("price")
+    p1 = end.get("price")
+    s0 = start.get("supply")
+    s1 = end.get("supply")
+    if not all(_positive(value) for value in (g0, g1, p0, p1, s0, s1)):
+        return None
+    days_start = p0 * s0 / g0
+    after_money = p0 * s0 / g1
+    after_price = p1 * s0 / g1
+    days_end = p1 * s1 / g1
+    return {
+        "days_start": days_start,
+        "days_end": days_end,
+        "from_money": after_money - days_start,
+        "from_price": after_price - after_money,
+        "from_supply": days_end - after_price,
+        "fixed_price_days": p0 * s1 / g1,
+        "fixed_units_days": p1 * s0 / g1,
+        "change": days_end - days_start,
+    }
+
+
+def _days_chart(points) -> list[dict]:
     """Line points for an expanding stretch. Contraction opens a gap.
 
     A whitespace point (no value) is inserted at the first day of each
@@ -191,3 +411,39 @@ def to_chart_data(points) -> list[dict]:
         if rows[-1]["time"] != points[-1]["date"]:
             rows.append({"time": points[-1]["date"]})
     return rows
+
+
+def _series_chart(points, key: str, positive_only: bool) -> list[dict]:
+    """Same gap rule as the day count, for a numeric field on each point.
+
+    The pace chart sets positive_only False so a decrease is drawn below zero
+    instead of being dropped.
+    """
+    rows = []
+    gap_open = False
+    last_ok = False
+    for point in points:
+        value = point.get(key)
+        ok = _positive(value) if positive_only else (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and math.isfinite(value)
+        )
+        if ok:
+            rows.append({"time": point["date"], "value": value})
+            gap_open = False
+            last_ok = True
+            continue
+        last_ok = False
+        if rows and not gap_open:
+            rows.append({"time": point["date"]})
+            gap_open = True
+    if points and not last_ok and rows and rows[-1]["time"] != points[-1]["date"]:
+        rows.append({"time": points[-1]["date"]})
+    return rows
+
+
+def to_chart_data(points, key: str = "days") -> list[dict]:
+    if key == "days":
+        return _days_chart(points)
+    return _series_chart(points, key, positive_only=(key != "growth_per_day"))

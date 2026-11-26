@@ -6,8 +6,13 @@ import re
 from datetime import date
 
 
-def parse_fred_csv(text: str, multiplier: float) -> list[tuple[date, int]]:
-    """FRED graph CSV. Missing prints are '.'. Multiplier converts to dollars."""
+def parse_fred_csv(text: str, multiplier: float, *, integral: bool = True) -> list[tuple[date, float]]:
+    """FRED graph CSV. Missing prints are '.'. Multiplier converts to dollars.
+
+    Dollar stocks are stored as whole dollars. An index such as CPI is kept
+    as a decimal, because a monthly change is often smaller than one index point
+    and rounding it away would erase the growth the normalization uses.
+    """
     rows = []
     for line in text.splitlines()[1:]:
         line = line.strip()
@@ -17,9 +22,9 @@ def parse_fred_csv(text: str, multiplier: float) -> list[tuple[date, int]]:
         val = val.strip()
         if val in {"", "."}:
             continue
-        rows.append(
-            (date.fromisoformat(date_s.strip()), int(round(float(val) * multiplier)))
-        )
+        value = float(val) * multiplier
+        stored = int(round(value)) if integral else round(value, 6)
+        rows.append((date.fromisoformat(date_s.strip()), stored))
     return rows
 
 

@@ -51,6 +51,11 @@ class FredCsvTests(unittest.TestCase):
             ],
         )
 
+    def test_cpi_keeps_fractional_index_points(self):
+        text = "observation_date,CPIAUCSL\n2024-01-01,308.417\n2024-02-01,310.326\n"
+        rows = parse_fred_csv(text, multiplier=1, integral=False)
+        self.assertEqual(rows, [(date(2024, 1, 1), 308.417), (date(2024, 2, 1), 310.326)])
+
     def test_millions_to_dollars(self):
         text = "observation_date,WALCL\n2002-12-18,719542\n"
         rows = parse_fred_csv(text, multiplier=1_000_000)

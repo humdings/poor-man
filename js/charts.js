@@ -2,6 +2,7 @@
 (function () {
   var GOLD = "#e4b15a";
   var SAGE = "#9dbe8a";
+  var UNITS = "#8eb4d4";
   var INK = "#b7b1a3";
   var GRID = "rgba(243, 239, 228, 0.06)";
   var BORDER = "rgba(243, 239, 228, 0.14)";
@@ -60,6 +61,8 @@
   function ensure() {
     if (!library() || charts.bailout) return charts.bailout;
     charts.bailout = mount("chart-bailout");
+    charts.fixed = mount("chart-fixed");
+    charts.pace = mount("chart-pace");
     charts.money = mount("chart-money");
     charts.btc = mount("chart-btc");
     charts.overlay = mount("chart-overlay");
@@ -71,6 +74,44 @@
       priceFormat: { type: "custom", formatter: days, minMove: 0.1 },
       priceLineVisible: false,
       lastValueVisible: true,
+    });
+    var dayFormat = { type: "custom", formatter: days, minMove: 0.1 };
+    charts.fixedActual = charts.fixed.addLineSeries({
+      color: GOLD,
+      lineWidth: 2,
+      priceFormat: dayFormat,
+      priceLineVisible: false,
+      lastValueVisible: false,
+    });
+    charts.fixedPrice = charts.fixed.addLineSeries({
+      color: SAGE,
+      lineWidth: 2,
+      priceFormat: dayFormat,
+      priceLineVisible: false,
+      lastValueVisible: false,
+    });
+    charts.fixedUnits = charts.fixed.addLineSeries({
+      color: UNITS,
+      lineWidth: 2,
+      lineStyle: 2,
+      priceFormat: dayFormat,
+      priceLineVisible: false,
+      lastValueVisible: false,
+    });
+    charts.paceSeries = charts.pace.addLineSeries({
+      color: GOLD,
+      lineWidth: 2,
+      priceFormat: { type: "custom", formatter: usd },
+      priceLineVisible: false,
+      lastValueVisible: true,
+    });
+    charts.paceSeries.createPriceLine({
+      price: 0,
+      color: BORDER,
+      lineWidth: 1,
+      lineStyle: 2,
+      axisLabelVisible: false,
+      title: "",
     });
     charts.moneySeries = charts.money.addAreaSeries({
       lineColor: SAGE,
@@ -130,7 +171,7 @@
 
   function render(spec) {
     if (!ensure()) {
-      ["chart-bailout", "chart-money", "chart-btc", "chart-overlay"].forEach(function (id) {
+      ["chart-bailout", "chart-fixed", "chart-pace", "chart-money", "chart-btc", "chart-overlay"].forEach(function (id) {
         var el = document.getElementById(id);
         if (el && !el.dataset.missing) {
           el.dataset.missing = "1";
@@ -141,6 +182,10 @@
     }
     try {
       charts.bailoutSeries.setData(monotonic(spec.bailout));
+      charts.fixedActual.setData(monotonic(spec.bailout));
+      charts.fixedPrice.setData(monotonic(spec.fixedPrice || []));
+      charts.fixedUnits.setData(monotonic(spec.fixedUnits || []));
+      charts.paceSeries.setData(monotonic(spec.pace || []));
       charts.moneySeries.setData(levels(spec.money));
       charts.btcSeries.setData(levels(spec.btc));
       charts.overlayMoney.setData(levels(spec.money));
@@ -149,6 +194,8 @@
       console.error(err);
     }
     charts.bailout.timeScale().fitContent();
+    charts.fixed.timeScale().fitContent();
+    charts.pace.timeScale().fitContent();
     charts.money.timeScale().fitContent();
     charts.btc.timeScale().fitContent();
     charts.overlay.timeScale().fitContent();
@@ -158,6 +205,7 @@
   function setLog(on) {
     if (!charts.bailout) return;
     charts.bailout.priceScale("right").applyOptions({ mode: on ? 1 : 0 });
+    if (charts.fixed) charts.fixed.priceScale("right").applyOptions({ mode: on ? 1 : 0 });
   }
 
   window.PmbCharts = { render: render, setLog: setLog, available: library };

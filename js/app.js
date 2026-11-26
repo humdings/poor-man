@@ -12,15 +12,19 @@
     sentence: document.getElementById("sentence"),
     pace: document.getElementById("pace"),
     asof: document.getElementById("asof"),
+    split: document.getElementById("split"),
     strip: document.getElementById("strip"),
     assumptions: document.getElementById("assumption-list"),
     share: document.getElementById("share"),
     amount: document.getElementById("custom-amount"),
     unit: document.getElementById("custom-unit"),
     log: document.getElementById("log-scale"),
+    normalize: document.getElementById("normalize"),
+    normSeries: document.getElementById("norm-series"),
     moneyTitle: document.getElementById("money-title"),
     legend: document.getElementById("legend-money"),
     btcNote: document.getElementById("btc-note"),
+    paceNote: document.getElementById("pace-note"),
     empty: document.getElementById("empty-bailout"),
     sources: document.getElementById("sources"),
     generated: document.getElementById("generated"),
@@ -31,13 +35,17 @@
     var measure = q.get("measure");
     if (MEASURES.indexOf(measure) < 0) measure = "m2";
     var unit = q.get("unit") === "y" ? "y" : "m";
-    var amount = parseInt(q.get("window"), 10);
-    if (!isFinite(amount)) amount = 12;
-    amount = clamp(amount, unit);
+    var rawWindow = q.get("window");
+    var amount = parseInt(rawWindow, 10);
+    if (rawWindow === "0") amount = 0;
+    else if (!isFinite(amount)) amount = 12;
+    if (amount !== 0) amount = clamp(amount, unit);
     var method = q.get("method");
     if (METHODS.indexOf(method) < 0) method = "trailing";
     var log = q.get("log") === "0" ? false : true;
-    return { measure: measure, amount: amount, unit: unit, method: method, log: log };
+    var norm = q.get("norm");
+    if (norm !== "gdp" && norm !== "cpi") norm = "0";
+    return { measure: measure, amount: amount, unit: unit, method: method, log: log, norm: norm };
   }
 
   function clamp(amount, unit) {
@@ -52,7 +60,12 @@
     q.set("unit", state.unit);
     q.set("method", state.method);
     q.set("log", state.log ? "1" : "0");
+    q.set("norm", state.norm);
     history.replaceState(null, "", "?" + q.toString());
+  }
+
+  function smoothed() {
+    return state.amount > 0;
   }
 
   function unitName() {
@@ -60,34 +73,68 @@
   }
 
   function windowLabel() {
+    if (!smoothed()) return "no smoothing";
     var n = state.amount;
     if (state.unit === "y") return n + (n === 1 ? " year" : " years");
     return n + (n === 1 ? " month" : " months");
   }
 
   function windowAdjective() {
+    if (!smoothed()) return "print-to-print";
     return state.amount + (state.unit === "y" ? "-year" : "-month");
   }
 
   function methodName() {
+    if (!smoothed()) return "print-to-print change";
     if (state.method === "regression") return "linear regression";
     if (state.method === "cagr") return "CAGR pace";
     return "trailing change";
   }
 
+  function normName() {
+    if (state.norm === "gdp") return "nominal GDP";
+    if (state.norm === "cpi") return "CPI";
+    return "";
+  }
+
   function methodDetail() {
+    if (!smoothed()) {
+      return "No smoothing. The pace is the change from the previous print to the print in effect, divided by the days between those prints, and held until the next print. A decrease stays a decrease.";
+    }
     if (state.method === "regression") {
-      return "Linear regression. Growth per day is the slope of the daily forward-filled level across the window. Flat days between prints are part of the fit.";
+      return "Linear regression over " + windowLabel() + ". Growth per day is the slope of the daily forward-filled level across the window. Flat days between prints are part of the fit.";
     }
     if (state.method === "cagr") {
-      return "CAGR pace. The compound rate from the start of the window to today, converted to dollars per day at today's level.";
+      return "CAGR pace over " + windowLabel() + ". The compound rate from the start of the window to today, converted to dollars per day at today's level.";
     }
-    return "Simple trailing change, the default. Growth per day is (level today − level at the start of the window) ÷ days in the window.";
+    return "Simple trailing change over " + windowLabel() + ", the default smooth. Growth per day is (level today − level at the start of the window) ÷ days in the window.";
+  }
+
+  function normDetail() {
+    if (state.norm === "0") {
+      return "Off. The pace is the monetary expansion itself, not growth in excess of GDP or CPI.";
+    }
+    var which = state.norm === "gdp"
+      ? "Nominal GDP, FRED GDP, quarterly, seasonally adjusted annual rate. Only the ratio of levels is used, so the annual rate cancels."
+      : "CPI, FRED CPIAUCSL, the monthly seasonally adjusted index.";
+    var formula = !smoothed() || state.method === "trailing"
+      ? "Excess pace = money's trailing change minus the starting money level times the deflator's percentage change over the same dates."
+      : state.method === "cagr"
+        ? "Excess pace = today's level times (money's compound daily rate − the deflator's)."
+        : "Excess pace = the dollar slope of money minus today's level times the deflator's log-slope.";
+    return "On. Money growth in excess of " + which + " " + formula + " A flat deflator leaves the pace unchanged. Matching percentage growth pauses the trailing and CAGR day counts.";
   }
 
   function formatDays(n) {
-    if (n >= 1000) return Math.round(n).toLocaleString("en-US");
-    return n.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    var abs = Math.abs(n);
+    if (abs >= 1000) return Math.round(abs).toLocaleString("en-US");
+    return abs.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  }
+
+  function signedDays(n) {
+    if (n > 0) return "+" + formatDays(n);
+    if (n < 0) return "−" + formatDays(n);
+    return formatDays(0);
   }
 
   function formatUSD(n) {
@@ -109,37 +156,59 @@
     return data.btc.points.map(function (row) { return [row[0], row[1]]; });
   }
 
+  function deflatorPoints() {
+    if (state.norm !== "gdp" && state.norm !== "cpi") return null;
+    var series = data.deflators && data.deflators[state.norm];
+    return series ? series.points : [];
+  }
+
   function run(measure) {
-    return Pmb.computeBailout(measure.points, btcPairs(), {
+    return Pmb.computeBailout(measure.points, data.btc.points, {
       amount: state.amount,
       unit: unitName(),
       method: state.method,
+      deflator: state.norm === "0" ? null : deflatorPoints(),
     });
   }
 
   function sentence(measure, latest) {
-    var label = windowLabel();
     var name = measure.name;
+    var excess = state.norm === "0" ? "" : " in excess of " + normName();
     if (!latest || latest.state === "insufficient") {
-      return name + " does not cover a full " + label + " before this date, so there is no day count.";
+      if (state.norm !== "0") {
+        return name + " does not have a full " + windowLabel() + " covered by " + normName() + ", so there is no excess day count.";
+      }
+      if (!smoothed()) {
+        return name + " has no earlier print to compare, so there is no unsmoothed day count yet.";
+      }
+      return name + " does not cover a full " + windowLabel() + " before this date, so there is no day count.";
     }
     if (latest.state === "contracting") {
-      return name + " did not grow over the trailing " + label + ", using a " + methodName() + ", so the bailout clock is paused. A pace that is not positive is a gap, not a day count.";
+      if (!smoothed()) {
+        return "With no smoothing, the latest print of " + name + " was a decrease" + excess + ", so the bailout clock is paused. The decrease is shown as it is.";
+      }
+      return name + " did not expand over the trailing " + windowLabel() + excess + ", using a " + methodName() + ", so the bailout clock is paused. A pace that is not positive is a gap, not a day count.";
     }
     var pace = formatUSD(latest.growthPerDay) + " a day";
     var adj = windowAdjective();
+    var tail = "so it expands by one bitcoin market cap every " + formatDays(latest.days) + " days.";
+    if (!smoothed()) {
+      return "With no smoothing, the latest print-to-print change in " + name + excess + " is about " + pace + ", " + tail;
+    }
     if (state.method === "trailing") {
-      return "At the current pace, the trailing " + adj + " change in " + name + " is about " + pace + ", so the stock grows by one bitcoin market cap every " + formatDays(latest.days) + " days.";
+      return "At the current pace, the trailing " + adj + " change in " + name + excess + " is about " + pace + ", " + tail;
     }
     if (state.method === "regression") {
-      return "At the current pace, a " + adj + " linear regression on " + name + " rises about " + pace + ", so the stock grows by one bitcoin market cap every " + formatDays(latest.days) + " days.";
+      return "At the current pace, a " + adj + " linear regression on " + name + excess + " rises about " + pace + ", " + tail;
     }
-    return "At the current pace, the " + adj + " compound growth of " + name + ", applied at today's level, is about " + pace + ", so the stock grows by one bitcoin market cap every " + formatDays(latest.days) + " days.";
+    return "At the current pace, the " + adj + " compound growth of " + name + excess + ", applied at today's level, is about " + pace + ", " + tail;
   }
 
   function paintHeadline(measure, result) {
     var latest = result.points.length ? result.points[result.points.length - 1] : null;
-    els.kicker.textContent = measure.name + " · " + windowLabel() + " " + methodName();
+    var normBit = state.norm === "0" ? "" : " · excess of " + normName();
+    els.kicker.textContent = measure.name + " · " + windowLabel() + " " + (smoothed() ? methodName() : "") + normBit;
+    els.kicker.textContent = els.kicker.textContent.replace(/\s+/g, " ").trim();
     els.days.classList.remove("contracting", "insufficient");
     if (!latest || latest.state === "insufficient") {
       els.days.textContent = "Not enough history";
@@ -155,7 +224,13 @@
     }
     els.sentence.textContent = sentence(measure, latest);
     if (latest && latest.state === "expanding") {
-      els.pace.textContent = "Bitcoin market cap on this date: " + formatUSD(latest.mcap) + ". Level in effect: " + formatUSD(latest.level) + ".";
+      var line = "Bitcoin market cap on this date: " + formatUSD(latest.mcap) + ". Level in effect: " + formatUSD(latest.level) + ".";
+      if (state.norm !== "0" && latest.growthUnadjusted != null) {
+        line += " Unadjusted pace " + formatUSD(latest.growthUnadjusted) + " a day.";
+      }
+      els.pace.textContent = line;
+    } else if (latest && latest.growthPerDay != null) {
+      els.pace.textContent = "Pace " + formatUSD(latest.growthPerDay) + " a day." + (latest.mcap ? " Bitcoin market cap on this date: " + formatUSD(latest.mcap) + "." : "");
     } else if (latest && latest.mcap) {
       els.pace.textContent = "Bitcoin market cap on this date: " + formatUSD(latest.mcap) + ".";
     } else {
@@ -178,7 +253,80 @@
     var hasLine = plotted.some(function (row) { return row.value != null; });
     els.empty.hidden = hasLine;
     els.empty.textContent = hasLine ? "" : "Nothing to plot for this window. The pace is undefined over the whole overlap with bitcoin.";
+    if (els.paceNote) {
+      els.paceNote.textContent = smoothed()
+        ? "Dollars per day from the " + windowLabel() + " " + methodName() + (state.norm === "0" ? "" : ", in excess of " + normName()) + ". Decreases are drawn. The day count above is blank when this line is not positive."
+        : "Dollars per day with no smoothing" + (state.norm === "0" ? "" : ", in excess of " + normName()) + ". Each step is the change between one print and the next, held until the following print, so a decrease shows as a decrease. The day count above is blank when this line is not positive.";
+    }
     return { latest: latest, plotted: plotted };
+  }
+
+  function card(label, value, detail, tone) {
+    var article = document.createElement("article");
+    var p = document.createElement("p");
+    p.className = "label";
+    p.textContent = label;
+    var strong = document.createElement("strong");
+    if (tone) strong.className = tone;
+    strong.textContent = value;
+    var small = document.createElement("p");
+    small.className = "detail";
+    small.textContent = detail;
+    article.appendChild(p);
+    article.appendChild(strong);
+    article.appendChild(small);
+    return article;
+  }
+
+  function toneOf(n) {
+    if (n > 0) return "up";
+    if (n < 0) return "down";
+    return "";
+  }
+
+  function paintSplit(result) {
+    els.split.innerHTML = "";
+    var frame = document.createElement("p");
+    frame.className = "frame";
+    frame.textContent = "A longer bailout at a high price is the point: it is a higher valuation relative to monetary expansion.";
+    var latest = result.points.length ? result.points[result.points.length - 1] : null;
+    var ref = null;
+    if (latest && latest.refDate) {
+      for (var i = 0; i < result.points.length; i++) {
+        if (result.points[i].date === latest.refDate) {
+          ref = result.points[i];
+          break;
+        }
+      }
+    }
+    var split = ref ? Pmb.decompose(ref, latest) : null;
+    if (!split) {
+      var empty = document.createElement("p");
+      empty.className = "split-empty";
+      if (latest && latest.state === "contracting") {
+        empty.textContent = smoothed()
+          ? "The averaged pace is not positive, so there is no day count to split into price and money growth."
+          : "With no smoothing the latest print is a decrease, so there is no day count to split. The decrease is the print itself.";
+      } else if (!latest || !latest.refDate) {
+        empty.textContent = smoothed()
+          ? "The price-versus-money split starts once a full window sits inside the bitcoin history."
+          : "The price-versus-money split starts once two money prints sit inside the bitcoin history.";
+      } else {
+        empty.textContent = "The split needs an expanding pace, and a bitcoin price, both today and on " + latest.refDate + ".";
+      }
+      els.split.appendChild(empty);
+      els.split.appendChild(frame);
+      return null;
+    }
+    var since = smoothed() ? "Since the window opened on " + latest.refDate : "Since the previous print on " + latest.refDate;
+    els.split.appendChild(card("Change in days", signedDays(split.change), since, toneOf(split.change)));
+    els.split.appendChild(card("From money growth", signedDays(split.fromMoney), "Pace changed, bitcoin held", toneOf(split.fromMoney)));
+    els.split.appendChild(card("From bitcoin price", signedDays(split.fromPrice), "Price changed, coins held", toneOf(split.fromPrice)));
+    els.split.appendChild(card("From new coins", signedDays(split.fromSupply), "Coins outstanding", toneOf(split.fromSupply)));
+    els.split.appendChild(card("Fixed bitcoin price", formatDays(split.fixedPriceDays) + " days", "Price held at " + latest.refDate, ""));
+    els.split.appendChild(card("Fixed bitcoin units", formatDays(split.fixedUnitsDays) + " days", "Coin count held at " + latest.refDate, ""));
+    els.split.appendChild(frame);
+    return split;
   }
 
   function paintStrip(cache) {
@@ -218,13 +366,21 @@
     els.assumptions.appendChild(dd);
   }
 
-  function paintAssumptions(measure) {
+  function paintAssumptions(measure, split, latest) {
     els.assumptions.innerHTML = "";
-    addAssumption("Series", measure.name + " · " + measure.fred_id + " · " + measure.frequency + " · " + measure.seasonal);
-    addAssumption("Window", windowLabel() + ", ending on the headline date.");
-    addAssumption("Averaging", methodDetail());
-    addAssumption("Contraction", "Not plotted. Zero or negative growth is a gap. The day count is never negative and never infinite.");
-    addAssumption("Alignment", "Money levels step forward daily. Bitcoin market cap is the print on that date, or the latest print on or before it. The headline date is the later of the two last prints.");
+    addAssumption("Axiom", "Money spends the same, so expansion in any form counts as expansion. Public debt is included: debt spends the same as cash, and one person's debt is another's asset.");
+    addAssumption("Series", measure.name + ", a monetary expansion measure · " + measure.fred_id + " · " + measure.frequency + " · " + measure.seasonal);
+    addAssumption("Smoothing", methodDetail());
+    addAssumption("Normalization", normDetail());
+    addAssumption("Contraction", "Not plotted as a day count. Zero or negative growth is a gap there, and a decrease on the pace chart. The day count is never negative and never infinite.");
+    var moved = "Needs an expanding pace at both ends of the comparison.";
+    if (split && latest && latest.refDate) {
+      moved = "Since " + latest.refDate + ": money growth " + signedDays(split.fromMoney) + " days, bitcoin price " + signedDays(split.fromPrice) + " days, new coins " + signedDays(split.fromSupply) + " days. At the " + latest.refDate + " price the bailout would be " + formatDays(split.fixedPriceDays) + " days.";
+    } else if (latest && latest.state === "contracting" && !smoothed()) {
+      moved = "No smoothing, and the latest print decreased, so there is no day count to attribute.";
+    }
+    addAssumption("What moved", moved);
+    addAssumption("Alignment", "Money, bitcoin, and the deflator step forward daily. Bitcoin's market cap and price are the print on that date, or the latest print on or before it. The headline date is the later of the money and bitcoin last prints.");
     addAssumption("Units", measure.published_units + ", stored in dollars" + (measure.multiplier > 1 ? " (× " + measure.multiplier.toLocaleString("en-US") + ")." : "."));
   }
 
@@ -232,21 +388,38 @@
     els.sources.innerHTML = "";
     var btc = data.btc;
     els.sources.appendChild(sourceBlock(
-      "Bitcoin market cap",
+      "Bitcoin market cap and price",
       btc.start + " → " + btc.end + " · " + btc.count.toLocaleString("en-US") + " days",
       btc.retrieval,
       btc.source_url,
       btc.source_name
     ));
     data.measures.forEach(function (measure) {
+      var note = measure.retrieval;
+      if (measure.id === "debt" && note.indexOf("spends the same") < 0) {
+        note += " Counted as monetary expansion: debt spends the same as cash, and one person's debt is another's asset.";
+      }
       els.sources.appendChild(sourceBlock(
         measure.name + " (" + measure.fred_id + ")",
         measure.start + " → " + measure.end + " · " + measure.count.toLocaleString("en-US") + " prints",
-        measure.retrieval,
+        note,
         measure.fred_url,
         "FRED " + measure.fred_id
       ));
     });
+    if (data.deflators) {
+      ["gdp", "cpi"].forEach(function (key) {
+        var series = data.deflators[key];
+        if (!series) return;
+        els.sources.appendChild(sourceBlock(
+          series.name + " (" + series.fred_id + ")",
+          series.start + " → " + series.end + " · " + series.count.toLocaleString("en-US") + " prints",
+          series.retrieval,
+          series.fred_url,
+          "FRED " + series.fred_id
+        ));
+      });
+    }
     els.generated.textContent = "Snapshot generated " + data.generated_at + ". The page reads this file only.";
   }
 
@@ -274,20 +447,31 @@
       button.setAttribute("aria-pressed", button.getAttribute("data-measure") === state.measure ? "true" : "false");
     });
     document.querySelectorAll("[data-window]").forEach(function (button) {
-      var on = Number(button.getAttribute("data-window")) === state.amount && button.getAttribute("data-unit") === state.unit;
+      var amount = Number(button.getAttribute("data-window"));
+      var on = amount === 0 ? state.amount === 0 : state.amount === amount && button.getAttribute("data-unit") === state.unit;
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
     document.querySelectorAll("[data-method]").forEach(function (button) {
-      button.setAttribute("aria-pressed", button.getAttribute("data-method") === state.method ? "true" : "false");
+      var on = smoothed() && button.getAttribute("data-method") === state.method;
+      button.disabled = !smoothed();
+      button.setAttribute("aria-pressed", on ? "true" : "false");
     });
-    els.amount.value = String(state.amount);
-    els.unit.value = state.unit;
-    els.amount.max = state.unit === "y" ? "50" : "600";
+    if (smoothed()) {
+      els.amount.value = String(state.amount);
+      els.unit.value = state.unit;
+      els.amount.max = state.unit === "y" ? "50" : "600";
+    }
     els.log.checked = state.log;
+    var canNorm = !!(data.deflators && data.deflators.gdp && data.deflators.cpi);
+    els.normalize.disabled = !canNorm;
+    els.normalize.checked = canNorm && state.norm !== "0";
+    els.normSeries.value = state.norm === "cpi" ? "cpi" : "gdp";
+    els.normSeries.disabled = !canNorm || state.norm === "0";
+    if (!canNorm) state.norm = "0";
   }
 
   function render() {
-    state.amount = clamp(state.amount, state.unit);
+    if (state.amount !== 0) state.amount = clamp(state.amount, state.unit);
     writeState();
     syncControls();
     var measure = measureById(state.measure);
@@ -295,15 +479,20 @@
     data.measures.forEach(function (item) {
       if (item.group === "primary" || item.id === state.measure) cache[item.id] = run(item);
     });
-    var painted = paintHeadline(measure, cache[state.measure]);
+    var result = cache[state.measure];
+    var painted = paintHeadline(measure, result);
+    var split = paintSplit(result);
     paintStrip(cache);
-    paintAssumptions(measure);
+    paintAssumptions(measure, split, painted.latest);
     els.moneyTitle.textContent = measure.name;
     els.legend.textContent = measure.short;
     var price = data.btc.points[data.btc.points.length - 1][2];
     els.btcNote.textContent = "Log scale. Latest price " + (price != null ? "$" + Number(price).toLocaleString("en-US", { maximumFractionDigits: 2 }) : "unavailable") + ".";
     PmbCharts.render({
       bailout: painted.plotted,
+      fixedPrice: Pmb.toChartData(result.points, "fixedPriceDays"),
+      fixedUnits: Pmb.toChartData(result.points, "fixedUnitsDays"),
+      pace: Pmb.toChartData(result.points, "growthPerDay"),
       money: measure.points,
       btc: btcPairs(),
       log: state.log,
@@ -319,13 +508,18 @@
     });
     document.querySelectorAll("[data-window]").forEach(function (button) {
       button.addEventListener("click", function () {
-        state.amount = Number(button.getAttribute("data-window"));
-        state.unit = button.getAttribute("data-unit");
+        var amount = Number(button.getAttribute("data-window"));
+        if (amount === 0) state.amount = 0;
+        else {
+          state.amount = amount;
+          state.unit = button.getAttribute("data-unit");
+        }
         render();
       });
     });
     document.querySelectorAll("[data-method]").forEach(function (button) {
       button.addEventListener("click", function () {
+        if (!smoothed()) return;
         state.method = button.getAttribute("data-method");
         render();
       });
@@ -343,6 +537,15 @@
       state.log = els.log.checked;
       writeState();
       PmbCharts.setLog(state.log);
+    });
+    els.normalize.addEventListener("change", function () {
+      state.norm = els.normalize.checked ? els.normSeries.value : "0";
+      render();
+    });
+    els.normSeries.addEventListener("change", function () {
+      if (!els.normalize.checked) return;
+      state.norm = els.normSeries.value === "cpi" ? "cpi" : "gdp";
+      render();
     });
     els.share.addEventListener("click", function () {
       var url = location.href;
