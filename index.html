@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Poor Man's Bailout</title>
+  <meta name="description" content="Days for a US money stock to grow by one bitcoin market cap. M2, the monetary base, currency in circulation, public debt, and the Fed balance sheet.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#10140f">
+  <link rel="canonical" href="https://humdings.github.io/poor-man/">
+  <meta property="og:title" content="Poor Man's Bailout">
+  <meta property="og:description" content="Days for a US money stock to grow by one bitcoin market cap.">
+  <meta property="og:url" content="https://humdings.github.io/poor-man/">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,560;0,9..144,650;1,9..144,560&family=Outfit:wght@380;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://unpkg.com/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+  <header class="top">
+    <a class="wordmark" href="./">Poor Man's Bailout</a>
+    <p class="top-note">Days of printing equal to all of bitcoin.</p>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-main">
+        <p class="kicker" id="kicker">US M2 · 12-month trailing change</p>
+        <div class="days-row">
+          <p class="days" id="days" aria-live="polite">…</p>
+          <p class="days-unit" id="days-unit">days</p>
+        </div>
+        <p class="sentence" id="sentence">Loading the snapshot.</p>
+        <p class="pace" id="pace"></p>
+        <p class="asof" id="asof"></p>
+        <ul class="strip" id="strip" aria-label="Same window and method, other measures"></ul>
+      </div>
+      <aside class="assumptions" aria-labelledby="assumptions-title">
+        <h2 id="assumptions-title">Assumptions</h2>
+        <dl id="assumption-list"></dl>
+        <button type="button" class="share" id="share">Copy link</button>
+      </aside>
+    </section>
+
+    <section class="controls" aria-label="What to measure">
+      <div class="control">
+        <span class="control-label" id="measure-label">Series</span>
+        <div class="pills" role="radiogroup" aria-labelledby="measure-label">
+          <button type="button" data-measure="m2" aria-pressed="true">M2</button>
+          <button type="button" data-measure="base" aria-pressed="false">Monetary base</button>
+          <button type="button" data-measure="currency" aria-pressed="false">Currency in circulation</button>
+          <button type="button" data-measure="debt" aria-pressed="false">Public debt</button>
+          <span class="pill-also">Also</span>
+          <button type="button" class="quiet" data-measure="fed" aria-pressed="false" title="Kept last, and left off the comparison strip.">Fed balance sheet</button>
+        </div>
+      </div>
+      <div class="control">
+        <span class="control-label" id="window-label">Window</span>
+        <div class="pills" role="radiogroup" aria-labelledby="window-label">
+          <button type="button" data-window="3" data-unit="m" aria-pressed="false">3m</button>
+          <button type="button" data-window="12" data-unit="m" aria-pressed="true">12m</button>
+          <button type="button" data-window="5" data-unit="y" aria-pressed="false">5y</button>
+          <button type="button" data-window="10" data-unit="y" aria-pressed="false">10y</button>
+        </div>
+        <label class="custom">
+          Custom
+          <input id="custom-amount" type="number" inputmode="numeric" min="1" max="600" step="1" value="12" aria-label="Window length">
+          <select id="custom-unit" aria-label="Window unit">
+            <option value="m" selected>months</option>
+            <option value="y">years</option>
+          </select>
+        </label>
+      </div>
+      <div class="control">
+        <span class="control-label" id="method-label">Averaging</span>
+        <div class="pills" role="radiogroup" aria-labelledby="method-label">
+          <button type="button" data-method="trailing" aria-pressed="true">Trailing change</button>
+          <button type="button" data-method="regression" aria-pressed="false">Regression</button>
+          <button type="button" data-method="cagr" aria-pressed="false">CAGR pace</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Days per bitcoin market cap</h2>
+          <p class="card-note" id="gap-note">Gaps are contractions. Spikes are near-stalls: a barely positive pace makes one bitcoin market cap take much longer. Log scale is the default because the history spans several orders of magnitude.</p>
+        </div>
+        <label class="log-toggle">
+          <input type="checkbox" id="log-scale" checked>
+          Log scale
+        </label>
+      </div>
+      <div class="chart tall" id="chart-bailout" role="img" aria-label="History of the bailout day count"></div>
+      <p class="chart-empty" id="empty-bailout" hidden></p>
+    </section>
+
+    <section class="grid-charts">
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <h2 id="money-title">US M2</h2>
+            <p class="card-note">Published prints, in dollars. Log scale.</p>
+          </div>
+        </div>
+        <div class="chart" id="chart-money" role="img" aria-label="Selected money measure"></div>
+      </article>
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <h2>Bitcoin market cap</h2>
+            <p class="card-note" id="btc-note">Log scale.</p>
+          </div>
+        </div>
+        <div class="chart" id="chart-btc" role="img" aria-label="Bitcoin market cap"></div>
+      </article>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Both</h2>
+          <p class="card-note">Money on the left axis, bitcoin market cap on the right. Both log scales.</p>
+        </div>
+        <p class="legend">
+          <span><i class="swatch money"></i> <span id="legend-money">Money</span></span>
+          <span><i class="swatch btc"></i> Bitcoin</span>
+        </p>
+      </div>
+      <div class="chart" id="chart-overlay" role="img" aria-label="Money measure and bitcoin market cap"></div>
+    </section>
+
+    <section class="prose">
+      <h2>Formula</h2>
+      <p>The Poor Man's Bailout on a date <em>t</em> is how many days of printing, at the chosen average pace, it takes to equal the bitcoin market cap that day.</p>
+      <pre>s = t minus the window
+N = calendar days from s to t
+d(t) = C(t) / g(t)    when g(t) &gt; 0</pre>
+      <p><em>C(t)</em> is the bitcoin market cap in dollars. <em>M(t)</em> is the money stock in dollars, carried forward from the last print. The default pace is the simple trailing change:</p>
+      <pre>g(t) = (M(t) − M(s)) / N</pre>
+      <p>The other two paces, selected above:</p>
+      <pre>regression   g(t) = slope of daily M from s through t
+CAGR pace    g(t) = M(t) × ((M(t) / M(s))^(1/N) − 1)</pre>
+      <p>The regression is an ordinary least-squares line on the forward-filled daily level, so the flat days between prints are part of the fit. The CAGR pace is the compound rate that links the level at the start of the window to today's level, stated in dollars per day at today's level. The default is the trailing change, on US M2, over 12 months.</p>
+      <p>When <em>g(t)</em> is zero or negative — quantitative tightening, or the 2022–23 decline in M2 — <em>d(t)</em> is undefined. The chart leaves a gap. A negative or infinite day count is never drawn.</p>
+      <h2>How the series are aligned</h2>
+      <p>Prints arrive monthly, weekly, quarterly, or daily. Each money level is stepped forward to every calendar day and held until the next print. Bitcoin's market cap is the observation on that same calendar day, or the latest observation on or before it. The headline uses the later of the two last prints, and says when one of them was carried forward. Monthly figures taken from the Board's H.6 file are dated on the first of the month, which is how FRED dates the same print. Dollar levels in the snapshot are rounded to the nearest dollar.</p>
+      <h2>Sources</h2>
+      <div id="sources"></div>
+      <p class="fine" id="generated"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>A static reading of public series. Not a forecast and not investment advice.</p>
+    <p><a href="https://github.com/humdings/poor-man">Source</a> · MIT</p>
+  </footer>
+
+  <noscript>
+    <p class="noscript">This page computes the day count in the browser from the committed snapshot. JavaScript is required for the number and the charts. The formula is the bitcoin market cap divided by the money stock's average growth per day over the selected window.</p>
+  </noscript>
+
+  <script src="js/metric.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
