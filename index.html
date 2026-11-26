@@ -444,7 +444,25 @@
           <a class="share" id="share-half-x" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">Post on X</a>
         </div>
       </div>
-      <div class="chart" id="chart-halflife" role="img" aria-label="Years for the dollar to lose half its purchasing power, from trailing 12-month CPI"></div>
+      <div class="bs-adjust">
+        <p class="half-label">Bullshit adjuster</p>
+        <p class="card-note" id="bs-assumption">Adds a bullshit gap, in percentage points, to trailing CPI and plots that half-life beside the official CPI line. The gaps are illustrative assumptions, not measured real inflation.</p>
+        <div class="bs-control">
+          <label for="bs-gap">Gap</label>
+          <input type="range" id="bs-gap" min="-5" max="15" step="any" value="0" aria-describedby="bs-assumption">
+          <input type="number" id="bs-gap-num" min="-5" max="15" step="any" value="0" inputmode="decimal" aria-label="Bullshit gap in percentage points">
+          <span class="bs-unit">pp</span>
+        </div>
+        <div class="bs-presets" id="bs-presets"></div>
+        <p class="legend">
+          <span><i class="swatch btc"></i> Official CPI</span>
+          <span><i class="swatch clay"></i> CPI + gap</span>
+          <span><i class="swatch money"></i> Wages</span>
+        </p>
+      </div>
+      <div class="chart" id="chart-halflife" role="img" aria-label="Dollar half-life at official trailing CPI, at CPI plus a bullshit gap, and a wages reference line"></div>
+      <div class="bs-table" id="bs-table"></div>
+      <p class="card-note bs-credit">Cumulative changes, Jan. 2000–June 2026, from the chart “Price changes (Jan. 2000-June 2026), Selected US Consumer Goods and Services, and Wages.” Mark J. Perry, BLS data. The chart image is not hosted here. Wages is a reference line, not a gap preset.</p>
       <p class="half-label">Years at a steady inflation rate</p>
       <div class="half-table" id="half-table"></div>
     </section>
@@ -526,6 +544,7 @@ CAGR pace    g(t) = M(t) × ((M(t) / M(s))^(1/N) − 1)</pre>
       <p>The regression is an ordinary least-squares line on the forward-filled daily level, so the flat days between prints are part of the fit. The CAGR pace is the compound rate that links the level at the start of the window to today's level, stated in dollars per day at today's level. The default is the trailing change, on US M2, over 12 months.</p>
       <h2>Dollar half-life</h2>
       <p>How many years of inflation it takes for a dollar to buy half as much. half-life = ln(2) / ln(1 + inflation), with inflation a decimal. At 2% that is 35.0 years. At 7% it is 10.2 years. The chart uses trailing 12-month CPI: this month's index divided by the index twelve months earlier, minus one. A rate at or below zero leaves a gap. The table under the chart is the same formula at 1% through 10%.</p>
+      <p>The bullshit adjuster adds a gap, in percentage points, to that CPI rate and draws the half-life of the sum next to the official line. Preset gaps are the difference between each category's annualized change and overall CPI's annualized change, from cumulative BLS changes Mark J. Perry reports for Jan. 2000-June 2026. The gaps are illustrative assumptions, not measured real inflation. Average hourly wages is a reference line at the half-life of wage growth over that span, not a preset.</p>
       <h2>Smoothing</h2>
       <p>The window and the averaging method are the smoothing. Several of each are above. <strong>None</strong> turns the smooth off and delivers the change as published:</p>
       <pre>p = the print in effect on t

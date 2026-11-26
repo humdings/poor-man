@@ -31,8 +31,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from metric import (  # noqa: E402
+    annualized_from_cumulative,
     compute_bailout,
+    half_life_with_gap,
     half_life_years,
+    perry_table,
     regression_slope,
     shift_months,
     to_chart_data,
@@ -311,6 +314,72 @@ class HalfLifeTests(unittest.TestCase):
             self.assertIn("CPIAUCSL", text)
         self.assertIn('id="chart-halflife"', page)
 
+    def test_perry_gaps_are_the_hand_checked_values(self):
+        """Annualize Jan 2000–June 2026 cumulative changes over 26.5 years.
+
+        Worked from the published cumulatives, not from the helper's output:
+
+            overall  (1.964) ** (1/26.5) - 1 = 0.025798223883
+            hospital (3.911) ** (1/26.5) - 1 = 0.052811169022
+            gap = (0.052811169022 - 0.025798223883) * 100 = 2.70129451 pp
+
+        The same subtraction, rounded to 4 decimal percentage points:
+        tuition 1.6504, textbooks 1.4085, day care 1.1276, medical 0.9462,
+        wages 0.7085, housing 0.3563, food 0.2317.
+        A 2% rate plus the hospital gap halves in 15.0877 years.
+        Wage growth's own half-life is 21.4236 years.
+        """
+        span = 26.5
+        overall = (1.964) ** (1 / span) - 1
+        hospital = (3.911) ** (1 / span) - 1
+        self.assertAlmostEqual(overall, 0.025798223883, places=9)
+        self.assertAlmostEqual(hospital, 0.052811169022, places=9)
+        self.assertAlmostEqual((hospital - overall) * 100, 2.70129451, places=6)
+        self.assertAlmostEqual(annualized_from_cumulative(0.964), overall, places=12)
+        self.assertAlmostEqual(annualized_from_cumulative(2.911), hospital, places=12)
+
+        expected_pp = {
+            "hospital": 2.7013,
+            "tuition": 1.6504,
+            "textbooks": 1.4085,
+            "daycare": 1.1276,
+            "medical": 0.9462,
+            "wages": 0.7085,
+            "housing": 0.3563,
+            "food": 0.2317,
+        }
+        rows = {row["key"]: row for row in perry_table()}
+        self.assertAlmostEqual(rows["overall"]["gap"], 0.0, places=12)
+        self.assertEqual(rows["overall"]["role"], "baseline")
+        self.assertEqual(rows["wages"]["role"], "reference")
+        for key, gap_pp in expected_pp.items():
+            self.assertAlmostEqual(rows[key]["gap"] * 100, gap_pp, places=4)
+            self.assertAlmostEqual(
+                (1 + rows[key]["annualized"]) ** span - 1,
+                rows[key]["cumulative"],
+                places=9,
+            )
+            if key != "wages":
+                self.assertEqual(rows[key]["role"], "preset")
+        self.assertAlmostEqual(half_life_with_gap(0.02, rows["hospital"]["gap"]), 15.0877, places=4)
+        self.assertAlmostEqual(half_life_years(rows["wages"]["annualized"]), 21.4236, places=4)
+        self.assertIsNone(half_life_with_gap(0.02, -0.02))
+        self.assertIsNone(half_life_with_gap(0.02, -0.03))
+        self.assertEqual(round(half_life_with_gap(0.02, 0.0), 1), 35.0)
+
+    def test_the_adjuster_is_labeled_as_an_assumption(self):
+        page = (ROOT / "index.html").read_text(encoding="utf-8")
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        for text in (page, readme):
+            self.assertIn("Bullshit adjuster", text)
+            self.assertIn("illustrative assumptions, not measured real inflation", text)
+            self.assertIn("Mark J. Perry, BLS data", text)
+            self.assertIn("Jan. 2000-June 2026", text)
+        self.assertIn('id="bs-gap"', page)
+        self.assertIn('id="bs-gap-num"', page)
+        self.assertNotIn("aei.org", page)
+        self.assertNotIn("<img", page[page.find("Bullshit adjuster"):page.find("Years at a steady")])
+
     def test_javascript_matches(self):
         code = (
             "const Pmb = require(" + json.dumps(str(ROOT / "js" / "metric.js")) + ");\n"
@@ -322,7 +391,9 @@ class HalfLifeTests(unittest.TestCase):
             "seven: Pmb.halfLifeYears(0.07),"
             "zero: Pmb.halfLifeYears(0),"
             "neg: Pmb.halfLifeYears(-0.02),"
-            "series: Pmb.trailingCpiHalfLife(points)"
+            "series: Pmb.trailingCpiHalfLife(points),"
+            "perry: Pmb.perryTable(),"
+            "bumped: Pmb.halfLifeWithGap(0.02, Pmb.perryTable().filter(function (row) { return row.key === 'hospital'; })[0].gap)"
             "}));"
         )
         raw = subprocess.check_output(["node", "-e", code], text=True)
@@ -343,6 +414,14 @@ class HalfLifeTests(unittest.TestCase):
                 self.assertIsNone(left["years"])
             else:
                 self.assertAlmostEqual(left["years"], right["years"], places=9)
+        py_rows = perry_table()
+        self.assertEqual(len(js["perry"]), len(py_rows))
+        for left, right in zip(js["perry"], py_rows):
+            self.assertEqual(left["key"], right["key"])
+            self.assertEqual(left["role"], right["role"])
+            self.assertAlmostEqual(left["gap"], right["gap"], places=9)
+            self.assertAlmostEqual(left["annualized"], right["annualized"], places=9)
+        self.assertAlmostEqual(js["bumped"], half_life_with_gap(0.02, py_rows[1]["gap"]), places=9)
 
 
 class JavascriptParityTests(unittest.TestCase):
