@@ -1,0 +1,319 @@
+"""Hand-worked tests for the Poor Man's Bailout day count.
+
+The spec, written out so the implementation has to match it:
+
+    s = t shifted back by the window (calendar months or years, day clamped)
+    N = number of calendar days from s to t
+    M is the money level, forward-filled: the last observation on or before the day
+    C is the bitcoin market cap, same matching rule
+
+    trailing:    g = (M(t) - M(s)) / N
+    cagr:        g = M(t) * ((M(t) / M(s)) ** (1/N) - 1)
+                 when M(s) > 0 and M(t) > 0
+    regression:  g = OLS slope of the daily forward-filled level on time,
+                 in dollars per day, over the days s through t inclusive
+
+    d = C(t) / g when g > 0
+    when g <= 0 the point is "contracting" and d is None
+    a day count is never negative, never zero from a non-positive pace,
+    and never infinite
+"""
+
+import json
+import math
+import subprocess
+import sys
+import unittest
+from datetime import date
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from metric import (  # noqa: E402
+    compute_bailout,
+    regression_slope,
+    shift_months,
+    to_chart_data,
+)
+
+
+def D(iso):
+    y, m, d = (int(p) for p in iso.split("-"))
+    return date(y, m, d)
+
+
+def pts(*rows):
+    return [(D(a), b) for a, b in rows]
+
+
+class ShiftMonthsTests(unittest.TestCase):
+    def test_clamps_to_month_end(self):
+        self.assertEqual(shift_months(D("2024-03-31"), -1), D("2024-02-29"))
+        self.assertEqual(shift_months(D("2023-03-31"), -1), D("2023-02-28"))
+
+    def test_leap_day_forward(self):
+        self.assertEqual(shift_months(D("2020-02-29"), 12), D("2021-02-28"))
+
+    def test_full_years_and_across_year_boundary(self):
+        self.assertEqual(shift_months(D("2024-01-31"), -12), D("2023-01-31"))
+        self.assertEqual(shift_months(D("2024-05-15"), -5), D("2023-12-15"))
+        self.assertEqual(shift_months(D("2019-06-01"), -60), D("2014-06-01"))
+
+
+class RegressionSlopeTests(unittest.TestCase):
+    def test_exact_line(self):
+        self.assertEqual(regression_slope([0, 10, 20]), 10)
+
+    def test_exact_decline(self):
+        self.assertEqual(regression_slope([20, 10, 0]), -10)
+
+    def test_window_not_starting_at_zero(self):
+        # Levels 100, 100, 110, 120. The last three days are a line of slope 10.
+        self.assertAlmostEqual(regression_slope([100, 100, 110, 120], start=1), 10)
+
+    def test_flat_is_zero(self):
+        self.assertEqual(regression_slope([5, 5, 5, 5]), 0)
+
+
+class TrailingHandWorkedTests(unittest.TestCase):
+    def test_leap_year_window(self):
+        # 2020-01-01 -> 2021-01-01 is 366 days. Level 1000 -> 1460.
+        # Market cap on the end date is 100.
+        # d = 100 / ((1460-1000)/366) = 100 * 366 / 460.
+        money = pts(("2020-01-01", 1000), ("2021-01-01", 1460))
+        btc = pts(("2021-01-01", 100))
+        out = compute_bailout(money, btc, 12, "month", "trailing")
+        self.assertGreaterEqual(len(out), 1)
+        last = out[-1]
+        self.assertEqual(last["date"], "2021-01-01")
+        self.assertEqual(last["state"], "expanding")
+        self.assertAlmostEqual(last["days"], 100 * 366 / 460, places=9)
+        self.assertAlmostEqual(last["growth_per_day"], 460 / 366, places=9)
+        self.assertEqual(last["level"], 1460)
+        self.assertEqual(last["level_start"], 1000)
+        self.assertEqual(last["mcap"], 100)
+
+    def test_contraction_is_not_a_negative_day_count(self):
+        money = pts(("2020-01-01", 1000), ("2021-01-01", 800))
+        btc = pts(("2021-01-01", 100))
+        last = compute_bailout(money, btc, 12, "month", "trailing")[-1]
+        self.assertEqual(last["state"], "contracting")
+        self.assertIsNone(last["days"])
+        self.assertLess(last["growth_per_day"], 0)
+
+    def test_flat_level_is_contracting_not_infinite(self):
+        money = pts(("2020-01-01", 1000), ("2021-01-01", 1000))
+        btc = pts(("2021-01-01", 100))
+        last = compute_bailout(money, btc, 12, "month", "trailing")[-1]
+        self.assertEqual(last["state"], "contracting")
+        self.assertIsNone(last["days"])
+        self.assertEqual(last["growth_per_day"], 0)
+        self.assertFalse(math.isinf(last["growth_per_day"]))
+
+    def test_insufficient_history(self):
+        # One month of history cannot fill a 12-month window.
+        money = pts(("2020-06-01", 1000), ("2021-01-01", 1100))
+        btc = pts(("2021-01-01", 100))
+        last = compute_bailout(money, btc, 12, "month", "trailing")[-1]
+        self.assertEqual(last["date"], "2021-01-01")
+        self.assertEqual(last["state"], "insufficient")
+        self.assertIsNone(last["days"])
+
+    def test_forward_fill_and_calendar_window(self):
+        # Observations on the 1st. On the 10th the February print is in effect,
+        # and the lookback (one month earlier) still carries January.
+        # Jan 10 -> Feb 10 is 31 days. 1600 - 1000 = 600. Cap is 200.
+        # d = 200 * 31 / 600.
+        money = pts(("2020-01-01", 1000), ("2020-02-01", 1600))
+        btc = pts(("2020-02-10", 200))
+        last = compute_bailout(money, btc, 1, "month", "trailing")[-1]
+        self.assertEqual(last["date"], "2020-02-10")
+        self.assertEqual(last["level"], 1600)
+        self.assertEqual(last["level_start"], 1000)
+        self.assertEqual(last["state"], "expanding")
+        self.assertAlmostEqual(last["days"], 200 * 31 / 600, places=9)
+
+    def test_btc_uses_latest_print_on_or_before_the_day(self):
+        # Money is carried to the later bitcoin date. Bitcoin on Jan 10 is
+        # matched to itself; there is no print on Jan 11, so Jan 11 keeps 50
+        # only if we evaluated it. The series ends on the later of the two
+        # last prints, which here is the money date Jan 20, and the cap is
+        # the Jan 10 print carried forward.
+        money = pts(("2019-01-01", 100), ("2020-01-20", 500))
+        btc = pts(("2020-01-10", 80))
+        out = compute_bailout(money, btc, 12, "month", "trailing")
+        by_date = {p["date"]: p for p in out}
+        self.assertIn("2020-01-10", by_date)
+        self.assertEqual(by_date["2020-01-10"]["mcap"], 80)
+        self.assertEqual(out[-1]["date"], "2020-01-20")
+        self.assertEqual(out[-1]["mcap"], 80)
+        self.assertEqual(out[-1]["level"], 500)
+
+    def test_year_window_uses_calendar_years(self):
+        money = pts(("2015-06-01", 1000), ("2020-06-01", 2000))
+        btc = pts(("2020-06-01", 365))
+        last = compute_bailout(money, btc, 5, "year", "trailing")[-1]
+        # 2015-06-01 to 2020-06-01 is 1827 days (2016 and 2020 are leap years).
+        self.assertEqual((D("2020-06-01") - D("2015-06-01")).days, 1827)
+        self.assertAlmostEqual(last["days"], 365 * 1827 / 1000, places=9)
+        self.assertEqual(last["state"], "expanding")
+
+
+class CagrTests(unittest.TestCase):
+    def test_hand_worked_compound_pace(self):
+        # 100 -> 121 over the 365 days from 2019-01-01 to 2020-01-01.
+        # g = 121 * (1.21 ** (1/365) - 1)
+        # cap = 50.
+        money = pts(("2019-01-01", 100), ("2020-01-01", 121))
+        btc = pts(("2020-01-01", 50))
+        n = (D("2020-01-01") - D("2019-01-01")).days
+        self.assertEqual(n, 365)
+        g = 121 * (1.21 ** (1 / n) - 1)
+        last = compute_bailout(money, btc, 12, "month", "cagr")[-1]
+        self.assertEqual(last["state"], "expanding")
+        self.assertAlmostEqual(last["growth_per_day"], g, places=12)
+        self.assertAlmostEqual(last["days"], 50 / g, places=9)
+
+    def test_cagr_decline_is_contracting(self):
+        money = pts(("2019-01-01", 121), ("2020-01-01", 100))
+        btc = pts(("2020-01-01", 50))
+        last = compute_bailout(money, btc, 12, "month", "cagr")[-1]
+        self.assertEqual(last["state"], "contracting")
+        self.assertIsNone(last["days"])
+
+
+class RegressionMethodTests(unittest.TestCase):
+    def test_daily_line_over_a_short_explicit_slope(self):
+        # Three daily prints, perfectly linear, and the window is checked
+        # through regression_slope. The series method is covered by parity
+        # plus a case whose slope we recompute independently below.
+        self.assertEqual(regression_slope([0, 10, 20]), 10)
+
+    def test_series_regression_matches_independent_fit(self):
+        money = pts(
+            ("2020-01-01", 1000),
+            ("2020-02-01", 1100),
+            ("2020-03-01", 1300),
+        )
+        btc = pts(("2020-03-01", 90))
+        last = compute_bailout(money, btc, 2, "month", "regression")[-1]
+        # Independent ordinary-least-squares fit, not the helper under test.
+        levels = []
+        cur = None
+        prints = {D("2020-01-01"): 1000, D("2020-02-01"): 1100, D("2020-03-01"): 1300}
+        day = D("2020-01-01")
+        while day <= D("2020-03-01"):
+            if day in prints:
+                cur = prints[day]
+            levels.append(cur)
+            day = date.fromordinal(day.toordinal() + 1)
+        n = len(levels)
+        sum_t = (n - 1) * n / 2
+        sum_t2 = (n - 1) * n * (2 * n - 1) / 6
+        sum_y = sum(levels)
+        sum_ty = sum(i * y for i, y in enumerate(levels))
+        slope = (n * sum_ty - sum_t * sum_y) / (n * sum_t2 - sum_t ** 2)
+        self.assertAlmostEqual(last["growth_per_day"], slope, places=9)
+        self.assertEqual(last["state"], "expanding")
+        self.assertAlmostEqual(last["days"], 90 / slope, places=8)
+        self.assertGreater(last["days"], 0)
+
+
+class ChartGapTests(unittest.TestCase):
+    def test_contraction_becomes_a_gap_and_never_a_negative_value(self):
+        points = [
+            {"date": "2020-01-01", "state": "expanding", "days": 10},
+            {"date": "2020-01-02", "state": "expanding", "days": 12},
+            {"date": "2020-01-03", "state": "contracting", "days": None},
+            {"date": "2020-01-04", "state": "contracting", "days": None},
+            {"date": "2020-01-05", "state": "expanding", "days": 9},
+        ]
+        chart = to_chart_data(points)
+        values = [row.get("value") for row in chart]
+        self.assertEqual(values, [10, 12, None, 9])
+        self.assertTrue(all(v is None or v > 0 for v in values))
+        self.assertNotIn(float("inf"), values)
+
+    def test_full_series_never_emits_nonpositive_days(self):
+        # Rise, then a long decline, then a rise. Every plotted day count stays positive.
+        money = pts(
+            ("2019-01-01", 1000),
+            ("2020-01-01", 1500),
+            ("2021-01-01", 900),
+            ("2022-01-01", 1600),
+        )
+        btc = pts(("2020-06-01", 40), ("2022-01-01", 80))
+        out = compute_bailout(money, btc, 12, "month", "trailing")
+        self.assertTrue(any(p["state"] == "contracting" for p in out))
+        for p in out:
+            if p["state"] == "expanding":
+                self.assertIsNotNone(p["days"])
+                self.assertGreater(p["days"], 0)
+                self.assertTrue(math.isfinite(p["days"]))
+            else:
+                self.assertIsNone(p["days"])
+
+
+class JavascriptParityTests(unittest.TestCase):
+    def test_node_matches_python(self):
+        cases = [
+            {
+                "money": [["2020-01-01", 1000], ["2021-01-01", 1460]],
+                "btc": [["2021-01-01", 100]],
+                "amount": 12,
+                "unit": "month",
+                "method": "trailing",
+            },
+            {
+                "money": [["2020-01-01", 1000], ["2021-01-01", 800]],
+                "btc": [["2021-01-01", 100]],
+                "amount": 12,
+                "unit": "month",
+                "method": "trailing",
+            },
+            {
+                "money": [["2019-01-01", 100], ["2020-01-01", 121]],
+                "btc": [["2020-01-01", 50]],
+                "amount": 12,
+                "unit": "month",
+                "method": "cagr",
+            },
+            {
+                "money": [["2020-01-01", 1000], ["2020-02-01", 1600]],
+                "btc": [["2020-02-10", 200]],
+                "amount": 1,
+                "unit": "month",
+                "method": "trailing",
+            },
+            {
+                "money": [["2019-01-01", 1000], ["2019-06-01", 1200], ["2020-01-01", 1500]],
+                "btc": [["2020-01-01", 100]],
+                "amount": 12,
+                "unit": "month",
+                "method": "regression",
+            },
+        ]
+        runner = ROOT / "tests" / "parity.mjs"
+        for case in cases:
+            with self.subTest(case=case["method"]):
+                raw = subprocess.check_output(
+                    ["node", str(runner), json.dumps(case)],
+                    text=True,
+                )
+                js = json.loads(raw)
+                money = pts(*case["money"])
+                btc = pts(*case["btc"])
+                py_last = compute_bailout(
+                    money, btc, case["amount"], case["unit"], case["method"]
+                )[-1]
+                self.assertEqual(js["state"], py_last["state"])
+                self.assertEqual(js["date"], py_last["date"])
+                if py_last["days"] is None:
+                    self.assertIsNone(js["days"])
+                else:
+                    self.assertAlmostEqual(js["days"], py_last["days"], places=6)
+
+
+if __name__ == "__main__":
+    unittest.main()
