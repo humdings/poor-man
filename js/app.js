@@ -3,6 +3,7 @@
   var MEASURES = ["m2", "base", "currency", "debt", "fed"];
   var METHODS = ["trailing", "regression", "cagr"];
   var data = null;
+  var shareHalfYears = null;
   var state = readState();
 
   var els = {
@@ -16,6 +17,9 @@
     strip: document.getElementById("strip"),
     assumptions: document.getElementById("assumption-list"),
     share: document.getElementById("share"),
+    shareX: document.getElementById("share-x"),
+    shareHalf: document.getElementById("share-half"),
+    shareHalfX: document.getElementById("share-half-x"),
     amount: document.getElementById("custom-amount"),
     unit: document.getElementById("custom-unit"),
     log: document.getElementById("log-scale"),
@@ -488,6 +492,7 @@
       table.dataset.filled = "1";
     }
     if (!cpi || !cpi.points) {
+      shareHalfYears = null;
       if (latest) latest.textContent = "CPI is not in this snapshot.";
       return [];
     }
@@ -496,6 +501,7 @@
     for (var i = series.length - 1; i >= 0; i--) {
       if (series[i].years != null) { last = series[i]; break; }
     }
+    shareHalfYears = last ? last.years : null;
     if (latest) {
       if (!last) latest.textContent = "The trailing 12-month CPI rate is not positive.";
       else {
@@ -504,6 +510,34 @@
       }
     }
     return Pmb.toChartData(series, "years");
+  }
+
+  function shareSentence() {
+    var line = els.daysUnit.hidden
+      ? "The Poor Man's Bailout clock is paused."
+      : "The Poor Man's Bailout: the money printer makes a whole bitcoin market cap every " + els.days.textContent.trim() + " days.";
+    if (shareHalfYears != null) line += " Your dollar's half-life: " + yearsLabel(shareHalfYears) + " years.";
+    return line;
+  }
+
+  function paintShare() {
+    var text = shareSentence();
+    var href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(location.href);
+    els.shareX.href = href;
+    els.shareHalfX.href = href;
+  }
+
+  function copyLink(button) {
+    var url = location.href;
+    function done(label) {
+      button.textContent = label;
+      setTimeout(function () { button.textContent = "Copy link"; }, 1400);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { done("Copied"); }, function () { done("Copy the address bar"); });
+    } else {
+      done("Copy the address bar");
+    }
   }
 
   function render() {
@@ -534,6 +568,7 @@
       halfLife: paintHalfLife(),
       log: state.log,
     });
+    paintShare();
   }
 
   function bind() {
@@ -584,18 +619,8 @@
       state.norm = els.normSeries.value === "cpi" ? "cpi" : "gdp";
       render();
     });
-    els.share.addEventListener("click", function () {
-      var url = location.href;
-      function done(label) {
-        els.share.textContent = label;
-        setTimeout(function () { els.share.textContent = "Copy link"; }, 1400);
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(function () { done("Copied"); }, function () { done("Copy the address bar"); });
-      } else {
-        done("Copy the address bar");
-      }
-    });
+    els.share.addEventListener("click", function () { copyLink(els.share); });
+    els.shareHalf.addEventListener("click", function () { copyLink(els.shareHalf); });
   }
 
   function fail(message) {

@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from metric import compute_bailout  # noqa: E402
+from share_card import write_share_card  # noqa: E402
 from sources import parse_fred_csv, parse_frb_series, splice_before  # noqa: E402
 
 OUT = ROOT / "data" / "series.json"
@@ -689,7 +690,9 @@ def main() -> int:
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(document, separators=(",", ":")) + "\n", encoding="utf-8")
+    card = write_share_card(document)
     print(f"Wrote {OUT} ({OUT.stat().st_size} bytes)")
+    print(f"Wrote share card: {card['days_label']} days, half-life {card['half_label']} years")
     print("HEADLINES 12-month trailing change")
     for row in headlines:
         days = "undefined" if row["days"] is None else f"{row['days']:.2f}"

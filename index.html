@@ -12,6 +12,16 @@
   <meta property="og:description" content="Bitcoin is more American than the Dollar. Days of monetary expansion equal to all of bitcoin.">
   <meta property="og:url" content="https://humdings.github.io/poor-man/">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://humdings.github.io/poor-man/data/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Poor Man's Bailout: days for US M2 to grow by one bitcoin market cap, and the dollar's half-life.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Poor Man's Bailout">
+  <meta name="twitter:description" content="The money printer makes a whole bitcoin market cap every few hundred days. The dollar's half-life is on the card.">
+  <meta name="twitter:image" content="https://humdings.github.io/poor-man/data/og.png">
+  <meta name="twitter:image:alt" content="Poor Man's Bailout days and the dollar's half-life.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,11 +57,14 @@
         <p class="sentence" id="sentence">Loading the snapshot.</p>
         <p class="pace" id="pace"></p>
         <p class="asof" id="asof"></p>
+        <div class="share-row">
+          <button type="button" class="share" id="share">Copy link</button>
+          <a class="share" id="share-x" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">Post on X</a>
+        </div>
       </div>
       <aside class="assumptions" aria-labelledby="assumptions-title">
         <h2 id="assumptions-title">Assumptions</h2>
         <dl id="assumption-list"></dl>
-        <button type="button" class="share" id="share">Copy link</button>
       </aside>
     </section>
 
@@ -135,6 +148,10 @@
           <h2>Dollar half-life</h2>
           <p class="card-note">Years for the dollar to lose half its purchasing power. half-life = ln(2) / ln(1 + inflation). At 2% the formula gives 35.0 years. The line is the half-life implied by trailing 12-month <a href="https://fred.stlouisfed.org/series/CPIAUCSL">CPI (FRED CPIAUCSL)</a>, the same series the nightly job already fetches. A rate at or below zero does not halve purchasing power, and the line leaves a gap. Log scale.</p>
           <p class="card-note" id="half-latest"></p>
+        </div>
+        <div class="share-row">
+          <button type="button" class="share" id="share-half">Copy link</button>
+          <a class="share" id="share-half-x" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">Post on X</a>
         </div>
       </div>
       <div class="chart" id="chart-halflife" role="img" aria-label="Years for the dollar to lose half its purchasing power, from trailing 12-month CPI"></div>

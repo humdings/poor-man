@@ -282,7 +282,7 @@ When the pace is zero or negative, the day count is left blank. A negative or in
 
 ## Run it locally
 
-Python standard library only. Node is used by the parity tests.
+The day count and the data fetch use the Python standard library. Node is used by the parity tests. The share image uses Pillow, which the nightly job installs. Locally, `python3 -m pip install pillow` before regenerating `data/og.png`.
 
 ```bash
 python3 -m unittest discover -s tests -v
@@ -299,7 +299,7 @@ The tests include hand-worked cases for the day count, the split into money grow
 `.github/workflows/pages.yml` does both jobs.
 
 - Every push to `main` runs the tests and deploys the site.
-- A schedule at 09:17 UTC, and **Run workflow** by hand, fetch a new `data/series.json`, commit it, and deploy. The data commit deploys again and does not fetch a second time.
+- A schedule at 09:17 UTC, and **Run workflow** by hand, fetch a new `data/series.json`, draw `data/og.png` from it, commit both, and deploy. The data commit deploys again and does not fetch a second time. The PNG is the Open Graph and Twitter card: default M2 days, and the dollar half-life from trailing 12-month CPI. Pillow draws it with the Liberation fonts in `scripts/fonts` (SIL Open Font License). No API key, and the image is a static file.
 
 Before the first deploy, in the repository settings:
 
