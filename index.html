@@ -445,7 +445,7 @@
         </div>
       </div>
       <div class="bs-adjust">
-        <p class="half-label">Bullshit adjuster</p>
+        <p class="half-label">Bullshit adjuster<sup class="bs-star">*</sup></p>
         <p class="card-note" id="bs-assumption">Adds a bullshit gap, in percentage points, to trailing CPI and plots that half-life beside the official CPI line. The gaps are illustrative assumptions, not measured real inflation.</p>
         <div class="bs-control">
           <label for="bs-gap">Gap</label>
@@ -454,6 +454,8 @@
           <span class="bs-unit">pp</span>
         </div>
         <div class="bs-presets" id="bs-presets"></div>
+        <p class="bs-tease" id="bs-tease" aria-live="polite"></p>
+        <p class="bs-reveal" id="bs-reveal" hidden>You just had to dig to the bottom of the page to make the numbers honest. That was the point.</p>
         <p class="legend">
           <span><i class="swatch btc"></i> Official CPI</span>
           <span><i class="swatch clay"></i> CPI + gap</span>
@@ -597,6 +599,13 @@ regression
           <button type="button" class="tip-copy" id="copy-btc" data-address="bc1qyut5d3gmlf2lnuntl7aqx3l89sjd6m0ewzs845">Copy</button>
         </p>
       </div>
+    </div>
+    <div class="honest-row">
+      <label class="honest" for="honest">
+        <input type="checkbox" id="honest">
+        Turn off the bullshit
+      </label>
+      <p class="honest-aside">In the real world, you can't turn this bullshit off.</p>
     </div>
   </footer>
 
