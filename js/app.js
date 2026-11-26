@@ -4,7 +4,6 @@
   var METHODS = ["trailing", "regression", "cagr"];
   var data = null;
   var shareHalfYears = null;
-  var teaseTimer = null;
   var state = readState();
 
   var els = {
@@ -32,11 +31,6 @@
     bsGapNum: document.getElementById("bs-gap-num"),
     bsPresets: document.getElementById("bs-presets"),
     bsTable: document.getElementById("bs-table"),
-    bsTease: document.getElementById("bs-tease"),
-    bsReveal: document.getElementById("bs-reveal"),
-    honest: document.getElementById("honest"),
-    ack: document.getElementById("ack"),
-    ackLabel: document.getElementById("ack-label"),
     btcNote: document.getElementById("btc-note"),
     paceNote: document.getElementById("pace-note"),
     empty: document.getElementById("empty-bailout"),
@@ -63,7 +57,6 @@
     if (!isFinite(gap)) gap = 0;
     if (gap < -5) gap = -5;
     if (gap > 15) gap = 15;
-    var gate = Pmb.readGate(q.get("honest"), q.get("ack"));
     return {
       measure: measure,
       amount: amount,
@@ -72,8 +65,6 @@
       log: log,
       norm: norm,
       gap: gap,
-      honest: gate.honest,
-      ack: gate.acknowledged,
     };
   }
 
@@ -91,8 +82,6 @@
     q.set("log", state.log ? "1" : "0");
     q.set("norm", state.norm);
     q.set("gap", String(Math.round(state.gap * 1000000) / 1000000));
-    q.set("honest", state.honest ? "1" : "0");
-    q.set("ack", state.ack ? "1" : "0");
     history.replaceState(null, "", "?" + q.toString());
   }
 
@@ -500,21 +489,10 @@
     els.normSeries.value = state.norm === "cpi" ? "cpi" : "gdp";
     els.normSeries.disabled = !canNorm || state.norm === "0";
     if (!canNorm) state.norm = "0";
-    if (els.honest) els.honest.checked = !!state.honest;
-    if (els.ack) {
-      els.ack.checked = !!state.ack;
-      els.ack.disabled = !state.honest;
-    }
-    if (els.ackLabel) els.ackLabel.hidden = !state.honest;
     if (els.bsGap && document.activeElement !== els.bsGap) els.bsGap.value = String(state.gap);
     if (els.bsGapNum && document.activeElement !== els.bsGapNum) {
       els.bsGapNum.value = String(Math.round(state.gap * 10000) / 10000);
     }
-    if (els.bsReveal) els.bsReveal.hidden = !gateOpen();
-  }
-
-  function gateOpen() {
-    return !!(state.honest && state.ack);
   }
 
   function yearsLabel(value) {
@@ -566,7 +544,6 @@
         state.gap = next;
         els.bsGap.value = String(state.gap);
         els.bsGapNum.value = String(Math.round(state.gap * 10000) / 10000);
-        tease();
         render();
       });
     }
@@ -614,7 +591,7 @@
       return { official: [], gap: [], wages: [] };
     }
     var series = Pmb.trailingCpiHalfLife(cpi.points);
-    var gapDecimal = Pmb.effectiveGap(state.gap / 100, state.honest, state.ack);
+    var gapDecimal = Pmb.effectiveGap(state.gap / 100);
     var adjusted = series.map(function (row) {
       return {
         date: row.date,
@@ -635,16 +612,12 @@
       else {
         var pct = (last.rate * 100).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
         var line = "Latest print " + last.date + ": " + pct + "% over the prior twelve months, " +
-          yearsLabel(last.years) + " years";
-        if (!gateOpen()) {
-          latest.textContent = line + ".";
-        } else {
-          var adjustedYears = Pmb.halfLifeWithGap(last.rate, gapDecimal);
-          line += " at official CPI. At CPI plus " + ppLabel(state.gap / 100) + " percentage points, ";
-          line += adjustedYears != null ? yearsLabel(adjustedYears) + " years." : "the rate is not positive, so that half-life is a gap.";
-          line += " The gap is an illustrative assumption, not measured real inflation.";
-          latest.textContent = line;
-        }
+          yearsLabel(last.years) + " years at official CPI. At CPI plus " +
+          ppLabel(state.gap / 100) + " percentage points, ";
+        var adjustedYears = Pmb.halfLifeWithGap(last.rate, gapDecimal);
+        line += adjustedYears != null ? yearsLabel(adjustedYears) + " years." : "the rate is not positive, so that half-life is a gap.";
+        line += " The gap is an illustrative assumption, not measured real inflation.";
+        latest.textContent = line;
       }
     }
     return {
@@ -772,32 +745,10 @@
       state.gap = next;
       if (fromSlider) els.bsGapNum.value = String(Math.round(state.gap * 100) / 100);
       else els.bsGap.value = String(state.gap);
-      tease();
       render();
     }
     els.bsGap.addEventListener("input", function () { applyGap(els.bsGap.value, true); });
     els.bsGapNum.addEventListener("input", function () { applyGap(els.bsGapNum.value, false); });
-    els.honest.addEventListener("change", function () {
-      state.honest = els.honest.checked;
-      if (!state.honest) state.ack = false;
-      if (gateOpen() && els.bsTease) els.bsTease.textContent = "";
-      render();
-    });
-    els.ack.addEventListener("change", function () {
-      state.ack = !!(els.ack.checked && state.honest);
-      if (gateOpen() && els.bsTease) els.bsTease.textContent = "";
-      render();
-    });
-  }
-
-  function tease() {
-    if (!els.bsTease || gateOpen()) return;
-    els.bsTease.textContent = "Adjusting...";
-    clearTimeout(teaseTimer);
-    teaseTimer = setTimeout(function () {
-      if (!els.bsTease || gateOpen()) return;
-      els.bsTease.textContent = shareHalfYears != null ? yearsLabel(shareHalfYears) + " years" : "";
-    }, 700);
   }
 
   function fail(message) {

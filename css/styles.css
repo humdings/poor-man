@@ -530,16 +530,10 @@ a.share { display: inline-block; text-decoration: none; }
 }
 .bs-adjust { margin: 0.15rem 0.15rem 0.35rem; min-width: 0; }
 .bs-adjust .half-label { margin: 0.15rem 0 0.25rem; }
-.bs-tease {
-  margin: 0.15rem 0 0;
-  min-height: 1.05em;
+.bs-caption {
+  margin: 0.35rem 0 0;
   color: var(--faint);
-  font-size: 0.75rem;
-}
-.bs-reveal {
-  margin: 0.35rem 0 0.15rem;
-  color: var(--gold);
-  font-size: 0.88rem;
+  font-size: 0.78rem;
 }
 .bs-adjust .card-note { margin-bottom: 0.55rem; }
 .bs-control {
@@ -742,33 +736,6 @@ footer p { margin: 0; }
   line-height: 1.2;
 }
 .tip-copy:hover { background: var(--gold-dim); }
-
-.honest-row {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.45rem;
-  margin: 0.85rem 0.15rem 0.15rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--line);
-  min-width: 0;
-}
-.honest {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  color: var(--ink);
-  font-size: 0.95rem;
-  line-height: 1.35;
-}
-.honest[hidden] { display: none !important; }
-.honest input { margin-top: 0.25rem; flex: 0 0 auto; }
-.honest-aside {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-  min-width: 0;
-}
 
 .noscript {
   width: min(1120px, calc(100% - 2rem));

@@ -447,9 +447,8 @@
           <input type="number" id="bs-gap-num" min="-5" max="15" step="any" value="0" inputmode="decimal" aria-label="Bullshit gap in percentage points">
           <span class="bs-unit">pp</span>
         </div>
+        <p class="bs-caption">In the real world, you can't turn this bullshit off.</p>
         <div class="bs-presets" id="bs-presets"></div>
-        <p class="bs-tease" id="bs-tease" aria-live="polite"></p>
-        <p class="bs-reveal" id="bs-reveal" hidden>You just had to dig to the bottom of the page to make the numbers honest. That was the point.</p>
         <p class="legend">
           <span><i class="swatch btc"></i> Official CPI</span>
           <span><i class="swatch clay"></i> CPI + gap</span>
@@ -461,17 +460,6 @@
       <p class="card-note bs-credit">Cumulative changes, Jan. 2000–June 2026, from the chart “Price changes (Jan. 2000-June 2026), Selected US Consumer Goods and Services, and Wages.” Mark J. Perry, BLS data. The chart image is not hosted here. Wages is a reference line, not a gap preset.</p>
       <p class="half-label">Years at a steady inflation rate</p>
       <div class="half-table" id="half-table"></div>
-      <div class="honest-row" id="gate">
-        <label class="honest" for="honest">
-          <input type="checkbox" id="honest">
-          Turn off the bullshit
-        </label>
-        <p class="honest-aside">In the real world, you can't turn this bullshit off.</p>
-        <label class="honest" id="ack-label" for="ack" hidden>
-          <input type="checkbox" id="ack">
-          I acknowledge that in the real world, you can't turn this bullshit off.
-        </label>
-      </div>
     </section>
 
     <section class="card">
@@ -611,8 +599,8 @@ regression
     <p class="noscript">This page computes the day count in the browser from the committed snapshot. JavaScript is required for the number and the charts. The formula is the bitcoin market cap divided by the pace of monetary expansion. Money spends the same, so expansion in any form counts as expansion, public debt included. The default is US M2 and a 12-month trailing change.</p>
   </noscript>
 
-  <script src="js/metric.js?v=2"></script>
-  <script src="js/charts.js?v=2"></script>
-  <script src="js/app.js?v=2"></script>
+  <script src="js/metric.js?v=3"></script>
+  <script src="js/charts.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
 </body>
 </html>
