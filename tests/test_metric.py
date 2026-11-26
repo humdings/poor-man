@@ -378,7 +378,8 @@ class HalfLifeTests(unittest.TestCase):
             self.assertIn("Jan. 2000-June 2026", text)
         self.assertIn('id="bs-gap"', page)
         self.assertIn('id="bs-gap-num"', page)
-        self.assertNotIn("aei.org", page)
+        half = page[page.find("Dollar half-life"):page.find("Days at a fixed bitcoin price")]
+        self.assertNotIn("aei.org", half)
         self.assertNotIn("<img", page[page.find("Bullshit adjuster"):page.find("Years at a steady")])
 
     def test_the_gap_applies_immediately(self):

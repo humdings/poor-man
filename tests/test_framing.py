@@ -44,7 +44,10 @@ REQUIRED = [
     "I lost it in a boating accident.",
     "Attributed to Voltaire",
     "Paper money eventually returns to its intrinsic value: zero.",
-    "Attributed to Milton Friedman",
+    "is the one form of taxation that can be imposed without legislation.",
+    "Milton Friedman, AEI round table, 17 July 1974",
+    "https://www.aei.org/wp-content/uploads/2016/03/AEIRoundTable05.pdf",
+    "is a paraphrase.",
     "So I think we need a roundabout way.",
     "Bitcoin isn\u2019t strictly a monetary protocol.",
     "Bitcoin is proof that proof-of-work works.",
@@ -141,6 +144,21 @@ class FramingTests(unittest.TestCase):
         for text in FORBIDDEN:
             self.assertNotIn(text, self.page, text)
             self.assertNotIn(text, self.readme, text)
+
+    def test_the_friedman_card_quotes_the_aei_sentence(self):
+        for text in (self.page, self.readme):
+            self.assertNotIn("Attributed to Milton Friedman", text)
+            self.assertNotIn("No source in his own words has been found", text)
+        sentence = "It is the one form of taxation that can be imposed without legislation."
+        card = self.page.split(sentence, 1)[0].rsplit("<figure", 1)[1] + sentence
+        card += self.page.split(sentence, 1)[1].split("</figure>", 1)[0]
+        quote = card.split("<blockquote>", 1)[1].split("</blockquote>", 1)[0]
+        self.assertIn(sentence, quote)
+        self.assertNotIn("Inflation is taxation without legislation", quote)
+        self.assertIn("Inflation is taxation without legislation", card)
+        self.assertIn("is a paraphrase.", card)
+        self.assertNotIn("quote-flag", card)
+        self.assertNotIn("flagged", card)
 
     def test_the_frogs_and_the_big_short_cards_are_gone(self):
         for text in (self.page, self.readme):
