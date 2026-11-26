@@ -445,7 +445,7 @@
         </div>
       </div>
       <div class="bs-adjust">
-        <p class="half-label">Bullshit adjuster<sup class="bs-star">*</sup></p>
+        <p class="half-label">Bullshit adjuster</p>
         <p class="card-note" id="bs-assumption">Adds a bullshit gap, in percentage points, to trailing CPI and plots that half-life beside the official CPI line. The gaps are illustrative assumptions, not measured real inflation.</p>
         <div class="bs-control">
           <label for="bs-gap">Gap</label>
@@ -467,6 +467,17 @@
       <p class="card-note bs-credit">Cumulative changes, Jan. 2000–June 2026, from the chart “Price changes (Jan. 2000-June 2026), Selected US Consumer Goods and Services, and Wages.” Mark J. Perry, BLS data. The chart image is not hosted here. Wages is a reference line, not a gap preset.</p>
       <p class="half-label">Years at a steady inflation rate</p>
       <div class="half-table" id="half-table"></div>
+      <div class="honest-row" id="gate">
+        <label class="honest" for="honest">
+          <input type="checkbox" id="honest">
+          Turn off the bullshit
+        </label>
+        <p class="honest-aside">In the real world, you can't turn this bullshit off.</p>
+        <label class="honest" id="ack-label" for="ack" hidden>
+          <input type="checkbox" id="ack">
+          I acknowledge that in the real world, you can't turn this bullshit off.
+        </label>
+      </div>
     </section>
 
     <section class="card">
@@ -600,21 +611,14 @@ regression
         </p>
       </div>
     </div>
-    <div class="honest-row">
-      <label class="honest" for="honest">
-        <input type="checkbox" id="honest">
-        Turn off the bullshit
-      </label>
-      <p class="honest-aside">In the real world, you can't turn this bullshit off.</p>
-    </div>
   </footer>
 
   <noscript>
     <p class="noscript">This page computes the day count in the browser from the committed snapshot. JavaScript is required for the number and the charts. The formula is the bitcoin market cap divided by the pace of monetary expansion. Money spends the same, so expansion in any form counts as expansion, public debt included. The default is US M2 and a 12-month trailing change.</p>
   </noscript>
 
-  <script src="js/metric.js"></script>
-  <script src="js/charts.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/metric.js?v=2"></script>
+  <script src="js/charts.js?v=2"></script>
+  <script src="js/app.js?v=2"></script>
 </body>
 </html>

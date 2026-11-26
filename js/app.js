@@ -35,6 +35,8 @@
     bsTease: document.getElementById("bs-tease"),
     bsReveal: document.getElementById("bs-reveal"),
     honest: document.getElementById("honest"),
+    ack: document.getElementById("ack"),
+    ackLabel: document.getElementById("ack-label"),
     btcNote: document.getElementById("btc-note"),
     paceNote: document.getElementById("pace-note"),
     empty: document.getElementById("empty-bailout"),
@@ -61,8 +63,18 @@
     if (!isFinite(gap)) gap = 0;
     if (gap < -5) gap = -5;
     if (gap > 15) gap = 15;
-    var honest = q.get("honest") === "1";
-    return { measure: measure, amount: amount, unit: unit, method: method, log: log, norm: norm, gap: gap, honest: honest };
+    var gate = Pmb.readGate(q.get("honest"), q.get("ack"));
+    return {
+      measure: measure,
+      amount: amount,
+      unit: unit,
+      method: method,
+      log: log,
+      norm: norm,
+      gap: gap,
+      honest: gate.honest,
+      ack: gate.acknowledged,
+    };
   }
 
   function clamp(amount, unit) {
@@ -80,6 +92,7 @@
     q.set("norm", state.norm);
     q.set("gap", String(Math.round(state.gap * 1000000) / 1000000));
     q.set("honest", state.honest ? "1" : "0");
+    q.set("ack", state.ack ? "1" : "0");
     history.replaceState(null, "", "?" + q.toString());
   }
 
@@ -488,11 +501,20 @@
     els.normSeries.disabled = !canNorm || state.norm === "0";
     if (!canNorm) state.norm = "0";
     if (els.honest) els.honest.checked = !!state.honest;
+    if (els.ack) {
+      els.ack.checked = !!state.ack;
+      els.ack.disabled = !state.honest;
+    }
+    if (els.ackLabel) els.ackLabel.hidden = !state.honest;
     if (els.bsGap && document.activeElement !== els.bsGap) els.bsGap.value = String(state.gap);
     if (els.bsGapNum && document.activeElement !== els.bsGapNum) {
       els.bsGapNum.value = String(Math.round(state.gap * 10000) / 10000);
     }
-    if (els.bsReveal) els.bsReveal.hidden = !state.honest;
+    if (els.bsReveal) els.bsReveal.hidden = !gateOpen();
+  }
+
+  function gateOpen() {
+    return !!(state.honest && state.ack);
   }
 
   function yearsLabel(value) {
@@ -592,7 +614,7 @@
       return { official: [], gap: [], wages: [] };
     }
     var series = Pmb.trailingCpiHalfLife(cpi.points);
-    var gapDecimal = Pmb.effectiveGap(state.gap / 100, state.honest);
+    var gapDecimal = Pmb.effectiveGap(state.gap / 100, state.honest, state.ack);
     var adjusted = series.map(function (row) {
       return {
         date: row.date,
@@ -614,7 +636,7 @@
         var pct = (last.rate * 100).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
         var line = "Latest print " + last.date + ": " + pct + "% over the prior twelve months, " +
           yearsLabel(last.years) + " years";
-        if (!state.honest) {
+        if (!gateOpen()) {
           latest.textContent = line + ".";
         } else {
           var adjustedYears = Pmb.halfLifeWithGap(last.rate, gapDecimal);
@@ -757,17 +779,23 @@
     els.bsGapNum.addEventListener("input", function () { applyGap(els.bsGapNum.value, false); });
     els.honest.addEventListener("change", function () {
       state.honest = els.honest.checked;
-      if (state.honest && els.bsTease) els.bsTease.textContent = "";
+      if (!state.honest) state.ack = false;
+      if (gateOpen() && els.bsTease) els.bsTease.textContent = "";
+      render();
+    });
+    els.ack.addEventListener("change", function () {
+      state.ack = !!(els.ack.checked && state.honest);
+      if (gateOpen() && els.bsTease) els.bsTease.textContent = "";
       render();
     });
   }
 
   function tease() {
-    if (!els.bsTease || state.honest) return;
+    if (!els.bsTease || gateOpen()) return;
     els.bsTease.textContent = "Adjusting...";
     clearTimeout(teaseTimer);
     teaseTimer = setTimeout(function () {
-      if (!els.bsTease || state.honest) return;
+      if (!els.bsTease || gateOpen()) return;
       els.bsTease.textContent = shareHalfYears != null ? yearsLabel(shareHalfYears) + " years" : "";
     }, 700);
   }
