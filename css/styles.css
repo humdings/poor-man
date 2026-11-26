@@ -106,7 +106,8 @@ a:hover { color: var(--ink); }
 }
 
 .quotes { padding: 0.4rem 0 0.6rem; max-width: none; }
-.quotes h2, .quotes-note { max-width: 46rem; }
+.quotes h2, .quotes-note, .quotes-aside { max-width: 46rem; }
+.quotes-aside { margin: 0 0 0.45rem; color: var(--ink); }
 .quotes h2 {
   margin: 1.2rem 0 0.3rem;
   font-family: Fraunces, Georgia, serif;
@@ -217,6 +218,7 @@ a:hover { color: var(--ink); }
 .hero-main { min-width: 0; padding: 0.25rem 0 0; }
 .hero-quotes { min-width: 0; padding-top: 0.85rem; }
 .hero-quotes h2 { margin: 0 0 0.25rem; font-size: 1.25rem; }
+.hero-quotes .quotes-aside { margin: 0 0 0.4rem; font-size: 0.92rem; }
 .hero-quotes .quotes-note { margin: 0 0 0.55rem; font-size: 0.88rem; }
 .hero-quotes .quote-strip { max-width: 100%; margin-left: 0; margin-right: 0; }
 

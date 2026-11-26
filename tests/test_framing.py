@@ -38,8 +38,9 @@ REQUIRED = [
     "September 1935",
     "Money is gold, and nothing else.",
     "Gold is money. Everything else is credit.",
-    "Michael Saylor (paraphrase)",
-    "Bitcoin is money, everything else is credit.",
+    "Gold monetized physical scarcity. Fiat monetized political credit. Bitcoin monetizes digital scarcity.",
+    "sound money, limits on power, no taxation without consent",
+    "That is our view, not a line they wrote, and still one path among many.",
     "You can tell everybody to go fuck themselves.",
     "I lost it in a boating accident.",
     "Attributed to Voltaire",
@@ -185,25 +186,35 @@ class FramingTests(unittest.TestCase):
         self.assertIn("hero-col", hero)
         self.assertIn("hero-quotes", hero)
 
-    def test_morgan_sits_immediately_before_the_saylor_riff(self):
+    def test_the_founders_comment_is_the_sites_own_view(self):
+        section = self.page.split('id="quotes-title"', 1)[1].split('id="quote-strip"', 1)[0]
+        self.assertIn("sound money, limits on power, no taxation without consent", section)
+        self.assertIn("That is our view, not a line they wrote", section)
+        self.assertNotIn("<blockquote", section)
+        self.assertNotIn("<figure", section)
+        strip = self.page.split('id="quote-set"', 1)[1].split("</div>", 1)[0]
+        self.assertNotIn("sound money, limits on power", strip)
+
+    def test_morgan_sits_immediately_before_the_saylor_line(self):
+        sentence = "Gold monetized physical scarcity. Fiat monetized political credit. Bitcoin monetizes digital scarcity."
         for text in (self.page, self.readme):
             morgan = text.index("Money is gold, and nothing else.")
             paraphrase = text.index("Gold is money. Everything else is credit.")
-            saylor = text.index("Michael Saylor (paraphrase)")
-            riff = text.index("Bitcoin is money, everything else is credit.")
+            saylor = text.index(sentence)
             iou = text.index("That's as good as money, sir. Those are I.O.U.'s.")
             self.assertLess(morgan, paraphrase)
             self.assertLess(paraphrase, saylor)
-            self.assertLess(saylor, riff)
-            self.assertLess(riff, iou)
+            self.assertLess(saylor, iou)
+            self.assertNotIn("Michael Saylor (paraphrase)", text)
+            self.assertNotIn("Bitcoin is money, everything else is credit.", text)
             moon = text.index("We landed on the moon!")
             self.assertIn("Lloyd Christmas", text[moon:moon + 400])
+            entropy = text.index("all forms of monetary entropy")
+            self.assertNotEqual(entropy, saylor)
         trio = self.page.split('class="quote-trio"', 1)[1].split("</div>", 1)[0]
-        self.assertLess(trio.index("Money is gold, and nothing else."), trio.index("Michael Saylor (paraphrase)"))
-        self.assertLess(
-            trio.index("Bitcoin is money, everything else is credit."),
-            trio.index("That's as good as money, sir. Those are I.O.U.'s."),
-        )
+        self.assertLess(trio.index("Money is gold, and nothing else."), trio.index(sentence))
+        self.assertLess(trio.index(sentence), trio.index("That's as good as money, sir. Those are I.O.U.'s."))
+        self.assertNotIn("paraphrase", trio[trio.index(sentence):])
         self.assertIn("featured", trio)
 
     def test_shuffle_keeps_every_card_once_and_the_trio_in_order(self):

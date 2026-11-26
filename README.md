@@ -24,6 +24,8 @@ d(t) = C(t) / g(t)     when g(t) > 0
 
 ## In their words
 
+The founders would agree, on this page's reading: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does. That is our view, not a line they wrote, and still one path among many.
+
 The page runs these as a scrolling strip and shuffles the order on each visit. Morgan, Saylor, and the IOU stay together, in that order, and the IOU card is set larger. Verbatim, except the cards marked attributed or paraphrase. Film lines are the picture's own words. A one-line frame above a film card is ours. The list below is a catalog, not the order on a given visit.
 
 > And I sincerely believe with you, that banking establishments are more dangerous than standing armies; & that the principle of spending money to be paid by posterity, under the name of funding, is but swindling futurity on a large scale
@@ -198,9 +200,9 @@ Thomas Paine, *Dissertations on Government, the Affairs of the Bank, and Paper M
 
 J. Pierpont Morgan, Money Trust Investigation, 19 December 1912. [FRASER](https://fraser.stlouisfed.org/files/docs/historical/house/money_trust/montru_pt15.pdf). The popular line "Gold is money. Everything else is credit." is a paraphrase.
 
-**Michael Saylor (paraphrase).** No post or checked transcript prints this as one sentence.
+> Gold monetized physical scarcity. Fiat monetized political credit. Bitcoin monetizes digital scarcity.
 
-> Bitcoin is money, everything else is credit.
+Michael Saylor, "What is Money?", 15 August 2026. [michael.com](https://www.michael.com/articles/what-is-money).
 
 > That's as good as money, sir. Those are I.O.U.'s.
 
