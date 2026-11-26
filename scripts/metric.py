@@ -226,13 +226,24 @@ def half_life_with_gap(rate: float | None, gap: float | None) -> float | None:
     return half_life_years(rate + gap)
 
 
-def effective_gap(gap: float | None, honest: bool) -> float:
+def read_gate(honest: str | None, acknowledged: str | None) -> tuple[bool, bool]:
+    """Checkboxes restored from the query string.
+
+    Both values have to be present. A leftover `honest=1` from before the
+    second box existed leaves both unchecked.
+    """
+    if honest is None or acknowledged is None:
+        return False, False
+    return honest == "1", acknowledged == "1"
+
+
+def effective_gap(gap: float | None, honest: bool, acknowledged: bool) -> float:
     """Gap added to trailing CPI, as a decimal rate.
 
-    The slider and the presets always show a gap. It changes the chart only
-    when `honest` is true. Otherwise the applied gap is zero.
+    The slider moves either way. It changes the chart only when both boxes
+    are checked. Either one alone applies a gap of zero.
     """
-    if not honest:
+    if not honest or not acknowledged:
         return 0.0
     if isinstance(gap, bool) or not isinstance(gap, (int, float)):
         return 0.0
