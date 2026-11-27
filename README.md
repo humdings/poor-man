@@ -10,6 +10,8 @@ The price of that honesty is volatility, and it humbles everyone who holds it.
 
 One day the volatility will flip, when honesty proves to be the thing worth holding.
 
+Bitcoin's biggest risk is responsible governments.
+
 Don't forget to enjoy the journey.
 
 Your dollar loses half its value in about the live half-life years.
