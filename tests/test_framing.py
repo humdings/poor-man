@@ -7,14 +7,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED = [
-    "One path among many.",
-    "Bitcoin is a choice each person can make, or leave alone.",
-    "not a destination anyone needs to reach.",
-    "the price is volatile, custody is your own, and there is a real learning curve.",
-    "Don't forget to enjoy the journey.",
     "To a bitcoiner, debasement is a slow-motion bailout.",
-    "That is one way of seeing it, not a call to act.",
-    "Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.",
+    "Every few hundred days, the money supply grows by an entire bitcoin market cap.",
+    "Bitcoin is the first bailout the little guy can buy into, even with a few bucks.",
+    "Its supply is fixed and its rules are open for anyone to verify.",
+    "The price of that honesty is volatility, and it humbles everyone who holds it.",
+    "Your dollar loses half its value in about",
+    "That isn't an accident. A 2% inflation target is official policy, and you're told it's for your own good.",
+    "When centrally planned economies stumble, the bailout pulls wealth forward from future generations and erodes what every dollar buys.",
+    "One day the volatility will flip, when honesty proves to be the thing worth holding.",
+    "Don't forget to enjoy the journey.",
     "banking establishments are more dangerous than standing armies",
     "swindling futurity on a large scale",
     "Bank-paper must be suppressed, and the circulating medium must be restored to the nation to whom it belongs.",
@@ -38,8 +40,8 @@ REQUIRED = [
     "September 1935",
     "Money is gold, and nothing else.",
     "Gold is money. Everything else is credit.",
-    "Michael Saylor (paraphrase)",
-    "Bitcoin is money, everything else is credit.",
+    "Gold monetized physical scarcity. Fiat monetized political credit. Bitcoin monetizes digital scarcity.",
+    "We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.",
     "You can tell everybody to go fuck themselves.",
     "I lost it in a boating accident.",
     "Attributed to Voltaire",
@@ -185,25 +187,62 @@ class FramingTests(unittest.TestCase):
         self.assertIn("hero-col", hero)
         self.assertIn("hero-quotes", hero)
 
-    def test_morgan_sits_immediately_before_the_saylor_riff(self):
+    def test_the_opening_drops_the_old_hedges(self):
+        retired = (
+            "One path among many",
+            "leave alone",
+            "not a destination",
+            "not a call to act",
+            "A perspective",
+            "Fewer days means the printer",
+            "one possible path",
+            "not a prescription",
+            "learning curve",
+        )
+        for text in (self.page, self.readme):
+            for phrase in retired:
+                self.assertNotIn(phrase, text, phrase)
+        self.assertIn('<h1 class="banner">To a bitcoiner, debasement is a slow-motion bailout.</h1>', self.page)
+        self.assertLess(self.page.index('id="half-lead"'), self.page.index('id="chart-halflife"'))
+        lead = self.page.split('id="half-lead"', 1)[1].split("</p>", 1)[0]
+        self.assertIn('id="half-years"', lead)
+        app = (ROOT / "js" / "app.js").read_text(encoding="utf-8")
+        self.assertIn('getElementById("half-years")', app)
+        self.assertIn("yearsLabel(last.years)", app)
+
+    def test_the_founders_comment_is_the_sites_own_view(self):
+        section = self.page.split('id="quotes-title"', 1)[1].split('id="quote-strip"', 1)[0]
+        self.assertIn(
+            "We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.",
+            section,
+        )
+        self.assertNotIn("on this page's reading", section)
+        self.assertNotIn("not a line they wrote", section)
+        self.assertNotIn("<blockquote", section)
+        self.assertNotIn("<figure", section)
+        strip = self.page.split('id="quote-set"', 1)[1].split("</div>", 1)[0]
+        self.assertNotIn("sound money, limits on power", strip)
+
+    def test_morgan_sits_immediately_before_the_saylor_line(self):
+        sentence = "Gold monetized physical scarcity. Fiat monetized political credit. Bitcoin monetizes digital scarcity."
         for text in (self.page, self.readme):
             morgan = text.index("Money is gold, and nothing else.")
             paraphrase = text.index("Gold is money. Everything else is credit.")
-            saylor = text.index("Michael Saylor (paraphrase)")
-            riff = text.index("Bitcoin is money, everything else is credit.")
+            saylor = text.index(sentence)
             iou = text.index("That's as good as money, sir. Those are I.O.U.'s.")
             self.assertLess(morgan, paraphrase)
             self.assertLess(paraphrase, saylor)
-            self.assertLess(saylor, riff)
-            self.assertLess(riff, iou)
+            self.assertLess(saylor, iou)
+            self.assertNotIn("Michael Saylor (paraphrase)", text)
+            self.assertNotIn("Bitcoin is money, everything else is credit.", text)
             moon = text.index("We landed on the moon!")
             self.assertIn("Lloyd Christmas", text[moon:moon + 400])
+            entropy = text.index("all forms of monetary entropy")
+            self.assertNotEqual(entropy, saylor)
         trio = self.page.split('class="quote-trio"', 1)[1].split("</div>", 1)[0]
-        self.assertLess(trio.index("Money is gold, and nothing else."), trio.index("Michael Saylor (paraphrase)"))
-        self.assertLess(
-            trio.index("Bitcoin is money, everything else is credit."),
-            trio.index("That's as good as money, sir. Those are I.O.U.'s."),
-        )
+        self.assertLess(trio.index("Money is gold, and nothing else."), trio.index(sentence))
+        self.assertLess(trio.index(sentence), trio.index("That's as good as money, sir. Those are I.O.U.'s."))
+        self.assertNotIn("paraphrase", trio[trio.index(sentence):])
         self.assertIn("featured", trio)
 
     def test_shuffle_keeps_every_card_once_and_the_trio_in_order(self):

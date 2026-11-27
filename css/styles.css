@@ -61,40 +61,47 @@ a:hover { color: var(--ink); }
 
 .top-note { margin: 0; color: var(--muted); font-size: 0.92rem; }
 
-.banner {
-  margin: 1.1rem 0 0.35rem;
+h1.banner {
+  margin: 1.1rem 0 0.55rem;
+  max-width: 16em;
   color: var(--gold);
   font-family: Fraunces, Georgia, serif;
   font-weight: 650;
   font-size: clamp(1.85rem, 4.6vw, 2.85rem);
-  line-height: 1.02;
+  line-height: 1.05;
   letter-spacing: -0.03em;
 }
 
 .banner-tie {
   margin: 0.2rem 0 0;
   max-width: 40rem;
-  color: var(--muted);
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.45;
 }
 
-.why { margin: 1.15rem 0 0.2rem; max-width: 40rem; }
-.why h2 {
-  margin: 0 0 0.45rem;
-  color: var(--gold);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.why p { margin: 0.3rem 0; }
-.why-lead {
-  margin: 0;
+.closer {
+  margin: 0.9rem 0 0;
+  max-width: 40rem;
+  color: var(--ink);
   font-family: Fraunces, Georgia, serif;
   font-weight: 560;
-  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
-  line-height: 1.2;
+  font-size: 1.15rem;
+  line-height: 1.35;
   letter-spacing: -0.02em;
 }
+
+.half-lead {
+  margin: 0.15rem 0.35rem 0.85rem;
+  max-width: 38rem;
+  color: var(--ink);
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 560;
+  font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+}
+.half-lead span { font-variant-numeric: tabular-nums; }
 
 .axiom {
   margin: 0.85rem 0 0;
@@ -106,7 +113,8 @@ a:hover { color: var(--ink); }
 }
 
 .quotes { padding: 0.4rem 0 0.6rem; max-width: none; }
-.quotes h2, .quotes-note { max-width: 46rem; }
+.quotes h2, .quotes-note, .quotes-aside { max-width: 46rem; }
+.quotes-aside { margin: 0 0 0.45rem; color: var(--ink); }
 .quotes h2 {
   margin: 1.2rem 0 0.3rem;
   font-family: Fraunces, Georgia, serif;
@@ -217,6 +225,7 @@ a:hover { color: var(--ink); }
 .hero-main { min-width: 0; padding: 0.25rem 0 0; }
 .hero-quotes { min-width: 0; padding-top: 0.85rem; }
 .hero-quotes h2 { margin: 0 0 0.25rem; font-size: 1.25rem; }
+.hero-quotes .quotes-aside { margin: 0 0 0.4rem; font-size: 0.92rem; }
 .hero-quotes .quotes-note { margin: 0 0 0.55rem; font-size: 0.88rem; }
 .hero-quotes .quote-strip { max-width: 100%; margin-left: 0; margin-right: 0; }
 
@@ -696,6 +705,14 @@ footer p { margin: 0; }
   color: var(--ink);
   font-size: 1.02rem;
   letter-spacing: -0.02em;
+}
+.tip-work {
+  margin: 0.7rem 0 0.15rem;
+  color: var(--ink);
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 560;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
 }
 .tip-links { margin-top: 0.2rem; }
 .tip-ln {

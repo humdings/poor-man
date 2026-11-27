@@ -585,8 +585,10 @@
       table.dataset.filled = "1";
     }
     var wages = paintBullshit();
+    var yearsNode = document.getElementById("half-years");
     if (!cpi || !cpi.points) {
       shareHalfYears = null;
+      if (yearsNode) yearsNode.textContent = "\u2014";
       if (latest) latest.textContent = "CPI is not in this snapshot.";
       return { official: [], gap: [], wages: [] };
     }
@@ -607,6 +609,7 @@
       if (series[i].years != null) { last = series[i]; break; }
     }
     shareHalfYears = last ? last.years : null;
+    if (yearsNode) yearsNode.textContent = last ? yearsLabel(last.years) : "\u2014";
     if (latest) {
       if (!last) latest.textContent = "The trailing 12-month CPI rate is not positive.";
       else {

@@ -17,7 +17,7 @@ const trio = units.find((unit) => Array.isArray(unit));
 if (!trio) fail("trio missing from the page");
 if (trio.length !== 3) fail("trio length " + trio.length);
 if (!trio[0].includes("Money is gold, and nothing else.")) fail("trio does not open with Morgan");
-if (!trio[1].includes("Bitcoin is money, everything else is credit.")) fail("Saylor is not second");
+if (!trio[1].includes("Fiat monetized political credit.")) fail("Saylor is not second");
 if (!trio[2].includes("That's as good as money, sir. Those are I.O.U.'s.")) fail("IOU is not third");
 
 const seenOrders = new Set();
@@ -33,7 +33,7 @@ for (let seed = 1; seed <= 40; seed++) {
   }
   const morgan = order.findIndex((text) => text.includes("Money is gold, and nothing else."));
   if (morgan < 0) fail("Morgan missing at seed " + seed);
-  if (!order[morgan + 1].includes("Bitcoin is money, everything else is credit.")) {
+  if (!order[morgan + 1].includes("Fiat monetized political credit.")) {
     fail("Saylor left the trio at seed " + seed);
   }
   if (!order[morgan + 2].includes("That's as good as money, sir. Those are I.O.U.'s.")) {

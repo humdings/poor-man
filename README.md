@@ -1,10 +1,12 @@
 # Poor Man's Bailout
 
-**One path among many.**
+**To a bitcoiner, debasement is a slow-motion bailout.**
 
-Bitcoin is a choice each person can make, or leave alone. It is one possible path among many, not a destination anyone needs to reach. It is not easy: the price is volatile, custody is your own, and there is a real learning curve. Don't forget to enjoy the journey.
+Every few hundred days, the money supply grows by an entire bitcoin market cap. Bitcoin is the first bailout the little guy can buy into, even with a few bucks. Its supply is fixed and its rules are open for anyone to verify. The price of that honesty is volatility, and it humbles everyone who holds it.
 
-To a bitcoiner, debasement is a slow-motion bailout. That is one way of seeing it, not a call to act. Fewer days means the printer is outrunning bitcoin; more days means bitcoin is outrunning the printer.
+One day the volatility will flip, when honesty proves to be the thing worth holding. Don't forget to enjoy the journey.
+
+Your dollar loses half its value in about the live half-life years. That isn't an accident. A 2% inflation target is official policy, and you're told it's for your own good. When centrally planned economies stumble, the bailout pulls wealth forward from future generations and erodes what every dollar buys.
 
 How many days of monetary expansion equal the entire bitcoin market cap.
 
@@ -12,7 +14,7 @@ Money spends the same, so expansion in any form counts as expansion. M2, the mon
 
 **[humdings.github.io/poor-man](https://humdings.github.io/poor-man/)**
 
-![Poor Man's Bailout. One path among many. US M2, 12-month trailing change: 345.8 days.](docs/preview.png)
+![Poor Man's Bailout. To a bitcoiner, debasement is a slow-motion bailout. US M2, 12-month trailing change: 345.8 days.](docs/preview.png)
 
 On a date *t*, over a window that starts at *s* and spans *N* calendar days:
 
@@ -23,6 +25,8 @@ d(t) = C(t) / g(t)     when g(t) > 0
 *C* is the bitcoin market cap in dollars. *g* is the pace of the chosen measure, in dollars per day. The default is US M2 and a 12-month trailing change, `(M(t) − M(s)) / N`.
 
 ## In their words
+
+We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.
 
 The page runs these as a scrolling strip and shuffles the order on each visit. Morgan, Saylor, and the IOU stay together, in that order, and the IOU card is set larger. Verbatim, except the cards marked attributed or paraphrase. Film lines are the picture's own words. A one-line frame above a film card is ours. The list below is a catalog, not the order on a given visit.
 
@@ -198,9 +202,9 @@ Thomas Paine, *Dissertations on Government, the Affairs of the Bank, and Paper M
 
 J. Pierpont Morgan, Money Trust Investigation, 19 December 1912. [FRASER](https://fraser.stlouisfed.org/files/docs/historical/house/money_trust/montru_pt15.pdf). The popular line "Gold is money. Everything else is credit." is a paraphrase.
 
-**Michael Saylor (paraphrase).** No post or checked transcript prints this as one sentence.
+> Gold monetized physical scarcity. Fiat monetized political credit. Bitcoin monetizes digital scarcity.
 
-> Bitcoin is money, everything else is credit.
+Michael Saylor, "What is Money?", 15 August 2026. [michael.com](https://www.michael.com/articles/what-is-money).
 
 > That's as good as money, sir. Those are I.O.U.'s.
 
@@ -335,6 +339,8 @@ The site is [https://humdings.github.io/poor-man/](https://humdings.github.io/po
 ## Tip
 
 Stack sats? Tip the printer-watcher.
+
+Will work for Bitcoin.
 
 [Zap me on Nostr](https://njump.me/npub17z7t6hf6e3xru2lkc79lmkddljnswkn5xz86gppqt7amzvre90kqlew3u8) · Lightning `ivoryfireant9@primal.net` · On-chain `bc1qyut5d3gmlf2lnuntl7aqx3l89sjd6m0ewzs845`
 
