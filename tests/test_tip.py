@@ -10,6 +10,7 @@ NPUB = "npub17z7t6hf6e3xru2lkc79lmkddljnswkn5xz86gppqt7amzvre90kqlew3u8"
 LN = "ivoryfireant9@primal.net"
 BTC = "bc1qyut5d3gmlf2lnuntl7aqx3l89sjd6m0ewzs845"
 LEAD = "Stack sats? Tip the printer-watcher."
+WORK = "Will work for Bitcoin"
 CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 BECH32_CONST = 1
 
@@ -96,6 +97,17 @@ class TipTests(unittest.TestCase):
         self.assertIn(f'data-address="{LN}"', self.page)
         self.assertIn(f'data-address="{BTC}"', self.page)
         self.assertIn('src="img/onchain.svg"', self.page)
+
+    def test_will_work_for_bitcoin_sits_above_the_tip_lines(self):
+        for text in (self.page, self.readme):
+            self.assertIn(WORK, text)
+            note = text.index(WORK)
+            self.assertLess(note, text.index("Zap me on Nostr"))
+            self.assertLess(note, text.index(LN))
+            self.assertLess(note, text.index(BTC))
+        footer = self.page.split("<footer>", 1)[1].split("</footer>", 1)[0]
+        self.assertLess(footer.index(WORK), footer.index("Zap me on Nostr"))
+        self.assertLess(footer.index(LEAD), footer.index(WORK))
 
     def test_qr_is_a_local_svg_for_the_lightning_address(self):
         self.assertIn(f"<title>lightning:{LN}</title>", self.svg)
