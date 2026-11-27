@@ -1,6 +1,7 @@
 """Checks on the committed snapshot: units, coverage, and the 2022–23 gap."""
 
 import json
+import subprocess
 import sys
 import unittest
 from datetime import date
@@ -62,13 +63,18 @@ class SnapshotTests(unittest.TestCase):
     def test_debt_splices_history_in_front_of_april_1993(self):
         debt = next(m for m in self.doc["measures"] if m["id"] == "debt")
         days = [row[0] for row in debt["points"]]
-        self.assertLess(days[0], "1993-04-01")
+        self.assertEqual(days[0], "1790-01-01")
+        self.assertEqual(debt["points"][0][1], 71060508)
+        self.assertIn("1966-01-01", days)
         self.assertIn("1993-04-01", days)
         joined = dict(debt["points"])
         # Debt to the Penny opens just above $4.2 trillion.
         self.assertGreater(joined["1993-04-01"], 4e12)
         self.assertLess(joined["1993-04-01"], 4.5e12)
         self.assertGreater(debt["points"][-1][1], 3e13)
+        self.assertLess(debt["count"], 1600)
+        self.assertGreater(debt["count"], 400)
+        self.assertEqual(len([day for day in days if day.startswith("2000-01")]), 1)
 
     def test_bitcoin_market_cap_starts_in_2010(self):
         btc = self.doc["btc"]
@@ -104,6 +110,11 @@ class SnapshotTests(unittest.TestCase):
         cpi = self.doc["deflators"]["cpi"]
         self.assertEqual(gdp["fred_id"], "GDP")
         self.assertEqual(cpi["fred_id"], "CPIAUCSL")
+        self.assertEqual(cpi["history_fred_id"], "CPIAUCNS")
+        self.assertEqual(cpi["start"], "1913-01-01")
+        self.assertEqual(cpi["points"][0][1], 9.8)
+        joined = dict(cpi["points"])
+        self.assertAlmostEqual(joined["1947-01-01"], 21.48, places=2)
         self.assertLess(gdp["start"], "1948-01-01")
         self.assertLess(cpi["start"], "1948-01-01")
         self.assertGreater(gdp["points"][-1][1], 1.5e13)
@@ -122,6 +133,24 @@ class SnapshotTests(unittest.TestCase):
         latest = next(row for row in reversed(series) if row["years"] is not None)
         self.assertGreater(latest["years"], 5)
         self.assertLess(latest["years"], 80)
+        self.assertEqual(round(latest["years"], 1), 19.0)
+
+    def test_the_pace_line_starts_before_the_2008_crash(self):
+        m2 = next(m for m in self.doc["measures"] if m["id"] == "m2")
+        code = (
+            "const Pmb = require(" + json.dumps(str(ROOT / "js" / "metric.js")) + ");\n"
+            "const money = " + json.dumps(m2["points"]) + ";\n"
+            "const pace = Pmb.moneyPace(money, {amount:12, unit:'month', method:'trailing', norm:'0'});\n"
+            "const raw = Pmb.moneyPace(money, {amount:0, unit:'month', method:'none', norm:'0'});\n"
+            "console.log(JSON.stringify({first: pace[0].date, raw: raw[0].date, last: pace[pace.length-1].date, g: pace[0].growthPerDay}));"
+        )
+        got = json.loads(subprocess.check_output(["node", "-e", code], text=True))
+        self.assertEqual(got["first"], "1960-01-01")
+        self.assertEqual(got["raw"], "1959-02-01")
+        self.assertLess(got["first"], "2008-01-01")
+        self.assertGreater(got["g"], 0)
+        app = (ROOT / "js" / "app.js").read_text(encoding="utf-8")
+        self.assertIn("Pmb.moneyPace(measure.points", app)
 
 
 if __name__ == "__main__":

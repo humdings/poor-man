@@ -2,11 +2,21 @@
 
 **To a bitcoiner, debasement is a slow-motion bailout.**
 
-Every few hundred days, the money supply grows by an entire bitcoin market cap. Bitcoin is the first bailout the little guy can buy into, even with a few bucks. Its supply is fixed and its rules are open for anyone to verify. The price of that honesty is volatility, and it humbles everyone who holds it.
+Every few hundred days, the money supply grows by an entire bitcoin market cap. Bitcoin is the first bailout the little guy can buy into, even with a few bucks.
 
-One day the volatility will flip, when honesty proves to be the thing worth holding. Don't forget to enjoy the journey.
+Its supply is fixed and its rules are open for anyone to verify.
 
-Your dollar loses half its value in about the live half-life years. That isn't an accident. A 2% inflation target is official policy, and you're told it's for your own good. When centrally planned economies stumble, the bailout pulls wealth forward from future generations and erodes what every dollar buys.
+The price of that honesty is volatility, and it humbles everyone who holds it.
+
+One day the volatility will flip, when honesty proves to be the thing worth holding.
+
+Don't forget to enjoy the journey.
+
+Your dollar loses half its value in about the live half-life years.
+
+That isn't an accident. A 2% inflation target is official policy, and you're told it's for your own good.
+
+When centrally planned economies stumble, the bailout pulls wealth forward from future generations and erodes what every dollar buys.
 
 How many days of monetary expansion equal the entire bitcoin market cap.
 
@@ -251,25 +261,32 @@ Levels are stored in dollars. No API key.
 | US M2, the default | [FRED M2SL](https://fred.stlouisfed.org/series/M2SL) | 1959-01-01 → 2026-10-01 | billions, monthly, seasonally adjusted, × 1e9 |
 | Monetary base | [FRED BOGMBASE](https://fred.stlouisfed.org/series/BOGMBASE) | 1959-01-01 → 2026-10-01 | billions, monthly, × 1e9 |
 | Currency in circulation | [FRED MBCURRCIR](https://fred.stlouisfed.org/series/MBCURRCIR) | 1959-01-01 → 2026-10-01 | billions, monthly, × 1e9 |
-| Public debt | [Debt to the Penny](https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny) `tot_pub_debt_out_amt` | daily from 1993-04-01 → 2026-11-24 | dollars |
-| Public debt, earlier history | [FRED GFDEBTN](https://fred.stlouisfed.org/series/GFDEBTN) | 1966-01-01, spliced strictly before 1993-04-01 | millions, quarterly, × 1e6 |
+| Public debt | [Debt to the Penny](https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny) `tot_pub_debt_out_amt` | month-end from 1993-04-01, daily for the last 400 days (through 2026-11-24) | dollars |
+| Public debt, quarterly | [FRED GFDEBTN](https://fred.stlouisfed.org/series/GFDEBTN) | 1966-01-01, spliced strictly before 1993-04-01 | millions, quarterly, × 1e6 |
+| Public debt, annual | [Historical Debt Outstanding](https://fiscaldata.treasury.gov/datasets/historical-debt-outstanding/historical-debt-outstanding) | 1790-01-01, spliced strictly before 1966-01-01 | dollars, fiscal-year |
 | Fed balance sheet | [FRED WALCL](https://fred.stlouisfed.org/series/WALCL) | 2002-12-18 → 2026-11-18 | millions, Wednesday level, × 1e6 |
 | Bitcoin market cap and price | [Coin Metrics](https://docs.coinmetrics.io/api/v4/) `CapMrktCurUSD`, `PriceUSD` | 2010-07-18 → 2026-11-25 | dollars, daily |
 
-M2 is the seasonally adjusted monthly series only. The weekly not-seasonally-adjusted series [WM2NS](https://fred.stlouisfed.org/series/WM2NS) is left out, so the join does not add a seasonal jump. Currency in circulation is MBCURRCIR, the currency component of the monetary base, for the full history that series has.
+M2 is the seasonally adjusted monthly series only. The weekly not-seasonally-adjusted series [WM2NS](https://fred.stlouisfed.org/series/WM2NS) is left out, so the join does not add a seasonal jump. Currency in circulation is MBCURRCIR, the full history of that series, from 1959.
+
+The St. Louis adjusted monetary base ([AMBSL](https://fred.stlouisfed.org/series/AMBSL)) begins in 1918 and was discontinued in 2019. It is a different series: January 1959 is about $38.8 billion, against $50.5 billion for BOGMBASE. It is not spliced on. The monetary base chart is the full BOGMBASE history from 1959. The Fed balance sheet is WALCL from its first Wednesday, 2002-12-18.
+
+The pace chart is drawn at each money print, so it runs from the first print the window can see, not from bitcoin. For M2 that is 1960, before the 2008 crash. Charts that need a bitcoin market cap — the day count, days at a fixed price, and the bitcoin line — start on 2010-07-18, the first Coin Metrics print.
+
+Debt to the Penny is stored as the last print of each month, with the last 400 days left daily so a 12-month window still sees those days. A chart gives every print the same width, and 8,000 daily points would squeeze 1790–1993 into a sliver. The headline still uses the latest dollar level.
 
 Optional deflators, used only when normalization is on:
 
 | Deflator | Source | History | What is stored |
 | --- | --- | --- | --- |
 | Nominal GDP | [FRED GDP](https://fred.stlouisfed.org/series/GDP) | 1947-01-01 → 2026-07-01 | dollars. The series is an annual rate; only the ratio is used, so the annualization cancels |
-| CPI | [FRED CPIAUCSL](https://fred.stlouisfed.org/series/CPIAUCSL) | 1947-01-01 → 2026-10-01 | the index, including fractions of a point |
+| CPI | [FRED CPIAUCSL](https://fred.stlouisfed.org/series/CPIAUCSL), and [CPIAUCNS](https://fred.stlouisfed.org/series/CPIAUCNS) before 1947 | 1913-01-01 → 2026-10-01 | the index, including fractions of a point. From 1947-01-01 the print is the seasonally adjusted CPIAUCSL |
 
 The dollar half-life chart uses that same CPI print. Trailing 12-month inflation is this month's index divided by the index twelve months earlier, minus one. Years to lose half of purchasing power are ln(2) / ln(1 + inflation). At 2% that is 35.0 years. At 7% it is 10.2 years. A rate at or below zero leaves a gap.
 
 The Bullshit adjuster adds a gap, in percentage points, to that rate and plots the half-life of CPI plus the gap beside the official line. The slider and the presets change the chart and the caption immediately. The gap is the `gap` query parameter, in percentage points. `honest` and `ack` are ignored if a link still carries them. Presets come from cumulative changes Mark J. Perry reports from BLS for Jan. 2000-June 2026 (overall inflation +96.4%, and selected goods, services, and wages). Each category's annualized rate is (1 + change) ^ (1 / 26.5) − 1. The preset gap is that rate minus overall CPI's annualized rate. The gaps are illustrative assumptions, not measured real inflation. Average hourly wages is a reference line at the half-life of its own annualized rate. Credit on the page: Mark J. Perry, BLS data. The chart image is not hosted.
 
-If Coin Metrics does not respond, bitcoin falls back to the Blockchain.com market-cap and market-price charts. If the FRED CSV endpoint does not respond, M2, the monetary base, and currency come from the Board's [H.6](https://www.federalreserve.gov/releases/h6/current/default.htm) release, the balance sheet from [H.4.1](https://www.federalreserve.gov/releases/h41/current/), and debt before 1993-04-01 from the Treasury [Historical Debt Outstanding](https://fiscaldata.treasury.gov/datasets/historical-debt-outstanding/historical-debt-outstanding) annual file. `data/series.json` records which path was used.
+If Coin Metrics does not respond, bitcoin falls back to the Blockchain.com market-cap and market-price charts. If the FRED CSV endpoint does not respond, M2, the monetary base, and currency come from the Board's [H.6](https://www.federalreserve.gov/releases/h6/current/default.htm) release, and the balance sheet from [H.4.1](https://www.federalreserve.gov/releases/h41/current/). Debt before 1966 is the Treasury annual file. If that API does not respond, the fetch uses a public mirror of the same series and checks that 1790-01-01 is still $71,060,508.50. If Debt to the Penny does not respond, the fetch keeps the daily points already in `data/series.json`. The file records which path was used.
 
 Each level is stepped forward to every calendar day and held until the next print. Bitcoin's market cap and price on a day are the observations on that day, or the latest on or before it. The headline date is the later of the money print and the bitcoin print.
 

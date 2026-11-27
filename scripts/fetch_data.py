@@ -8,8 +8,9 @@ No API key. FRED is read from the public CSV endpoint
 If that endpoint does not respond, the script uses the Board of Governors
 release FRED republishes (H.6 for M2, the monetary base, and currency in
 circulation; H.4.1 for the balance sheet) and says so in the file. Public
-debt prefers the Treasury's Debt to the Penny file, with FRED GFDEBTN
-quarterly history spliced in front of it. Bitcoin is Coin Metrics' community
+debt prefers the Treasury's Debt to the Penny file, with the Historical
+Debt Outstanding annual series (from 1790) and FRED GFDEBTN quarterly
+history spliced in front of it. Bitcoin is Coin Metrics' community
 API (PriceUSD and CapMrktCurUSD), with Blockchain.com charts as a fallback.
 
 Run from anywhere:
@@ -19,6 +20,7 @@ Run from anywhere:
 
 from __future__ import annotations
 
+import csv
 import io
 import json
 import sys
@@ -58,6 +60,9 @@ DEBT_ANNUAL_PAGE = (
     "https://fiscaldata.treasury.gov/datasets/historical-debt-outstanding/"
     "historical-debt-outstanding"
 )
+# Same Treasury series, used only when fiscaldata.treasury.gov does not respond.
+# First print checked below: 1790-01-01, $71,060,508.50.
+DEBT_ANNUAL_MIRROR = "https://everydebtclock.com/data/us-debt-annual.csv"
 COIN_METRICS = (
     "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
     "?assets=btc&metrics=PriceUSD,CapMrktCurUSD&frequency=1d"
@@ -81,12 +86,14 @@ FRED_MULTIPLIER = {
     "GFDEBTN": 1_000_000,  # millions
     "GDP": 1_000_000_000,  # billions
     "CPIAUCSL": 1,  # index, 1982-84=100
+    "CPIAUCNS": 1,  # same index, not seasonally adjusted, from 1913
 }
 
 # CPI moves by fractions of an index point. Rounding to an integer would
 # erase a typical month. Dollar stocks stay whole dollars.
 FRED_INTEGRAL = {
     "CPIAUCSL": False,
+    "CPIAUCNS": False,
 }
 
 
@@ -155,7 +162,30 @@ def treasury_pages(url: str, fields: str) -> list[dict]:
     return rows
 
 
+def committed_debt():
+    """Debt points already in data/series.json, used when a live feed times out."""
+    if not OUT.exists():
+        return []
+    doc = json.loads(OUT.read_text(encoding="utf-8"))
+    debt = next(item for item in doc["measures"] if item["id"] == "debt")
+    rows = [(date.fromisoformat(day), value) for day, value in debt["points"]]
+    rows.sort()
+    return rows
+
+
 def load_debt_daily():
+    try:
+        return load_debt_daily_live()
+    except Exception as exc:
+        print(f"  Debt to the Penny did not respond ({exc})")
+        rows = [row for row in committed_debt() if row[0] >= date(1993, 4, 1)]
+        if not rows:
+            raise
+        print(f"  Using the committed daily file: {rows[0][0]} → {rows[-1][0]} ({len(rows)} days)")
+        return rows
+
+
+def load_debt_daily_live():
     raw = treasury_pages(DEBT_DAILY_URL, "record_date,tot_pub_debt_out_amt")
     rows = []
     for item in raw:
@@ -171,6 +201,14 @@ def load_debt_daily():
 
 
 def load_debt_annual():
+    try:
+        return load_debt_annual_api(), "api"
+    except Exception as exc:
+        print(f"  Historical debt outstanding API did not respond ({exc})")
+        return load_debt_annual_mirror(), "mirror"
+
+
+def load_debt_annual_api():
     raw = treasury_pages(DEBT_ANNUAL_URL, "record_date,debt_outstanding_amt")
     rows = []
     for item in raw:
@@ -181,8 +219,63 @@ def load_debt_annual():
             )
         )
     rows.sort()
+    check_debt_annual(rows)
     print(f"  Historical debt outstanding: {rows[0][0]} → {rows[-1][0]} ({len(rows)})")
     return rows
+
+
+def load_debt_annual_mirror():
+    text = get_bytes(DEBT_ANNUAL_MIRROR, timeout=30).decode("utf-8")
+    rows = []
+    for item in csv.DictReader(io.StringIO(text)):
+        rows.append(
+            (
+                date.fromisoformat(item["record_date"]),
+                int(round(float(item["total_public_debt_outstanding_usd"]))),
+            )
+        )
+    rows.sort()
+    check_debt_annual(rows)
+    print(f"  Historical debt mirror: {rows[0][0]} → {rows[-1][0]} ({len(rows)})")
+    return rows
+
+
+def month_end_daily(rows, daily_from):
+    """Keep sparse history as published, and thin the daily file to month-ends.
+
+    One bar per print is how the chart spaces time, so 8,000 daily points
+    would hide 1790–1993 in a sliver. The first daily print and the latest
+    print stay, so the splice date and the headline level do not move.
+    """
+    early = [row for row in rows if row[0] < daily_from]
+    daily = [row for row in rows if row[0] >= daily_from]
+    if len(daily) < 3:
+        return rows
+    # The last 400 days stay daily so a 12-month window still sees the same days.
+    cutoff = daily[-1][0] - timedelta(days=400)
+    older = [row for row in daily if row[0] < cutoff]
+    recent = [row for row in daily if row[0] >= cutoff]
+    kept = []
+    last_key = None
+    for day, value in older:
+        key = (day.year, day.month)
+        if day == daily_from or not kept or key != last_key or kept[-1][0] == daily_from:
+            kept.append((day, value))
+            last_key = key
+        else:
+            kept[-1] = (day, value)
+    print(
+        f"  Debt to the Penny thinned to month-ends before {cutoff}: "
+        f"{len(daily)} days → {len(kept) + len(recent)} prints"
+    )
+    return early + kept + recent
+
+
+def check_debt_annual(rows):
+    if not rows or rows[0][0] != date(1790, 1, 1):
+        raise RuntimeError(f"historical debt does not start 1790-01-01 (got {rows[:1]})")
+    if not 71_000_000 <= rows[0][1] <= 71_100_000:
+        raise RuntimeError(f"1790 debt {rows[0][1]} is not the published $71,060,508.50")
 
 
 def load_bitcoin():
@@ -348,6 +441,22 @@ def load_deflators() -> dict:
         latest = rows[-1][1]
         if not latest_low <= latest <= latest_high:
             raise SystemExit(f"{series_id} latest value {latest} failed the unit check")
+        extra = {}
+        if series_id == "CPIAUCSL":
+            nsa = fred_csv("CPIAUCNS")
+            if nsa and nsa[0][0] < rows[0][0]:
+                early = [row for row in nsa if row[0] < rows[0][0]]
+                # Same 1982-84 index. Keep the seasonally adjusted print on the overlap.
+                rows = early + rows
+                extra = {
+                    "history_fred_id": "CPIAUCNS",
+                    "history_url": "https://fred.stlouisfed.org/series/CPIAUCNS",
+                    "seasonal_from": "1947-01-01",
+                }
+                role = (
+                    "CPIAUCNS (not seasonally adjusted) before 1947-01-01, then CPIAUCSL. "
+                    "Both are the 1982-84 index. The latest half-life uses the seasonally adjusted print."
+                )
         out[key] = measure_record(
             points=rows,
             id=key,
@@ -362,6 +471,7 @@ def load_deflators() -> dict:
             retrieval=(
                 f"FRED CSV for {series_id}, no API key. {role}"
             ),
+            **extra,
         )
     return out
 
@@ -465,31 +575,60 @@ def main() -> int:
 
     print("Public debt…")
     daily = load_debt_daily()
-    early = None
-    early_note = ""
-    early_url = ""
+    quarterly = None
     if fred_up:
-        early = fred_csv("GFDEBTN")
+        quarterly = fred_csv("GFDEBTN")
     else:
         print("  Skipping FRED GFDEBTN because the CSV endpoint did not respond")
-    if early:
+    try:
+        annual, annual_via = load_debt_annual()
+    except Exception as exc:
+        print(f"  Historical debt outstanding did not respond ({exc})")
+        annual, annual_via = None, None
+    if not quarterly:
+        earlier = [row for row in committed_debt() if row[0] < daily[0][0]]
+        if earlier:
+            quarterly = earlier
+            print(f"  Using committed debt before {daily[0][0]}: {earlier[0][0]} → {earlier[-1][0]}")
+    # Annual (from 1790) in front of quarterly GFDEBTN in front of daily Debt to the Penny.
+    # splice_before keeps the later series on any overlap.
+    history = quarterly or []
+    if annual:
+        history = splice_before(annual, history) if history else annual
+    if not history:
+        raise SystemExit("Public debt is missing its pre-1993 history")
+    if annual and quarterly:
+        mirror_note = (
+            " This snapshot read that annual file from a public mirror of the same Treasury series "
+            "because fiscaldata.treasury.gov did not respond."
+            if annual_via == "mirror" else ""
+        )
+        early_note = (
+            "History before the daily file is the Treasury Historical Debt Outstanding series "
+            "(fiscal-year annual, dollars, from 1790-01-01), "
+            "then FRED GFDEBTN (millions of dollars, quarterly, converted to dollars × 1e6) "
+            "through the day before Debt to the Penny." + mirror_note
+        )
+        early_url = DEBT_ANNUAL_PAGE
+    elif quarterly:
         early_note = (
             "History before the daily file is FRED GFDEBTN (Federal Debt: Total Public Debt), "
-            "millions of dollars, quarterly, converted to dollars × 1e6."
+            "millions of dollars, quarterly, converted to dollars × 1e6. "
+            "The Treasury annual file did not respond for this snapshot."
         )
         early_url = "https://fred.stlouisfed.org/series/GFDEBTN"
     else:
-        early = load_debt_annual()
         early_note = (
             "History before the daily file is the Treasury Historical Debt Outstanding series "
-            "(fiscal-year annual, dollars). FRED GFDEBTN quarterly was not available for this snapshot; "
-            "the fetch retries GFDEBTN whenever the FRED CSV endpoint responds."
+            "(fiscal-year annual, dollars). FRED GFDEBTN quarterly was not available for this snapshot."
         )
         early_url = DEBT_ANNUAL_PAGE
-    debt_points = splice_before(early, daily)
+    debt_points = month_end_daily(splice_before(history, daily), date(1993, 4, 1))
     require_range("Public debt", debt_points, 5e12, 2e14, 14)
     if debt_points[0][0] >= date(1993, 4, 1):
         raise SystemExit("Public debt is missing its pre-1993 history")
+    if annual and debt_points[0][0] != date(1790, 1, 1):
+        raise SystemExit(f"Public debt did not keep the 1790 annual print (got {debt_points[0][0]})")
     if not any(day == date(1993, 4, 1) for day, _ in debt_points):
         raise SystemExit("Debt to the Penny start 1993-04-01 is missing")
 
@@ -560,13 +699,14 @@ def main() -> int:
             fred_url="https://fred.stlouisfed.org/series/GFDEBTN",
             source_url=DEBT_PAGE,
             history_url=early_url,
-            frequency="daily, with earlier history spliced in front",
+            frequency="annual, then quarterly, then month-end, latest daily print kept",
             seasonal="Not seasonally adjusted",
             published_units="Dollars (Debt to the Penny). Earlier history converted to dollars.",
             multiplier=1,
             retrieval=(
                 "Treasury Fiscal Data Debt to the Penny, field tot_pub_debt_out_amt, "
-                "daily from 1993-04-01, already in dollars. " + early_note +
+                "from 1993-04-01, already in dollars. Prints before the last 400 days are the "
+                "last print of each month, so the earlier years stay visible on the chart. " + early_note +
                 " Counted as monetary expansion: debt spends the same as cash, and one person's debt is another's asset."
             ),
         ),
