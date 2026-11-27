@@ -16,6 +16,7 @@ REQUIRED = [
     "That isn't an accident. A 2% inflation target is official policy, and you're told it's for your own good.",
     "When centrally planned economies stumble, the bailout pulls wealth forward from future generations and erodes what every dollar buys.",
     "One day the volatility will flip, when honesty proves to be the thing worth holding.",
+    "Bitcoin's biggest risk is responsible governments.",
     "Don't forget to enjoy the journey.",
     "banking establishments are more dangerous than standing armies",
     "swindling futurity on a large scale",
@@ -203,6 +204,11 @@ class FramingTests(unittest.TestCase):
             for phrase in retired:
                 self.assertNotIn(phrase, text, phrase)
         self.assertIn('<h1 class="banner">To a bitcoiner, debasement is a slow-motion bailout.</h1>', self.page)
+        risk = "Bitcoin's biggest risk is responsible governments."
+        for text in (self.page, self.readme):
+            flip = text.index("One day the volatility will flip, when honesty proves to be the thing worth holding.")
+            self.assertLess(flip, text.index(risk))
+            self.assertLess(text.index(risk), text.index("Don't forget to enjoy the journey."))
         self.assertLess(self.page.index('id="half-lead"'), self.page.index('id="chart-halflife"'))
         lead = self.page.split('id="half-lead"', 1)[1].split("</p>", 1)[0]
         self.assertIn('id="half-years"', lead)
