@@ -453,12 +453,85 @@
     return seriesChart(points, key, key !== "growthPerDay");
   }
 
+  function indexOnOrBefore(points, day) {
+    var lo = 0;
+    var hi = points.length - 1;
+    var ans = -1;
+    while (lo <= hi) {
+      var mid = (lo + hi) >> 1;
+      if (points[mid][0] <= day) {
+        ans = mid;
+        lo = mid + 1;
+      } else hi = mid - 1;
+    }
+    return ans;
+  }
+
+  // Pace at each money print, for the whole series. The day-count chart still
+  // starts when bitcoin does. One point per print keeps a long history small.
+  function moneyPace(money, opts, deflator) {
+    money = normalize(money || []);
+    opts = opts || {};
+    if (money.length < 2) return [];
+    var amount = Number(opts.amount);
+    var smooth = amount > 0;
+    var method = smooth ? opts.method : "none";
+    if (method !== "trailing" && method !== "cagr" && method !== "regression" && method !== "none") {
+      method = "trailing";
+    }
+    var useDefl = opts.norm && opts.norm !== "0";
+    var defl = useDefl ? normalize(deflator || []) : [];
+    var out = [];
+    for (var i = 0; i < money.length; i++) {
+      var day = money[i][0];
+      var level = money[i][1];
+      var start;
+      var nDays;
+      if (!smooth) {
+        if (i === 0) continue;
+        start = money[i - 1][0];
+        nDays = daysBetween(start, day);
+      } else {
+        start = shiftMonths(day, -monthsOf(amount, opts.unit || "month"));
+        nDays = daysBetween(start, day);
+      }
+      if (!(nDays > 0) || start < money[0][0]) continue;
+      var sIdx = indexOnOrBefore(money, start);
+      if (sIdx < 0) continue;
+      var levelStart = money[sIdx][1];
+      var growthMethod = method === "none" ? "trailing" : method;
+      var raw = growthMethod === "regression"
+        ? regressionSlope(forwardFill(money, start, day), 0, daysBetween(start, day))
+        : growth(growthMethod, null, 0, 0, levelStart, level, nDays);
+      var g = raw;
+      if (useDefl) {
+        if (!defl.length || start < defl[0][0]) {
+          out.push({ date: day, growthPerDay: null });
+          continue;
+        }
+        var dS = indexOnOrBefore(defl, start);
+        var dE = indexOnOrBefore(defl, day);
+        if (dS < 0 || dE < 0) {
+          out.push({ date: day, growthPerDay: null });
+          continue;
+        }
+        var rate = growthMethod === "regression"
+          ? logSlope(forwardFill(defl, start, day), 0, daysBetween(start, day))
+          : proportionalRate(growthMethod, null, 0, 0, defl[dS][1], defl[dE][1], nDays);
+        g = excessGrowth(method, raw, level, levelStart, rate);
+      }
+      out.push({ date: day, growthPerDay: g });
+    }
+    return out;
+  }
+
   return {
     shiftMonths: shiftMonths,
     regressionSlope: regressionSlope,
     computeBailout: computeBailout,
     decompose: decompose,
     toChartData: toChartData,
+    moneyPace: moneyPace,
     halfLifeYears: halfLifeYears,
     trailingCpiHalfLife: trailingCpiHalfLife,
     annualizedFromCumulative: annualizedFromCumulative,

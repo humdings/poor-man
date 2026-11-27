@@ -275,11 +275,27 @@
     els.empty.hidden = hasLine;
     els.empty.textContent = hasLine ? "" : "Nothing to plot for this window. The pace is undefined over the whole overlap with bitcoin.";
     if (els.paceNote) {
-      els.paceNote.textContent = smoothed()
-        ? "Dollars per day from the " + windowLabel() + " " + methodName() + (state.norm === "0" ? "" : ", in excess of " + normName()) + ". Decreases are drawn. The day count above is blank when this line is not positive."
-        : "Dollars per day with no smoothing" + (state.norm === "0" ? "" : ", in excess of " + normName()) + ". Each step is the change between one print and the next, held until the following print, so a decrease shows as a decrease. The day count above is blank when this line is not positive.";
+      var paceBits = els.paceNote.querySelectorAll("p");
+      var paceLead = smoothed()
+        ? "Dollars per day, " + windowLabel() + " " + methodName() + (state.norm === "0" ? "" : ", in excess of " + normName()) + "."
+        : "Dollars per day, print to print" + (state.norm === "0" ? "" : ", in excess of " + normName()) + ".";
+      if (paceBits.length >= 2) {
+        paceBits[0].textContent = paceLead + " Decreases are drawn.";
+        paceBits[1].textContent = "The line uses every print of this series. The day count is blank when the pace is not positive.";
+      }
     }
     return { latest: latest, plotted: plotted };
+  }
+
+  function setNotes(node, lines) {
+    if (!node) return;
+    node.replaceChildren();
+    lines.forEach(function (text) {
+      var p = document.createElement("p");
+      p.className = "card-note";
+      p.textContent = text;
+      node.appendChild(p);
+    });
   }
 
   function card(label, value, detail, tone) {
@@ -611,16 +627,17 @@
     shareHalfYears = last ? last.years : null;
     if (yearsNode) yearsNode.textContent = last ? yearsLabel(last.years) : "\u2014";
     if (latest) {
-      if (!last) latest.textContent = "The trailing 12-month CPI rate is not positive.";
+      if (!last) setNotes(latest, ["The trailing 12-month CPI rate is not positive."]);
       else {
         var pct = (last.rate * 100).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-        var line = "Latest print " + last.date + ": " + pct + "% over the prior twelve months, " +
-          yearsLabel(last.years) + " years at official CPI. At CPI plus " +
-          ppLabel(state.gap / 100) + " percentage points, ";
         var adjustedYears = Pmb.halfLifeWithGap(last.rate, gapDecimal);
-        line += adjustedYears != null ? yearsLabel(adjustedYears) + " years." : "the rate is not positive, so that half-life is a gap.";
-        line += " The gap is an illustrative assumption, not measured real inflation.";
-        latest.textContent = line;
+        var adjustedLine = adjustedYears != null
+          ? yearsLabel(adjustedYears) + " years at CPI plus " + ppLabel(state.gap / 100) + " percentage points."
+          : "At CPI plus " + ppLabel(state.gap / 100) + " percentage points, the rate is not positive, so that half-life is a gap.";
+        setNotes(latest, [
+          "Latest print " + last.date + ": " + pct + "% over the prior twelve months, " + yearsLabel(last.years) + " years at official CPI.",
+          adjustedLine + " The gap is an illustrative assumption.",
+        ]);
       }
     }
     return {
@@ -675,13 +692,25 @@
     els.moneyTitle.textContent = measure.name;
     els.legend.textContent = measure.short;
     var price = data.btc.points[data.btc.points.length - 1][2];
-    els.btcNote.textContent = "Log scale. Latest price " + (price != null ? "$" + Number(price).toLocaleString("en-US", { maximumFractionDigits: 2 }) : "unavailable") + ".";
+    setNotes(els.btcNote, [
+      "Starts in 2010, with the first bitcoin price.",
+      "Log scale. Latest price " + (price != null ? "$" + Number(price).toLocaleString("en-US", { maximumFractionDigits: 2 }) : "unavailable") + ".",
+    ]);
     var half = paintHalfLife();
     PmbCharts.render({
       bailout: painted.plotted,
       fixedPrice: Pmb.toChartData(result.points, "fixedPriceDays"),
       fixedUnits: Pmb.toChartData(result.points, "fixedUnitsDays"),
-      pace: Pmb.toChartData(result.points, "growthPerDay"),
+      pace: Pmb.toChartData(Pmb.moneyPace(measure.points, {
+        amount: state.amount,
+        unit: state.unit,
+        method: state.method,
+        norm: state.norm,
+      }, state.norm === "cpi" && data.deflators && data.deflators.cpi
+        ? data.deflators.cpi.points
+        : state.norm === "gdp" && data.deflators && data.deflators.gdp
+          ? data.deflators.gdp.points
+          : null), "growthPerDay"),
       money: measure.points,
       btc: btcPairs(),
       halfLife: half.official,
