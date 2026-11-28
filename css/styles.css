@@ -119,6 +119,7 @@ h1.banner {
 }
 
 .closer-stack { margin-top: 0.95rem; max-width: 40rem; gap: 0.55rem; }
+.chart-closer { margin: 0.35rem 0.35rem 0.7rem; max-width: 40rem; }
 .closer {
   color: var(--ink);
   font-family: Fraunces, Georgia, serif;
