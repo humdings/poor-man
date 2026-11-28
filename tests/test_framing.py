@@ -1,5 +1,6 @@
 """The framing and the quotes stay verbatim, and the spurious line stays out."""
 
+import re
 import subprocess
 import unittest
 from pathlib import Path
@@ -219,19 +220,34 @@ class FramingTests(unittest.TestCase):
         self.assertIn('<p class="subhead">To a bitcoiner, debasement is a slow-motion bailout.</p>', self.page)
         bold = "For the first time, we can feel like the government is subsidizing our degeneracy, and bailing us out on a rolling basis."
         self.assertIn("<strong>" + bold + "</strong>", self.page)
-        supply = self.page.split('class="callout"', 1)[1].split("</aside>", 1)[0]
-        self.assertIn("Bitcoin does not promise a price, it promises a supply.", supply)
+        supply = "Bitcoin does not promise a price, it promises a supply. Fiat attempts to promise a price by manipulating supply."
         after_btc = self.page.split('id="chart-btc"', 1)[1].split("</article>", 1)[0]
         self.assertIn("Panicking erodes the value of your bailout.", after_btc)
         risk = "Bitcoin's biggest risk is responsible governments."
         journey = "Don't forget to enjoy the journey."
         flip = "Occasionally the volatility flips and honesty proves to be the thing worth holding."
+        axiom = "Money spends the same, so expansion in any form counts as expansion."
         for text in (self.page, self.readme):
             self.assertNotIn("One day the volatility will flip", text)
             self.assertLess(text.index(risk), text.index(journey))
-        after = self.page.split(flip, 1)[1]
-        self.assertRegex(after, r'^</p>\s*<div class="chart tall" id="chart-bailout"')
-        self.assertLess(self.page.index(journey), self.page.index(flip))
+        intro = self.page.split("<h1", 1)[1].split('<section class="hero">', 1)[0]
+        self.assertIn(flip, intro)
+        self.assertNotIn(risk, intro)
+        self.assertNotIn(journey, intro)
+        self.assertNotIn(supply, intro)
+        self.assertNotIn(axiom, intro)
+        self.assertRegex(self.page, re.escape(flip) + r"</p>\s*<section class=\"hero\">")
+        half = self.page.split('id="chart-halflife"', 1)[1].split('id="chart-fixed"', 1)[0]
+        self.assertIn(risk, half)
+        self.assertIn('<aside class="callout below-chart">', half)
+        pace = self.page.split('id="chart-pace"', 1)[1].split('id="chart-money"', 1)[0]
+        self.assertIn(supply, pace)
+        self.assertIn('<aside class="callout below-chart">', pace)
+        self.assertLess(self.page.index('id="generated"'), self.page.index(journey))
+        after_journey = self.page.split(journey, 1)[1].split("<footer>", 1)[0]
+        self.assertFalse(re.search(r"[A-Za-z]", re.sub(r"<[^>]+>", "", after_journey)))
+        axiom_section = self.page.split("<h2>The axiom</h2>", 1)[1].split("<h2>", 1)[0]
+        self.assertIn(axiom, axiom_section)
         self.assertLess(self.page.index('id="half-lead"'), self.page.index('id="chart-halflife"'))
         lead = self.page.split('id="half-lead"', 1)[1].split("</p>", 1)[0]
         self.assertIn('id="half-years"', lead)
