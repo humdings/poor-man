@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Poor Man's Bailout</title>
-  <meta name="description" content="To a bitcoiner, debasement is a slow-motion bailout. Every few hundred days, the money supply grows by an entire bitcoin market cap.">
+  <meta name="description" content="The Poor Man's Bailout. To a bitcoiner, debasement is a slow-motion bailout.">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#10140f">
   <link rel="canonical" href="https://humdings.github.io/poor-man/">
   <meta property="og:title" content="Poor Man's Bailout">
-  <meta property="og:description" content="To a bitcoiner, debasement is a slow-motion bailout. Every few hundred days, the money supply grows by an entire bitcoin market cap.">
+  <meta property="og:description" content="The Poor Man's Bailout. To a bitcoiner, debasement is a slow-motion bailout.">
   <meta property="og:url" content="https://humdings.github.io/poor-man/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://humdings.github.io/poor-man/data/og.png">
@@ -35,17 +35,22 @@
     <p class="top-note">Days of monetary expansion equal to all of bitcoin.</p>
   </header>
   <main>
-    <h1 class="banner">To a bitcoiner, debasement is a slow-motion bailout.</h1>
+    <h1 class="banner">The Poor Man's Bailout</h1>
+    <p class="subhead">To a bitcoiner, debasement is a slow-motion bailout.</p>
     <div class="stack banner-copy">
-      <p class="banner-tie">Every few hundred days, the money supply grows by an entire bitcoin market cap. Bitcoin is the first bailout the little guy can buy into, even with a few bucks.</p>
-      <p class="banner-tie">Its supply is fixed and its rules are open for anyone to verify.</p>
-      <p class="banner-tie">The price of that honesty is volatility, and it humbles everyone who holds it.</p>
+      <p class="banner-tie">Bitcoin is a much needed win for the little guy globally. Finally, when fancy bundled obligations blow up and monetary superheroes engineer a solution (they print), the savvy little guy can catch a tailwind too. Keeping bitcoin decentralized and secure is what keeps the tailwind alive.</p>
+      <p class="banner-tie">The poor man's bailout is simple: store your time and energy, your savings, in bitcoin. When central planners inevitably screw up and inflate away the purchasing power of your local currency, they can't put it on you. It's less a bailout than refusing to be the one who pays for theirs.</p>
+      <p class="banner-tie banner-strong"><strong>For the first time, we can feel like the government is subsidizing our degeneracy, and bailing us out on a rolling basis.</strong></p>
+      <p class="banner-tie">The poor man's bailout is not free, it's earned by taking an ego test and humbling yourself. It's taking responsibility for yourself knowing it empowers you. It's months of feeling like an absolute moron, but sleeping well knowing actual morons are debasing your alternative. It's knowing that when the music stops, they can't hand you the bill.</p>
     </div>
     <div class="stack closer-stack">
       <p class="closer">One day the volatility will flip, when honesty proves to be the thing worth holding.</p>
       <p class="closer">Bitcoin's biggest risk is responsible governments.</p>
       <p class="closer">Don't forget to enjoy the journey.</p>
     </div>
+    <aside class="callout">
+      <p>Bitcoin does not promise a price, it promises a supply. Fiat attempts to promise a price by manipulating supply.</p>
+    </aside>
 
     <p class="axiom">Money spends the same, so expansion in any form counts as expansion.</p>
 
@@ -68,12 +73,12 @@
 
     <section class="quotes hero-quotes" aria-labelledby="quotes-title">
       <h2 id="quotes-title">In their words</h2>
-      <p class="quotes-aside">We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.</p>
       <div class="stack note-stack">
         <p class="quotes-note">A scrolling strip, shuffled on each visit. Verbatim, except the cards marked attributed or paraphrase.</p>
         <p class="quotes-note">The film lines are the picture's own words, with a one-line frame of ours above them. Spellings are the source's.</p>
         <p class="quotes-note">Morgan, Saylor, and the IOU stay together, in that order. The strip pauses when you hover it.</p>
       </div>
+      <p class="quotes-lead"><strong>Bitcoin is a pure expression of Western ideals: sound money, open competition, limits on power, and no taxation without consent. The founders would recognize it. The more you think about it, the more it feels like common sense. It's all been said before:</strong></p>
       <div class="quote-strip" id="quote-strip" tabindex="0" aria-label="Quotes">
         <div class="quote-track" id="quote-track">
           <div class="quote-set" id="quote-set">
@@ -537,6 +542,7 @@
           </div>
         </div>
         <div class="chart" id="chart-btc" role="img" aria-label="Bitcoin market cap"></div>
+        <p class="callout btc-callout">Panicking erodes the value of your bailout.</p>
       </article>
     </section>
 
@@ -560,51 +566,32 @@
     <script src="js/quotes.js"></script>
     <section class="prose">
       <h2>The axiom</h2>
-      <p>Money spends the same, so expansion in any form counts as expansion. That includes M2, the monetary base, currency in circulation, the Fed balance sheet, and the public debt.</p>
-      <p>Debt spends the same as cash. One person's debt is another's asset. Public debt stays in the comparison, on the same terms as the other measures.</p>
+      <p>Money spends the same, so expansion in any form counts as expansion.</p>
       <h2>Formula</h2>
-      <p>The Poor Man's Bailout on a date <em>t</em> is how many days of monetary expansion, at the chosen pace, it takes to equal the bitcoin market cap that day.</p>
+      <p>On a date <em>t</em>, the bailout is how many days of expansion equal that day's bitcoin market cap.</p>
       <pre>s = t minus the window
 N = calendar days from s to t
 d(t) = C(t) / g(t)    when g(t) &gt; 0</pre>
-      <p><em>C(t)</em> is the bitcoin market cap in dollars. <em>M(t)</em> is the monetary expansion measure in dollars, carried forward from the last print.</p>
-      <p>The default pace is the simple trailing change, which is a 12-month smooth of US M2:</p>
+      <p><em>C(t)</em> is the bitcoin market cap. The default pace is a 12-month trailing change of US M2:</p>
       <pre>g(t) = (M(t) − M(s)) / N</pre>
-      <p>The other two averaging methods:</p>
       <pre>regression   g(t) = slope of daily M from s through t
 CAGR pace    g(t) = M(t) × ((M(t) / M(s))^(1/N) − 1)</pre>
-      <p>The regression is an ordinary least-squares line on the forward-filled daily level, so the flat days between prints are part of the fit.</p>
-      <p>The CAGR pace is the compound rate that links the level at the start of the window to today's level, stated in dollars per day at today's level. The default is the trailing change, on US M2, over 12 months.</p>
       <h2>Dollar half-life</h2>
-      <p>How many years of inflation it takes for a dollar to buy half as much. half-life = ln(2) / ln(1 + inflation), with inflation a decimal.</p>
-      <p>At 2% that is 35.0 years. At 7% it is 10.2 years.</p>
-      <p>The chart uses trailing 12-month CPI: this month's index divided by the index twelve months earlier, minus one. Before 1947 that index is CPIAUCNS. From 1947 it is CPIAUCSL, and the latest half-life uses that seasonally adjusted print.</p>
-      <p>A rate at or below zero leaves a gap. The table under the chart is the same formula at 1% through 10%.</p>
-      <p>The bullshit adjuster adds a gap, in percentage points, to that CPI rate and draws the half-life of the sum next to the official line.</p>
-      <p>Preset gaps are the difference between each category's annualized change and overall CPI's annualized change, from cumulative BLS changes Mark J. Perry reports for Jan. 2000-June 2026.</p>
-      <p>The gaps are illustrative assumptions, not measured real inflation. Average hourly wages is a reference line at the half-life of wage growth over that span, not a preset.</p>
+      <p>Years for a dollar to buy half as much: half-life = ln(2) / ln(1 + inflation). At 2% that is 35.0 years. At 7% it is 10.2 years. A rate at or below zero leaves a gap.</p>
       <h2>Smoothing</h2>
-      <p>The window and the averaging method are the smoothing. Several of each are above. <strong>None</strong> turns the smooth off and delivers the change as published:</p>
+      <p>None uses the change from one print to the next, held until the following print.</p>
       <pre>p = the print in effect on t
 q = the print before p
 g(t) = (M(p) − M(q)) / days from q to p</pre>
-      <p>That pace is held until the next print. If the print is lower than the one before it, <em>g</em> is negative for the whole stretch.</p>
-      <p>The pace chart draws that decrease. The day count stays blank. A negative or infinite day count is never drawn, with or without smoothing.</p>
-      <p>A longer window can hide a dip that a later rise reverses. With no smoothing, that dip stays a dip.</p>
       <h2>When expansion stops</h2>
-      <p>When <em>g(t)</em> is zero or negative — quantitative tightening, the 2022–23 decline in M2, or a single print that falls — <em>d(t)</em> is undefined. The day-count chart leaves a gap. The pace chart keeps the decrease.</p>
+      <p>When <em>g(t)</em> is not positive, the day count is blank and the pace chart keeps the decrease.</p>
       <h2>What moved</h2>
-      <p>The change in the day count from the start of the window (or from the previous print, when smoothing is off) splits into three parts that add up. Money growth moves first, with bitcoin's price and the coins outstanding held at the reference date. The price moves next, coins still held. Coins outstanding move last.</p>
+      <p>The change in the day count splits into money, then the bitcoin price, then coins.</p>
       <pre>from money   = P(s)×S(s)/g(t) − P(s)×S(s)/g(s)
 from price   = P(t)×S(s)/g(t) − P(s)×S(s)/g(t)
 from coins   = P(t)×S(t)/g(t) − P(t)×S(s)/g(t)</pre>
-      <p><em>P</em> is the bitcoin price and <em>S</em> is coins outstanding, market cap divided by price.</p>
-      <p>Days at a fixed bitcoin price are <em>P(s) × S(t) / g(t)</em>: today's coins and today's pace, at the reference price. Days at a fixed coin count are <em>P(t) × S(s) / g(t)</em>.</p>
-      <p>A longer bailout at a high price is the point. It is a higher valuation relative to monetary expansion.</p>
       <h2>Normalizing for growth</h2>
-      <p>The checkbox is off by default. When it is on, the pace is money growth in excess of a deflator over the same interval the averaging method already uses.</p>
-      <p>Nominal GDP is <a href="https://fred.stlouisfed.org/series/GDP">FRED GDP</a>, quarterly, seasonally adjusted annual rate, in dollars. CPI is <a href="https://fred.stlouisfed.org/series/CPIAUCSL">FRED CPIAUCSL</a>, the monthly seasonally adjusted index.</p>
-      <p>No API key. Only ratios enter the formula, so GDP's annualized rate cancels and CPI stays an index.</p>
+      <p>Checked, the pace is growth in excess of GDP or CPI over the same window.</p>
       <pre>trailing, and no smoothing
     g* = g − M(s) × (D(t) − D(s)) / (N × D(s))
 CAGR
@@ -612,13 +599,9 @@ CAGR
     g* = M(t) × (r(M) − r(D))
 regression
     g* = slope(M) − M(t) × slope(ln D)</pre>
-      <p>Trailing and CAGR use the deflator at the two ends of the window. Regression uses every forward-filled day.</p>
-      <p>A flat deflator leaves the pace unchanged. If the money stock grew at the same percentage rate as the deflator, the trailing and CAGR excess is zero and the day count pauses.</p>
-      <p>The regression excess subtracts the deflator's daily log-slope, converted to dollars at today's level. If the deflator does not cover the interval, the day count is left blank rather than silently using the unadjusted pace.</p>
       <h2>How the series are aligned</h2>
-      <p>Prints arrive monthly, weekly, quarterly, or daily. Each level — money, bitcoin market cap, bitcoin price, GDP, and CPI — is stepped forward to every calendar day and held until the next print.</p>
-      <p>Bitcoin's market cap and price on a day are the observations on that calendar day, or the latest on or before it. The headline uses the later of the money series' last print and bitcoin's last print, and says when one of them was carried forward.</p>
-      <p>Monthly figures taken from the Board's H.6 file are dated on the first of the month, which is how FRED dates the same print. Dollar levels in the snapshot are rounded to the nearest dollar. CPI is stored as the published index, including fractions of a point.</p>
+      <p>Each print is held until the next one.</p>
+      <p>The working detail is in the <a href="https://github.com/humdings/poor-man#readme">README on GitHub</a>.</p>
       <h2>Sources</h2>
       <div id="sources"></div>
       <p class="fine" id="generated"></p>
