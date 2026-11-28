@@ -28,7 +28,7 @@ REQUIRED = [
     "Your dollar loses half its value in about",
     "That isn't an accident. A 2% inflation target is official policy, and you're told it's for your own good.",
     "When centrally planned economies stumble, the bailout pulls wealth forward from future generations and erodes what every dollar buys.",
-    "One day the volatility will flip, when honesty proves to be the thing worth holding.",
+    "Occasionally the volatility flips and honesty proves to be the thing worth holding.",
     "Bitcoin's biggest risk is responsible governments.",
     "Don't forget to enjoy the journey.",
     "banking establishments are more dangerous than standing armies",
@@ -224,10 +224,14 @@ class FramingTests(unittest.TestCase):
         after_btc = self.page.split('id="chart-btc"', 1)[1].split("</article>", 1)[0]
         self.assertIn("Panicking erodes the value of your bailout.", after_btc)
         risk = "Bitcoin's biggest risk is responsible governments."
+        journey = "Don't forget to enjoy the journey."
+        flip = "Occasionally the volatility flips and honesty proves to be the thing worth holding."
         for text in (self.page, self.readme):
-            flip = text.index("One day the volatility will flip, when honesty proves to be the thing worth holding.")
-            self.assertLess(flip, text.index(risk))
-            self.assertLess(text.index(risk), text.index("Don't forget to enjoy the journey."))
+            self.assertNotIn("One day the volatility will flip", text)
+            self.assertLess(text.index(risk), text.index(journey))
+        after = self.page.split(flip, 1)[1]
+        self.assertRegex(after, r'^</p>\s*<div class="chart tall" id="chart-bailout"')
+        self.assertLess(self.page.index(journey), self.page.index(flip))
         self.assertLess(self.page.index('id="half-lead"'), self.page.index('id="chart-halflife"'))
         lead = self.page.split('id="half-lead"', 1)[1].split("</p>", 1)[0]
         self.assertIn('id="half-years"', lead)

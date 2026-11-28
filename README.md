@@ -12,7 +12,7 @@ The poor man's bailout is simple: store your time and energy, your savings, in b
 
 The poor man's bailout is not free, it's earned by taking an ego test and humbling yourself. It's taking responsibility for yourself knowing it empowers you. It's months of feeling like an absolute moron, but sleeping well knowing actual morons are debasing your alternative. It's knowing that when the music stops, they can't hand you the bill.
 
-One day the volatility will flip, when honesty proves to be the thing worth holding.
+Occasionally the volatility flips and honesty proves to be the thing worth holding.
 
 Bitcoin's biggest risk is responsible governments.
 
