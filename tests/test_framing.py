@@ -7,11 +7,24 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED = [
+    "The Poor Man's Bailout",
     "To a bitcoiner, debasement is a slow-motion bailout.",
-    "Every few hundred days, the money supply grows by an entire bitcoin market cap.",
-    "Bitcoin is the first bailout the little guy can buy into, even with a few bucks.",
-    "Its supply is fixed and its rules are open for anyone to verify.",
-    "The price of that honesty is volatility, and it humbles everyone who holds it.",
+    "Bitcoin is a much needed win for the little guy globally.",
+    "Finally, when fancy bundled obligations blow up and monetary superheroes engineer a solution (they print), the savvy little guy can catch a tailwind too.",
+    "Keeping bitcoin decentralized and secure is what keeps the tailwind alive.",
+    "The poor man's bailout is simple: store your time and energy, your savings, in bitcoin.",
+    "When central planners inevitably screw up and inflate away the purchasing power of your local currency, they can't put it on you.",
+    "It's less a bailout than refusing to be the one who pays for theirs.",
+    "For the first time, we can feel like the government is subsidizing our degeneracy, and bailing us out on a rolling basis.",
+    "The poor man's bailout is not free, it's earned by taking an ego test and humbling yourself.",
+    "It's taking responsibility for yourself knowing it empowers you.",
+    "It's months of feeling like an absolute moron, but sleeping well knowing actual morons are debasing your alternative.",
+    "It's knowing that when the music stops, they can't hand you the bill.",
+    "Bitcoin does not promise a price, it promises a supply. Fiat attempts to promise a price by manipulating supply.",
+    "Panicking erodes the value of your bailout.",
+    "Bitcoin is a pure expression of Western ideals: sound money, open competition, limits on power, and no taxation without consent.",
+    "The founders would recognize it.",
+    "The more you think about it, the more it feels like common sense. It's all been said before:",
     "Your dollar loses half its value in about",
     "That isn't an accident. A 2% inflation target is official policy, and you're told it's for your own good.",
     "When centrally planned economies stumble, the bailout pulls wealth forward from future generations and erodes what every dollar buys.",
@@ -42,7 +55,6 @@ REQUIRED = [
     "Money is gold, and nothing else.",
     "Gold is money. Everything else is credit.",
     "Gold monetized physical scarcity. Fiat monetized political credit. Bitcoin monetizes digital scarcity.",
-    "We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.",
     "You can tell everybody to go fuck themselves.",
     "I lost it in a boating accident.",
     "Attributed to Voltaire",
@@ -203,7 +215,14 @@ class FramingTests(unittest.TestCase):
         for text in (self.page, self.readme):
             for phrase in retired:
                 self.assertNotIn(phrase, text, phrase)
-        self.assertIn('<h1 class="banner">To a bitcoiner, debasement is a slow-motion bailout.</h1>', self.page)
+        self.assertIn('<h1 class="banner">The Poor Man\'s Bailout</h1>', self.page)
+        self.assertIn('<p class="subhead">To a bitcoiner, debasement is a slow-motion bailout.</p>', self.page)
+        bold = "For the first time, we can feel like the government is subsidizing our degeneracy, and bailing us out on a rolling basis."
+        self.assertIn("<strong>" + bold + "</strong>", self.page)
+        supply = self.page.split('class="callout"', 1)[1].split("</aside>", 1)[0]
+        self.assertIn("Bitcoin does not promise a price, it promises a supply.", supply)
+        after_btc = self.page.split('id="chart-btc"', 1)[1].split("</article>", 1)[0]
+        self.assertIn("Panicking erodes the value of your bailout.", after_btc)
         risk = "Bitcoin's biggest risk is responsible governments."
         for text in (self.page, self.readme):
             flip = text.index("One day the volatility will flip, when honesty proves to be the thing worth holding.")
@@ -216,18 +235,18 @@ class FramingTests(unittest.TestCase):
         self.assertIn('getElementById("half-years")', app)
         self.assertIn("yearsLabel(last.years)", app)
 
-    def test_the_founders_comment_is_the_sites_own_view(self):
+    def test_the_quotes_open_on_the_sites_own_line(self):
         section = self.page.split('id="quotes-title"', 1)[1].split('id="quote-strip"', 1)[0]
-        self.assertIn(
-            "We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.",
-            section,
-        )
+        line = "Bitcoin is a pure expression of Western ideals: sound money, open competition, limits on power, and no taxation without consent. The founders would recognize it. The more you think about it, the more it feels like common sense. It's all been said before:"
+        self.assertIn("<strong>" + line + "</strong>", section)
+        self.assertNotIn("We think the founders would agree", section)
         self.assertNotIn("on this page's reading", section)
         self.assertNotIn("not a line they wrote", section)
         self.assertNotIn("<blockquote", section)
         self.assertNotIn("<figure", section)
         strip = self.page.split('id="quote-set"', 1)[1].split("</div>", 1)[0]
         self.assertNotIn("sound money, limits on power", strip)
+        self.assertIn('href="https://github.com/humdings/poor-man#readme"', self.page)
 
     def test_morgan_sits_immediately_before_the_saylor_line(self):
         sentence = "Gold monetized physical scarcity. Fiat monetized political credit. Bitcoin monetizes digital scarcity."

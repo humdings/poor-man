@@ -1,18 +1,26 @@
 # Poor Man's Bailout
 
-**To a bitcoiner, debasement is a slow-motion bailout.**
+**The Poor Man's Bailout**
 
-Every few hundred days, the money supply grows by an entire bitcoin market cap. Bitcoin is the first bailout the little guy can buy into, even with a few bucks.
+To a bitcoiner, debasement is a slow-motion bailout.
 
-Its supply is fixed and its rules are open for anyone to verify.
+Bitcoin is a much needed win for the little guy globally. Finally, when fancy bundled obligations blow up and monetary superheroes engineer a solution (they print), the savvy little guy can catch a tailwind too. Keeping bitcoin decentralized and secure is what keeps the tailwind alive.
 
-The price of that honesty is volatility, and it humbles everyone who holds it.
+The poor man's bailout is simple: store your time and energy, your savings, in bitcoin. When central planners inevitably screw up and inflate away the purchasing power of your local currency, they can't put it on you. It's less a bailout than refusing to be the one who pays for theirs.
+
+**For the first time, we can feel like the government is subsidizing our degeneracy, and bailing us out on a rolling basis.**
+
+The poor man's bailout is not free, it's earned by taking an ego test and humbling yourself. It's taking responsibility for yourself knowing it empowers you. It's months of feeling like an absolute moron, but sleeping well knowing actual morons are debasing your alternative. It's knowing that when the music stops, they can't hand you the bill.
 
 One day the volatility will flip, when honesty proves to be the thing worth holding.
 
 Bitcoin's biggest risk is responsible governments.
 
 Don't forget to enjoy the journey.
+
+Bitcoin does not promise a price, it promises a supply. Fiat attempts to promise a price by manipulating supply.
+
+Panicking erodes the value of your bailout.
 
 Your dollar loses half its value in about the live half-life years.
 
@@ -22,7 +30,7 @@ When centrally planned economies stumble, the bailout pulls wealth forward from 
 
 How many days of monetary expansion equal the entire bitcoin market cap.
 
-Money spends the same, so expansion in any form counts as expansion. M2, the monetary base, currency in circulation, public debt, and the Fed balance sheet all count. Debt spends the same as cash: one person's debt is another's asset.
+Money spends the same, so expansion in any form counts as expansion. M2, the monetary base, currency in circulation, public debt, and the Fed balance sheet all count. Debt spends the same as cash: one person's debt is another's asset. Public debt stays in the comparison, on the same terms as the other measures.
 
 **[humdings.github.io/poor-man](https://humdings.github.io/poor-man/)**
 
@@ -38,7 +46,7 @@ d(t) = C(t) / g(t)     when g(t) > 0
 
 ## In their words
 
-We think the founders would agree: bitcoin embodies American values (sound money, limits on power, no taxation without consent) better than the dollar does.
+**Bitcoin is a pure expression of Western ideals: sound money, open competition, limits on power, and no taxation without consent. The founders would recognize it. The more you think about it, the more it feels like common sense. It's all been said before:**
 
 The page runs these as a scrolling strip and shuffles the order on each visit. Morgan, Saylor, and the IOU stay together, in that order, and the IOU card is set larger. Verbatim, except the cards marked attributed or paraphrase. Film lines are the picture's own words. A one-line frame above a film card is ours. The list below is a catalog, not the order on a given visit.
 
@@ -290,7 +298,7 @@ The Bullshit adjuster adds a gap, in percentage points, to that rate and plots t
 
 If Coin Metrics does not respond, bitcoin falls back to the Blockchain.com market-cap and market-price charts. If the FRED CSV endpoint does not respond, M2, the monetary base, and currency come from the Board's [H.6](https://www.federalreserve.gov/releases/h6/current/default.htm) release, and the balance sheet from [H.4.1](https://www.federalreserve.gov/releases/h41/current/). Debt before 1966 is the Treasury annual file. If that API does not respond, the fetch uses a public mirror of the same series and checks that 1790-01-01 is still $71,060,508.50. If Debt to the Penny does not respond, the fetch keeps the daily points already in `data/series.json`. The file records which path was used.
 
-Each level is stepped forward to every calendar day and held until the next print. Bitcoin's market cap and price on a day are the observations on that day, or the latest on or before it. The headline date is the later of the money print and the bitcoin print.
+Each level is stepped forward to every calendar day and held until the next print. Bitcoin's market cap and price on a day are the observations on that day, or the latest on or before it. The headline date is the later of the money print and the bitcoin print. Monthly figures taken from the Board's H.6 file are dated on the first of the month, which is how FRED dates the same print. Dollar levels in the snapshot are rounded to the nearest dollar. CPI is stored as the published index, including fractions of a point.
 
 ## Assumptions and options
 
@@ -308,7 +316,7 @@ The panel beside the headline lists the choices in force. The same choices are t
 | Contraction | A gap in the day count | The pace chart still draws a decrease |
 | Scale | Log on the day-count charts | Linear |
 
-**Smoothing.** The window and the averaging method smooth the pace. Trailing change is `(M(t) − M(s)) / N`. Regression is the ordinary least-squares slope of the daily forward-filled level. CAGR pace is `M(t) × ((M(t) / M(s))^(1/N) − 1)`, the compound rate at today's level. **None** (`window=0`) uses the change between the print in effect and the print before it, held until the next print. A down print stays a decrease.
+**Smoothing.** The window and the averaging method smooth the pace. Trailing change is `(M(t) − M(s)) / N`. Regression is the ordinary least-squares slope of the daily forward-filled level, so the flat days between prints are part of the fit. CAGR pace is `M(t) × ((M(t) / M(s))^(1/N) − 1)`, the compound rate that links the level at the start of the window to today's level, stated in dollars per day at today's level. **None** (`window=0`) uses the change between the print in effect and the print before it, held until the next print. A down print stays a decrease. A longer window can hide a dip that a later rise reverses. With no smoothing, that dip stays a dip.
 
 **Normalization.** Off unless the box is checked. The pace is then money growth in excess of the deflator over the same interval:
 
@@ -321,9 +329,17 @@ regression
     g* = slope(M) − M(t) × slope(ln D)
 ```
 
-A flat deflator leaves the pace unchanged. If money grew at the same percentage rate as the deflator, the trailing and CAGR excess is zero and the day count pauses.
+A flat deflator leaves the pace unchanged. If money grew at the same percentage rate as the deflator, the trailing and CAGR excess is zero and the day count pauses. Trailing and CAGR use the deflator at the two ends of the window. Regression uses every forward-filled day, and subtracts the deflator's daily log-slope converted to dollars at today's level. If the deflator does not cover the interval, the day count is left blank rather than silently using the unadjusted pace. Nominal GDP is FRED GDP, a seasonally adjusted annual rate; only the ratio is used, so the annualization cancels. CPI is FRED CPIAUCSL, kept as an index.
 
-**Fixed bitcoin.** The change in days since the start of the window splits into three parts that add up: money growth moves first, then the bitcoin price, then coins outstanding. Days at a fixed price hold the price from the start of the window. Days at a fixed coin count hold the number of coins. A longer bailout at a high price is the point: it is a higher valuation relative to monetary expansion.
+**Fixed bitcoin.** The change in days since the start of the window splits into three parts that add up: money growth moves first, with price and coins held at the reference date, then the bitcoin price, coins still held, then coins outstanding.
+
+```
+from money   = P(s)×S(s)/g(t) − P(s)×S(s)/g(s)
+from price   = P(t)×S(s)/g(t) − P(s)×S(s)/g(t)
+from coins   = P(t)×S(t)/g(t) − P(t)×S(s)/g(t)
+```
+
+*P* is the bitcoin price and *S* is coins outstanding, market cap divided by price. Days at a fixed bitcoin price are `P(s) × S(t) / g(t)`. Days at a fixed coin count are `P(t) × S(s) / g(t)`. A longer bailout at a high price is the point: it is a higher valuation relative to monetary expansion.
 
 When the pace is zero or negative, the day count is left blank. A negative or infinite day count is never drawn. The pace chart keeps the decrease, including M2 in 2022–23.
 
